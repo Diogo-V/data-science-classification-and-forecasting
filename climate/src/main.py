@@ -1,8 +1,12 @@
-from pandas import read_csv, DataFrame
+from pandas import read_csv, DataFrame, Series
 from pandas.plotting import register_matplotlib_converters
-from matplotlib.pyplot import figure, savefig, show, subplots
-from ds_charts import bar_chart, get_variable_types, choose_grid, HEIGHT, multiple_bar_chart
+from matplotlib.pyplot import figure, savefig, show, subplots, Axes
+from ds_charts import bar_chart, get_variable_types, choose_grid, HEIGHT, multiple_bar_chart, multiple_line_chart
 from seaborn import distplot
+from numpy import log
+from scipy.stats import norm, expon, lognorm
+
+
 
 NR_STDEV: int = 2
 
@@ -12,6 +16,9 @@ register_matplotlib_converters()
 
 filename = 'climate/resources/data/drought.csv'
 data = read_csv(filename, na_values='na')
+
+data['fips'] = data['fips'].astype('category')
+data['date'] = data['date'].astype('datetime64')
 
 data.shape
 
@@ -29,7 +36,7 @@ def get_variable_types(df: DataFrame) -> dict:
         if len(uniques) == 2:
             variable_types['Binary'].append(c)
             df[c].astype('bool')
-        elif df[c].dtype == 'datetime64':
+        elif df[c].dtype == 'datetime64' or df[c].dtype == 'datetime64[ns]':
             variable_types['Date'].append(c)
         elif df[c].dtype == 'int':
             variable_types['Numeric'].append(c)
@@ -147,6 +154,39 @@ def histogram_trend_per_numeric_variable():
   savefig('climate/images/histograms_trend_numeric.png')
   show()
 
+def compute_known_distributions(x_values: list) -> dict:
+    distributions = dict()
+    # Gaussian
+    mean, sigma = norm.fit(x_values)
+    distributions['Normal(%.1f,%.2f)'%(mean,sigma)] = norm.pdf(x_values, mean, sigma)
+    # Exponential
+    loc, scale = expon.fit(x_values)
+    distributions['Exp(%.2f)'%(1/scale)] = expon.pdf(x_values, loc, scale)
+    # LogNorm
+    sigma, loc, scale = lognorm.fit(x_values)
+    distributions['LogNor(%.1f,%.2f)'%(log(scale),sigma)] = lognorm.pdf(x_values, sigma, loc, scale)
+    return distributions
+
+def histogram_with_distributions(ax: Axes, series: Series, var: str):
+    values = series.sort_values().values
+    ax.hist(values, 20, density=True)
+    distributions = compute_known_distributions(values)
+    multiple_line_chart(values, distributions, ax=ax, title='Best fit for %s'%var, xlabel=var, ylabel='')
+
+
+def histogram_with_distributions_per_numeric_variable():
+  numeric_vars = get_variable_types(data)['Numeric']
+  if [] == numeric_vars:
+      raise ValueError('There are no numeric variables.')
+  rows, cols = choose_grid(len(numeric_vars))
+  fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+  i, j = 0, 0
+  for n in range(len(numeric_vars)):
+      histogram_with_distributions(axs[i, j], data[numeric_vars[n]].dropna(), numeric_vars[n])
+      i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
+  savefig('images/histogram_numeric_distribution.png')
+  show()
 
 if __name__ == "__main__":
-  histogram_trend_per_numeric_variable()
+  print(data.dtypes)
+  nr_of_variables_per_type()
