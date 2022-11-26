@@ -58,7 +58,7 @@ def set_locators(xvalues: list, ax: Axes = None, rotation: bool=False):
         return None
     elif isinstance(xvalues[0], str):
         if rotation:
-            ax.set_xticklabels(xvalues, rotation='90', fontsize='small', ha='center')
+            ax.set_xticklabels(xvalues, rotation='vertical', fontsize='small', ha='center')
         else:
             ax.set_xticklabels(xvalues, fontsize='small', ha='center')
         return None
@@ -95,8 +95,9 @@ def bar_chart(xvalues: list, yvalues: list, ax: Axes = None, title: str = '', xl
         ax.text(i, yvalues[i] + TEXT_MARGIN, f'{yvalues[i]:.2f}', ha='center', fontproperties=FONT_TEXT)
 
 
-def multiple_bar_chart(xvalues: list, yvalues: dict, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = '', percentage: bool = False, unit=1):
+def multiple_bar_chart(xvalues: list, yvalues: dict, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = '', percentage: bool = False, rotation: bool = False, unit=1):
     ax = set_elements(ax=ax, title=title, xlabel=xlabel, ylabel=ylabel, percentage=percentage, unit=unit)
+    set_locators(xvalues, ax=ax, rotation=rotation)
     ngroups = len(xvalues)
     nseries = len(yvalues)
     pos_group = arange(ngroups)

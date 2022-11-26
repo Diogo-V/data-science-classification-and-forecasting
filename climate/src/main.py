@@ -123,7 +123,7 @@ def nr_of_outliers_per_numeric_variable():
 
   outliers = {'iqr': outliers_iqr, 'stdev': outliers_stdev}
   figure(figsize=(12, HEIGHT))
-  multiple_bar_chart(numeric_vars, outliers, title='Nr of outliers per variable', xlabel='variables', ylabel='nr outliers', percentage=False)
+  multiple_bar_chart(numeric_vars, outliers, title='Nr of outliers per variable', xlabel='variables', ylabel='nr outliers', percentage=False, rotation=True)
   savefig('climate/images/outliers.png')
   show()
 
@@ -190,8 +190,9 @@ def histogram_with_distributions_per_numeric_variable():
   for n in range(len(numeric_vars)):
       histogram_with_distributions(axs[i, j], data[numeric_vars[n]].dropna(), numeric_vars[n])
       i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
-  savefig('images/histogram_numeric_distribution.png')
+  savefig('climate/images/histogram_numeric_distribution.png')
   show()
 
+
 if __name__ == "__main__":
-  nr_of_variables_per_type()
+  histogram_with_distributions_per_numeric_variable()
