@@ -11,7 +11,7 @@ FILE_PATH = 'health/resources/data/diabetic_data.csv'
 MISSING_VALUES_REPR = '?'
 
 if __name__ == "__main__":
-  data = read_csv(FILE_PATH, na_values=MISSING_VALUES_REPR)
+  data = read_csv(FILE_PATH, na_values='na')
 
   # 1º Phase -> Data profiling
   profiler = Profiler(data)

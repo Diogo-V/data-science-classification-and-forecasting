@@ -2,6 +2,7 @@ from pandas import read_csv
 from pandas.plotting import register_matplotlib_converters
 
 from profiling import Profiler
+from sparsity import Sparsity
 
 register_matplotlib_converters()
 
@@ -13,6 +14,10 @@ if __name__ == "__main__":
 
   profiler = Profiler(data)
 
-  profiler.explore_data_granularity(RECORDS_PATH, True, data_type='Numeric')
-  profiler.explore_data_granularity(RECORDS_PATH, True, data_type="Symbolic")
-  profiler.explore_data_granularity(RECORDS_PATH, True, data_type='Date')
+  # profiler.explore_data_granularity(RECORDS_PATH, True, data_type='Numeric')
+  # profiler.explore_data_granularity(RECORDS_PATH, True, data_type="Symbolic")
+  # profiler.explore_data_granularity(RECORDS_PATH, True, data_type='Date')
+
+  profiler_sparsity = Sparsity(data)
+  # profiler_sparsity.explore_scatter_plot(RECORDS_PATH)
+  # profiler_sparsity.explore_heatmap(RECORDS_PATH)
