@@ -19,5 +19,5 @@ if __name__ == "__main__":
   # profiler.explore_data_granularity(RECORDS_PATH, True, data_type='Date')
 
   profiler_sparsity = Sparsity(data)
-  # profiler_sparsity.explore_scatter_plot(RECORDS_PATH)
+  profiler_sparsity.explore_scatter_plot(RECORDS_PATH)
   # profiler_sparsity.explore_heatmap(RECORDS_PATH)
