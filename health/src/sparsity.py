@@ -18,17 +18,17 @@ class Sparsity:
       * output_image_path(str): path to output image
     """
     columns = list(self.data)
-    rows, cols = len(columns)-1, len(columns)-1
+    rows, cols = 10, len(columns)-1
     _, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
-    for i in range(len(columns)):
+    for i in range(40, 50):
         var1 = columns[i]
         for j in range(i+1, len(columns)):
             var2 = columns[j]
-            axs[i, j-1].set_title("%s x %s"%(var1,var2))
-            axs[i, j-1].set_xlabel(var1)
-            axs[i, j-1].set_ylabel(var2)
-            axs[i, j-1].scatter(self.data[var1], self.data[var2])
-    savefig(f'{output_image_path}/sparsity_study.png')
+            axs[i - 40, j-1].set_title("%s x %s"%(var1,var2))
+            axs[i - 40, j-1].set_xlabel(var1)
+            axs[i - 40, j-1].set_ylabel(var2)
+            axs[i - 40, j-1].scatter(self.data[var1], self.data[var2])
+    savefig(f'{output_image_path}/sparsity_study_4.png')
 
   def explore_heatmap(self, output_image_path: str) -> None:
     """
