@@ -8,6 +8,9 @@ class Profiler:
 
   def __init__(self, data: pd.DataFrame) -> None:
     self.data: pd.DataFrame = data
+    data['admission_type_id'] = data['admission_type_id'].astype('category')
+    data['discharge_disposition_id'] = data['discharge_disposition_id'].astype('category')
+    data['admission_source_id'] = data['admission_source_id'].astype('category')
 
   def explore_dimensionality(self, output_image_path: str, display: bool = False) -> None:
     """
