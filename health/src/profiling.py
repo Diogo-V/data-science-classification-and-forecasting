@@ -1,7 +1,7 @@
 import pandas as pd
-from matplotlib.pyplot import figure, savefig, show
+from matplotlib.pyplot import figure, savefig, show, subplots
 
-from ds_charts import bar_chart
+from ds_charts import bar_chart, get_variable_types, HEIGHT
 
 
 class Profiler:
@@ -100,3 +100,21 @@ class Profiler:
     savefig(f'{output_image_path}/nr_missing_values.png')
     if display:
         show()
+
+
+  def explore_data_granularity(self, output_image_path: str, display=False, data_type: str = 'Numeric') -> None:
+    variables = get_variable_types(self.data)[data_type]
+    bins = (10, 100, 1000)
+    rows = len(variables)
+    cols = len(bins)
+    fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
+    i, j = 0, 0
+    for i in range(rows):
+      for j in range(cols):
+        axs[i, j].set_title('Histogram for %s %d bins'%(variables[i], bins[j]))
+        axs[i, j].set_xlabel(variables[i])
+        axs[i, j].set_ylabel('Nr records')
+        axs[i, j].hist(self.data[variables[i]].values, bins=bins[j])
+    savefig(f'{output_image_path}/granularity_{data_type}.png')
+    if display:
+      show()
