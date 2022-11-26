@@ -18,6 +18,13 @@ filename = 'climate/resources/data/drought.csv'
 data = read_csv(filename, na_values='na')
 
 data['fips'] = data['fips'].astype('category')
+data['SQ1'] = data['SQ1'].astype('category')
+data['SQ2'] = data['SQ2'].astype('category')
+data['SQ3'] = data['SQ3'].astype('category')
+data['SQ4'] = data['SQ4'].astype('category')
+data['SQ5'] = data['SQ5'].astype('category')
+data['SQ6'] = data['SQ6'].astype('category')
+data['SQ7'] = data['SQ7'].astype('category')
 data['date'] = data['date'].astype('datetime64')
 
 data.shape
@@ -33,7 +40,7 @@ def get_variable_types(df: DataFrame) -> dict:
     }
     for c in df.columns:
         uniques = df[c].dropna(inplace=False).unique()
-        if len(uniques) == 2:
+        if df[c].dtype == 'int' and len(uniques) == 2:
             variable_types['Binary'].append(c)
             df[c].astype('bool')
         elif df[c].dtype == 'datetime64' or df[c].dtype == 'datetime64[ns]':
@@ -187,4 +194,4 @@ def histogram_with_distributions_per_numeric_variable():
   show()
 
 if __name__ == "__main__":
-  boxplot_per_numeric_variable()
+  nr_of_variables_per_type()
