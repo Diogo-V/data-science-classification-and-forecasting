@@ -57,7 +57,6 @@ def nr_of_records_vs_nr_of_variables():
 
 def nr_of_variables_per_type():
   variable_types = get_variable_types(data)
-  print(variable_types)
   counts = {}
   for tp in variable_types.keys():
       counts[tp] = len(variable_types[tp])
@@ -188,5 +187,4 @@ def histogram_with_distributions_per_numeric_variable():
   show()
 
 if __name__ == "__main__":
-  print(data.dtypes)
-  nr_of_variables_per_type()
+  boxplot_per_numeric_variable()
