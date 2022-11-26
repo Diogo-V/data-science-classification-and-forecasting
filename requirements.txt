@@ -8,3 +8,4 @@ imblearn==0.0
 mlxtend==0.21.0
 statsmodels==0.13.5
 torch==1.13.0
+config==0.5.1
