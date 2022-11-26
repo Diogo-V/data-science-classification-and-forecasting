@@ -8,19 +8,21 @@
 
 ## Setup and installation
 
-1. To install all the required packages, run the following command:
+1. Download above datasets into the corresponding resources folder
+
+2. Install all the required packages, run the following command:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. To extract health dataset, run the following command:
+3. Extract health dataset, run the following command:
 
 ```bash
 unzip health/resources/health.zip -d health/resources/data
 ```
 
-3. To extract climate dataset, run the following command:
+4. Extract climate dataset, run the following command:
 
 ```bash
 unzip climate/resources/climate.zip -d climate/resources/data && unzip climate/resources/drought.csv.zip -d climate/resources/data
