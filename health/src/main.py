@@ -7,18 +7,13 @@ register_matplotlib_converters()
 
 RECORDS_PATH = 'health/records'
 FILE_PATH = 'health/resources/data/diabetic_data.csv'
+MISSING_VALUES_REPR = '?'
 
 if __name__ == "__main__":
   data = read_csv(FILE_PATH, na_values='na')
 
-  print(data["diag_1"])
-
-  for val in data["diag_1"]:
-    if type(val) is str:
-      print(val)
-
   # 1º Phase -> Data profiling
-  # profiler = Profiler(data)
-  # profiler.explore_dimensionality(RECORDS_PATH)
-  # profiler.explore_data_types()
-  # profiler.explore_missing_values(RECORDS_PATH, True)
+  profiler = Profiler(data)
+  profiler.explore_dimensionality(RECORDS_PATH, display=False)
+  profiler.explore_variable_types(RECORDS_PATH, display=False)
+  profiler.explore_missing_values(RECORDS_PATH, MISSING_VALUES_REPR, display=True)

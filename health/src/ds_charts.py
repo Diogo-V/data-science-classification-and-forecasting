@@ -58,7 +58,7 @@ def set_locators(xvalues: list, ax: Axes = None, rotation: bool=False):
         return None
     elif isinstance(xvalues[0], str):
         if rotation:
-            ax.set_xticklabels(xvalues, rotation='90', fontsize='small', ha='center')
+            ax.set_xticklabels(xvalues, rotation='vertical', fontsize='small', ha='center')
         else:
             ax.set_xticklabels(xvalues, fontsize='small', ha='center')
         return None
