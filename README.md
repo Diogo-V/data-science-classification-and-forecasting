@@ -5,6 +5,7 @@
 * Teacher's website: <http://web.ist.utl.pt/~claudia.antunes/DSLabs/>
 * Health dataset in Kaggle: <https://www.kaggle.com/datasets/brandao/diabetes>
 * Climate dataset in Kaggçe: <https://www.kaggle.com/datasets/cdminix/us-drought-meteorological-data>
+* Notes: <https://docs.google.com/document/d/1EKG_WaoMWat4D9Xw-C6WE-Ayf509Ai2a45vYr1PP4r4/edit>
 
 ## Setup and installation
 
