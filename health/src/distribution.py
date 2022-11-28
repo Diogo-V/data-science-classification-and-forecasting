@@ -172,7 +172,9 @@ class Distribution:
       distributions = compute_known_distributions(values)
       multiple_line_chart(values, distributions, ax=ax, title='Best fit for %s'%var, xlabel=var, ylabel='')
 
-    numeric_vars = get_variable_types(self.data)['Numeric']
+    res = get_variable_types(self.data)['Numeric']
+    k = 0  # Literally had to move it one by one
+    numeric_vars = [res[k]]
     if [] == numeric_vars:
         raise ValueError('There are no numeric variables.')
 
@@ -182,4 +184,4 @@ class Distribution:
     for n in range(len(numeric_vars)):
         histogram_with_distributions(axs[i, j], self.data[numeric_vars[n]].dropna(), numeric_vars[n])
         i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
-    savefig(f'{output_image_path}/numeric_distribution.png')
+    savefig(f'{output_image_path}/numeric_distribution_{k}.png')

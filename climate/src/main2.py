@@ -24,7 +24,7 @@ if __name__ == "__main__":
   # profiler_sparsity.explore_scatter_plot(RECORDS_PATH)
   # profiler_sparsity.explore_heatmap(RECORDS_PATH)
 
-  profiler_distribution.explore_global_boxplot(RECORDS_PATH)
+  # profiler_distribution.explore_global_boxplot(RECORDS_PATH)
   # profiler_distribution.explore_numeric_boxplot(RECORDS_PATH)
   # profiler_distribution.explore_count_numeric_outliers(RECORDS_PATH)
   # profiler_distribution.explore_histogram_numeric_outliers(RECORDS_PATH)
