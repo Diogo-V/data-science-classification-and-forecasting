@@ -5,22 +5,27 @@ from profiling.profiling import Profiler
 from profiling.sparsity import Sparsity
 from profiling.distribution import Distribution
 
+from preparation.parsing import Parser
+
 register_matplotlib_converters()
 
 RECORDS_PATH = 'health/records'
 PROFILING_PATH = RECORDS_PATH + '/profiling'
-FILE_PATH = 'health/resources/data/diabetic_data.csv'
+PREPARATION_PATH = RECORDS_PATH + '/preparation'
+
+INPUT_FILE_PATH = 'health/resources/data/diabetic_data.csv'
+PREPARATION_OUT_FILE_PATH = 'health/resources/data/data_prepared.csv'
 MISSING_VALUES_REPR = '?'
 
+
 if __name__ == "__main__":
-  data = read_csv(FILE_PATH, na_values='na')
+  data = read_csv(INPUT_FILE_PATH, na_values='na')
 
-  # 1º Phase -> Data profiling
-  profiler = Profiler(data)
-  profiler_sparsity = Sparsity(data)
-  profiler_distribution = Distribution(data)
-
-  profiler.explore_count_data_types()
+  # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
+  
+  # profiler = Profiler(data)
+  # profiler_sparsity = Sparsity(data)
+  # profiler_distribution = Distribution(data)
 
   # profiler.explore_dimensionality(PROFILING_PATH, display=False)
   # profiler.explore_variable_types(PROFILING_PATH, display=False)
@@ -40,3 +45,8 @@ if __name__ == "__main__":
 
   # profiler_sparsity.explore_scatter_plot(PROFILING_PATH)
   # profiler_sparsity.explore_heatmap(PROFILING_PATH)
+
+  # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
+
+  parser = Parser(data, MISSING_VALUES_REPR)
+  parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
