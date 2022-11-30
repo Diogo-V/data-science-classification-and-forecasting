@@ -1,13 +1,14 @@
 from pandas import read_csv
 from pandas.plotting import register_matplotlib_converters
 
-from profiling import Profiler
-from sparsity import Sparsity
-from distribution import Distribution
+from profiling.profiling import Profiler
+from profiling.sparsity import Sparsity
+from profiling.distribution import Distribution
 
 register_matplotlib_converters()
 
 RECORDS_PATH = 'health/records'
+PROFILING_PATH = RECORDS_PATH + '/profiling'
 FILE_PATH = 'health/resources/data/diabetic_data.csv'
 MISSING_VALUES_REPR = '?'
 
@@ -19,21 +20,21 @@ if __name__ == "__main__":
   profiler_sparsity = Sparsity(data)
   profiler_distribution = Distribution(data)
 
-  # profiler.explore_dimensionality(RECORDS_PATH, display=False)
-  # profiler.explore_variable_types(RECORDS_PATH, display=False)
-  # profiler.explore_missing_values(RECORDS_PATH, MISSING_VALUES_REPR, display=True)
+  # profiler.explore_dimensionality(PROFILING_PATH, display=False)
+  # profiler.explore_variable_types(PROFILING_PATH, display=False)
+  # profiler.explore_missing_values(PROFILING_PATH, MISSING_VALUES_REPR, display=True)
 
-  # profiler_distribution.explore_global_boxplot(RECORDS_PATH)
-  # profiler_distribution.explore_numeric_boxplot(RECORDS_PATH)
-  # profiler_distribution.explore_count_numeric_outliers(RECORDS_PATH)
-  # profiler_distribution.explore_histogram_numeric_outliers(RECORDS_PATH)
-  # profiler_distribution.explore_trend_numeric(RECORDS_PATH)
-  # profiler_distribution.explore_symbolic_histogram(RECORDS_PATH)
-  profiler_distribution.explore_numeric_distributions(RECORDS_PATH)
+  # profiler_distribution.explore_global_boxplot(PROFILING_PATH)
+  # profiler_distribution.explore_numeric_boxplot(PROFILING_PATH)
+  # profiler_distribution.explore_count_numeric_outliers(PROFILING_PATH)
+  # profiler_distribution.explore_histogram_numeric_outliers(PROFILING_PATH)
+  # profiler_distribution.explore_trend_numeric(PROFILING_PATH)
+  # profiler_distribution.explore_symbolic_histogram(PROFILING_PATH)
+  profiler_distribution.explore_numeric_distributions(PROFILING_PATH)
 
-  # profiler.explore_data_granularity(RECORDS_PATH, True, data_type='Numeric')
-  # profiler.explore_data_granularity(RECORDS_PATH, True, data_type="Symbolic")
-  # profiler.explore_data_granularity(RECORDS_PATH, True, data_type='Date')
+  # profiler.explore_data_granularity(PROFILING_PATH, True, data_type='Numeric')
+  # profiler.explore_data_granularity(PROFILING_PATH, True, data_type="Symbolic")
+  # profiler.explore_data_granularity(PROFILING_PATH, True, data_type='Date')
 
-  # profiler_sparsity.explore_scatter_plot(RECORDS_PATH)
-  # profiler_sparsity.explore_heatmap(RECORDS_PATH)
+  # profiler_sparsity.explore_scatter_plot(PROFILING_PATH)
+  # profiler_sparsity.explore_heatmap(PROFILING_PATH)
