@@ -20,6 +20,8 @@ if __name__ == "__main__":
   profiler_sparsity = Sparsity(data)
   profiler_distribution = Distribution(data)
 
+  profiler.explore_count_data_types()
+
   # profiler.explore_dimensionality(PROFILING_PATH, display=False)
   # profiler.explore_variable_types(PROFILING_PATH, display=False)
   # profiler.explore_missing_values(PROFILING_PATH, MISSING_VALUES_REPR, display=True)
@@ -30,7 +32,7 @@ if __name__ == "__main__":
   # profiler_distribution.explore_histogram_numeric_outliers(PROFILING_PATH)
   # profiler_distribution.explore_trend_numeric(PROFILING_PATH)
   # profiler_distribution.explore_symbolic_histogram(PROFILING_PATH)
-  profiler_distribution.explore_numeric_distributions(PROFILING_PATH)
+  # profiler_distribution.explore_numeric_distributions(PROFILING_PATH)
 
   # profiler.explore_data_granularity(PROFILING_PATH, True, data_type='Numeric')
   # profiler.explore_data_granularity(PROFILING_PATH, True, data_type="Symbolic")
