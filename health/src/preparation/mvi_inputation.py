@@ -1,10 +1,11 @@
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from ds_charts import get_variable_types
+from ds_charts import get_variable_types, plot_evaluation_results
 from numpy import nan
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
 
 
 
@@ -36,10 +37,15 @@ class Inputator:
 		- Evaluate with NB
 		"""
 
+		self.img_out = img_out_path
+		self.file_out = file_out_path
+
 		self.drop_column('weight')
 		self.drop_column('payer_code')
 		self.fill_missing_values('medical_specialty', 'most_frequent')
 		self.drop_records()
+
+		self.data.to_csv(f'{self.file_out}/data_mvi_approach1.csv')
 
 		self.evaluate_knn()
 
@@ -57,11 +63,31 @@ class Inputator:
 		data = pd.DataFrame(self.data)
 		y = data.pop('readmitted').values
 		X = data.values
-		
+
 		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+
+		labels = pd.unique(y_train)
+		labels.sort()
 
 		knn = KNeighborsClassifier(n_neighbors=10)
 		knn.fit(X_train, y_train)
 		predict = knn.predict(X_test)
 		result = accuracy_score(y_test, predict)
 		print(result)
+
+		### FIXME: CANT USE THIS, NOT BINARY CLASS 
+		# prd_trn = knn.predict(X_train)
+		# prd_tst = knn.predict(X_test)
+
+		# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
+		# savefig(f'{self.img_out}/knn_approach1_results.png')
+
+	def evaluate_nb(self):
+		data = pd.DataFrame(self.data)
+		y = data.pop('readmitted').values
+		X = data.values
+
+		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+
+		labels = pd.unique(y_train)
+		labels.sort()

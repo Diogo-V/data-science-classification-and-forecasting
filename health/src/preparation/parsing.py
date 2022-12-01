@@ -51,6 +51,8 @@ class Parser:
       'diabetesMed': self._map_binary,
       'acetohexamide': self._map_medication,
       'troglitazone': self._map_medication,
+      'tolbutamide': self._map_medication,
+
     }
 
   def parse_dataset(self, output_path: str) -> None:
