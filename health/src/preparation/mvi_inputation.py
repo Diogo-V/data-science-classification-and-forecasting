@@ -48,6 +48,7 @@ class Inputator:
 		self.data.to_csv(f'{self.file_out}/data_mvi_approach1.csv')
 
 		self.evaluate_knn()
+		self.evaluate_nb()
 
 
 	def drop_column(self, column_name: str):
@@ -91,3 +92,16 @@ class Inputator:
 
 		labels = pd.unique(y_train)
 		labels.sort()
+
+		nb = GaussianNB()
+		nb.fit(X_train, y_train)
+		predict = nb.predict(X_test)
+		result = accuracy_score(y_test, predict)
+		print(result)
+
+		### FIXME: CANT USE THIS, NOT BINARY CLASS 
+		# prd_trn = nb.predict(X_train)
+		# prd_tst = nb.predict(X_test)
+
+		# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
+		# savefig(f'{self.img_out}/nb_approach1_results.png')
