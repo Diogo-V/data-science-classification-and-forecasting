@@ -42,7 +42,15 @@ class Parser:
       'citoglipton': self._map_medication, 
       'insulin': self._map_medication, 
       'glyburide-metformin': self._map_medication,
-      'readmitted': self._map_readmitted
+      'readmitted': self._map_readmitted,
+      'glipizide-metformin': self._map_medication,
+      'glimepiride-pioglitazone': self._map_medication,
+      'metformin-rosiglitazone': self._map_medication,
+      'metformin-pioglitazone': self._map_medication,
+      'change': self._map_binary,
+      'diabetesMed': self._map_binary,
+      'acetohexamide': self._map_medication,
+      'troglitazone': self._map_medication,
     }
 
   def parse_dataset(self, output_path: str) -> None:
@@ -241,5 +249,13 @@ class Parser:
       '<30': 3,
       '>30': 2,
       'NO': 1,
+    }
+    return mapper[ele]
+
+  def _map_binary(self, ele: str) -> int:
+    mapper: dict[str, int] = {
+      'No': 0,
+      'Yes': 1,
+      'Ch': 1,
     }
     return mapper[ele]
