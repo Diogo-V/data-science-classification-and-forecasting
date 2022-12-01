@@ -5,6 +5,8 @@ from profiling.profiling import Profiler
 from profiling.sparsity import Sparsity
 from profiling.distribution import Distribution
 
+from preparation.scaling import Scaling
+
 register_matplotlib_converters()
 
 RECORDS_PATH = 'climate/records'
@@ -16,6 +18,9 @@ if __name__ == "__main__":
 
   profiler = Profiler(data)
   profiler_distribution = Distribution(data)
+
+  scaling = Scaling(data)
+  scaling.analyze_scaling()
 
   # profiler.explore_data_granularity(PROFILING_PATH, True, data_type='Numeric')
   # profiler.explore_data_granularity(PROFILING_PATH, True, data_type="Symbolic")
