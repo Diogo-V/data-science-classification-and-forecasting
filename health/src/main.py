@@ -52,10 +52,10 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  # parser = Parser(data, MISSING_VALUES_REPR)
-  # parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+  parser = Parser(data, MISSING_VALUES_REPR)
+  parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
 
   data = read_csv(PREPARATION_OUT_FILE_PATH, na_values=nan)
 
   inputator = Inputator(data, MISSING_VALUES_REPR)
-  inputator.approach_1(INPUTATION_PATH, INPUTATION_OUT_FILE_PATH)
+  inputator.approach_2(INPUTATION_PATH, INPUTATION_OUT_FILE_PATH)

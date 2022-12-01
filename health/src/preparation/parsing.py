@@ -18,9 +18,9 @@ class Parser:
 
     # Holds mapping between columns and functions used to transform them
     self.func_map: dict[str, Callable[[str], int]] = {
+      'age': self._map_age, 
       'race': self._map_race,
       'gender': self._map_gender,
-      'age': self._map_age,
       'diag_1': self._map_diag, 
       'diag_2': self._map_diag,
       'diag_3': self._map_diag,
