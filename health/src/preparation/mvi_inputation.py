@@ -6,10 +6,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
-
+from sklearn.model_selection import StratifiedKFold
 
 
 class Inputator:
+
+	DETERMINISM_FACTOR = 3
+	NEIGHBORS = [7, 9]
 
 	def __init__(self, data: pd.DataFrame, missing_values_str: str) -> None:
 		"""
@@ -103,20 +106,61 @@ class Inputator:
 		self.data.dropna(axis=0, how='any', inplace=True)
 
 	def evaluate_knn(self):
+		best_test_acc = -1
+
 		data = pd.DataFrame(self.data)
 		y = data.pop('readmitted').values
 		X = data.values
 
-		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+		# We need to create a classifier for each number of neighbors
+		for n in self.NEIGHBORS:
 
-		labels = pd.unique(y_train)
-		labels.sort()
+			# Holds training and testing accuracy to be latter used to determine which K is more susceptible to over fit
+			train_acc = []
+			test_acc = []
 
-		knn = KNeighborsClassifier(n_neighbors=10)
-		knn.fit(X_train, y_train)
-		predict = knn.predict(X_test)
-		result = accuracy_score(y_test, predict)
-		print(result)
+			print(f"Classifying n = {n}:")
+
+			# Creates a k fold cross validator
+			skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=self.DETERMINISM_FACTOR)
+
+			# Creates KNN classifier for n neighbors
+			clf = KNeighborsClassifier(n, weights="uniform", p=2, metric="minkowski")
+
+			# For each train/test set, we use a KNN classifier
+			for train_index, test_index in skf.split(X, y):
+
+				# Uses indexes to fetch which values are going to be used to train and test
+				X_train, X_test = X[train_index], X[test_index]
+				y_train, y_test = y[train_index], y[test_index]
+
+				# Trains knn classifier
+				clf.fit(X_train, y_train.ravel())
+
+				# Uses testing data and gets model accuracy
+				acc = clf.score(X_test, y_test)
+				test_acc.append(acc)
+				print("Acc using test data {:.3f}".format(acc))
+
+				# Uses training data and gets model accuracy to determine over fitting
+				acc = clf.score(X_train, y_train)
+				train_acc.append(acc)
+				print("Acc using training data {:.3f}".format(acc))
+
+			# Calculates means for train and test to determine which one is over fitting less
+			train_mean = sum(train_acc) / 10
+			test_mean = sum(test_acc) / 10
+			error = math.sqrt(np.square(np.subtract(train_acc, test_acc)).mean())
+			print("Training acc: {:.3f}".format(train_mean))
+			print("Test acc: {:.3f}".format(test_mean))
+			print("Diff between train and test: {:.3f}".format(train_mean - test_mean))
+			print("Root mean squared error: {:.3f}".format(error))
+
+			if test_mean > best_test_acc:
+				best_test_acc = test_mean
+
+		print("MVI NB Acc: " + test_mean)
+
 
 		### FIXME: CANT USE THIS, NOT BINARY CLASS 
 		# prd_trn = knn.predict(X_train)
@@ -126,21 +170,55 @@ class Inputator:
 		# savefig(f'{self.img_out}/knn_approach1_results.png')
 
 	def evaluate_nb(self):
+
+		# Holds training and testing accuracy to compute mean
+		train_acc = []
+		test_acc = []
+
 		data = pd.DataFrame(self.data)
 		y = data.pop('readmitted').values
 		X = data.values
 
-		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+		
+		# Creates a Gaussian Naive Bayes classifier
+		gnb = GaussianNB()
 
-		labels = pd.unique(y_train)
-		labels.sort()
+		# Creates a k fold cross validator
+		skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=self.DETERMINISM_FACTOR)
 
-		nb = GaussianNB()
-		nb.fit(X_train, y_train)
-		predict = nb.predict(X_test)
-		result = accuracy_score(y_test, predict)
-		print(result)
 
+		# For each train/test set, we use a KNN classifier
+		for train_index, test_index in skf.split(X, y):
+
+			# Uses indexes to fetch which values are going to be used to train and test
+			X_train, X_test = X[train_index], X[test_index]
+			y_train, y_test = y[train_index], y[test_index]
+			
+			labels = pd.unique(y_train)
+			labels.sort()
+
+			# Uses testing data and gets model accuracy
+			acc = gnb.score(X_test, y_test)
+			test_acc.append(acc)
+			print("Acc using test data {:.3f}".format(acc))
+
+			# Uses training data and gets model accuracy to determine over fitting
+			acc = gnb.score(X_train, y_train)
+			train_acc.append(acc)
+			print("Acc using training data {:.3f}".format(acc))
+
+		# Calculates means for train and test to determine which one is over fitting less
+		train_mean = sum(train_acc) / 10
+		test_mean = sum(test_acc) / 10
+		error = math.sqrt(np.square(np.subtract(train_acc, test_acc)).mean())
+		print("Training acc: {:.3f}".format(train_mean))
+		print("Test acc: {:.3f}".format(test_mean))
+		print("Diff between train and test: {:.3f}".format(train_mean - test_mean))
+		print("Root mean squared error: {:.3f}".format(error))
+		
+		print("MVI NB Acc: " + test_mean)
+		
+		
 		### FIXME: CANT USE THIS, NOT BINARY CLASS 
 		# prd_trn = nb.predict(X_train)
 		# prd_tst = nb.predict(X_test)
