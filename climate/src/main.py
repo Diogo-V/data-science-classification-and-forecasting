@@ -6,6 +6,7 @@ from profiling.sparsity import Sparsity
 from profiling.distribution import Distribution
 
 from preparation.scaling import Scaling
+from preparation.outliers_imputation import OutliersImputation
 
 register_matplotlib_converters()
 
@@ -17,9 +18,11 @@ FILE_PATH = 'climate/resources/data/drought.csv'
 if __name__ == "__main__":
   data = read_csv(FILE_PATH, na_values='na')
 
-  profiler = Profiler(data)
-  profiler_distribution = Distribution(data)
+  # profiler = Profiler(data)
 
+  outliers = OutliersImputation(data)
+  data = outliers.remove_outliers()
+  
   scaling = Scaling(data)
   scaling.analyze_scaling()
 
