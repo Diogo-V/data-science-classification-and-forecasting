@@ -7,12 +7,14 @@ from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import StratifiedKFold
+import math
 
 
 class Inputator:
 
 	DETERMINISM_FACTOR = 3
-	NEIGHBORS = [7, 9]
+	# NEIGHBORS = [3, 5, 7, 9, 11, 13]
+	NEIGHBORS = [7]
 
 	def __init__(self, data: pd.DataFrame, missing_values_str: str) -> None:
 		"""
@@ -107,6 +109,7 @@ class Inputator:
 
 	def evaluate_knn(self):
 		best_test_acc = -1
+		best_k_value = -1
 
 		data = pd.DataFrame(self.data)
 		y = data.pop('readmitted').values
@@ -140,12 +143,10 @@ class Inputator:
 				# Uses testing data and gets model accuracy
 				acc = clf.score(X_test, y_test)
 				test_acc.append(acc)
-				print("Acc using test data {:.3f}".format(acc))
 
 				# Uses training data and gets model accuracy to determine over fitting
 				acc = clf.score(X_train, y_train)
 				train_acc.append(acc)
-				print("Acc using training data {:.3f}".format(acc))
 
 			# Calculates means for train and test to determine which one is over fitting less
 			train_mean = sum(train_acc) / 10
@@ -158,8 +159,9 @@ class Inputator:
 
 			if test_mean > best_test_acc:
 				best_test_acc = test_mean
+				best_k_value = n
 
-		print("MVI NB Acc: " + test_mean)
+		print("MVI KNN Acc: " + best_test_acc + ", K: " + best_k_value)
 
 
 		### FIXME: CANT USE THIS, NOT BINARY CLASS 
