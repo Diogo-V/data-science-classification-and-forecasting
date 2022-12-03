@@ -8,13 +8,13 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import StratifiedKFold
 import math
+import numpy as np
 
 
 class Inputator:
 
 	DETERMINISM_FACTOR = 3
-	# NEIGHBORS = [3, 5, 7, 9, 11, 13]
-	NEIGHBORS = [7]
+	NEIGHBORS = [3, 5, 7, 9, 11, 13]
 
 	def __init__(self, data: pd.DataFrame, missing_values_str: str) -> None:
 		"""
@@ -143,10 +143,12 @@ class Inputator:
 				# Uses testing data and gets model accuracy
 				acc = clf.score(X_test, y_test)
 				test_acc.append(acc)
+				print(f"Test acc: {acc}")
 
 				# Uses training data and gets model accuracy to determine over fitting
 				acc = clf.score(X_train, y_train)
 				train_acc.append(acc)
+				print(f"Train acc: {acc}")
 
 			# Calculates means for train and test to determine which one is over fitting less
 			train_mean = sum(train_acc) / 10
