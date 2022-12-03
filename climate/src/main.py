@@ -11,6 +11,7 @@ register_matplotlib_converters()
 
 RECORDS_PATH = 'climate/records'
 PROFILING_PATH = RECORDS_PATH + '/profiling'
+PREPARATION_DATA = RECORDS_PATH + '/preparation'
 FILE_PATH = 'climate/resources/data/drought.csv'
 
 if __name__ == "__main__":
