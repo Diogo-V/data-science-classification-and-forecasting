@@ -1,6 +1,4 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import StratifiedKFold
@@ -25,12 +23,15 @@ class Scaling:
       * data(pd.DataFrame): dataset to be treated
     """
     self.data: pd.DataFrame = data
+  
+  def compute_scale(self) -> pd.DataFrame:
+    return self.data  # TODO: decide best
 
-  def analyze_scaling(self):
+  def explore_scaling(self):
 
     # Builds datasets with both approaches
     zscore = self.scale_zscore()
-    min_max = self.scale_mim_max()
+    min_max = self.scale_min_max()
 
     zscore = zscore.drop(columns=['date'])
     min_max = min_max.drop(columns=['date'])
@@ -47,7 +48,7 @@ class Scaling:
     print("GETTING BEST NEIGHBOR VALUE:")
     self.compute_best_knn_neighbor(min_max)
 
-  def scale_mim_max(self) -> pd.DataFrame:
+  def scale_min_max(self) -> pd.DataFrame:
 
     variable_types = get_variable_types(self.data)
     numeric_vars = variable_types['Numeric']
