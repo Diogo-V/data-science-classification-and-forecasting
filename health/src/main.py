@@ -1,13 +1,15 @@
 from pandas import read_csv
 from pandas.plotting import register_matplotlib_converters
+from numpy import nan
 
 from profiling.profiling import Profiler
 from profiling.sparsity import Sparsity
 from profiling.distribution import Distribution
 
 from preparation.parsing import Parser
-from preparation.mvi_inputation import Inputator
-from numpy import nan
+from preparation.mvi_inputation import MVImputation
+from preparation.outliers_imputation import OutliersImputation
+from preparation.scaling import Scaling
 
 register_matplotlib_converters()
 
@@ -52,13 +54,16 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  # parser = Parser(data, MISSING_VALUES_REPR)
-  # parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+  parser = Parser(data, MISSING_VALUES_REPR)
+  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
 
-  data = read_csv(PREPARATION_OUT_FILE_PATH, na_values=nan)
-  inputator = Inputator(data, MISSING_VALUES_REPR)
-  inputator.approach_2(INPUTATION_PATH, INPUTATION_OUT_FILE_PATH)
+  mvi = MVImputation(data, MISSING_VALUES_REPR)
+  data = mvi.compute_mv_imputation()
+  
+  outliers = OutliersImputation(data)
+  data = outliers.compute_outliers()
 
-  # data = read_csv(PREPARATION_OUT_FILE_PATH, na_values=nan)
-  # inputator = Inputator(data, MISSING_VALUES_REPR)
-  # inputator.approach_2(INPUTATION_PATH, INPUTATION_OUT_FILE_PATH)
+  scaling = Scaling(data)
+  data = scaling.compute_scale()
+  
+  # data.to_csv(PREPARATION_OUT_FILE_PATH)

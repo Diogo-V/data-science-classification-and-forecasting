@@ -55,7 +55,7 @@ class Parser:
 
     }
 
-  def parse_dataset(self, output_path: str) -> None:
+  def parse_dataset(self, output_path: str) -> pd.DataFrame:
     """
     Description:
       * Uses input dataset to parse symbolic column values into numeric ones.
@@ -69,6 +69,7 @@ class Parser:
     print(f"Storing resulting dataset in [{output_path}]...")
     print("DONE :)")
     self.data.to_csv(output_path)
+    return self.data
 
   def _map_race(self, ele: str) -> int:
     """

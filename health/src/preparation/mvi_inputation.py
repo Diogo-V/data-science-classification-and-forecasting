@@ -10,7 +10,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import confusion_matrix, classification_report
 
 
-class Inputator:
+class MVImputation:
 
 	DETERMINISM_FACTOR = 3
 	NEIGHBORS = [3, 5, 7, 9, 11, 13]
@@ -29,6 +29,32 @@ class Inputator:
 		# self.data.replace({missing_values_str, nan}, regex=True, inplace=True)
 		for c in self.data:
 			self.data[c] = self.data[c].map(lambda x: nan if x == missing_values_str or x == -1 else x)
+
+	def compute_mv_imputation(self) -> pd.DataFrame:
+		self.drop_column('weight')
+		self.drop_column('payer_code')
+		self.drop_column('medical_specialty')
+		
+		tmp_nr, tmp_sb, tmp_bool = None, None, None
+		## FIXME: since we enconde the data first, there is no way that this can know what variables are symbolic if they are also int
+		numeric_vars = ['encounter_id', 'patient_nbr', 'time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
+		symbolic_vars = ['race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'readmitted', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
+		binary_vars = ['diabetesMed', 'change']
+
+		tmp_nr, tmp_sb, tmp_bool = None, None, None
+		if len(numeric_vars) > 0:
+			imp = SimpleImputer(strategy='mean', missing_values=nan, copy=True)
+			tmp_nr = pd.DataFrame(imp.fit_transform(self.data[numeric_vars]), columns=numeric_vars)
+		if len(symbolic_vars) > 0:
+			imp = SimpleImputer(strategy='most_frequent', missing_values=nan, copy=True)
+			tmp_sb = pd.DataFrame(imp.fit_transform(self.data[symbolic_vars]), columns=symbolic_vars)
+		if len(binary_vars) > 0:
+			imp = SimpleImputer(strategy='most_frequent', missing_values=nan, copy=True)
+			tmp_bool = pd.DataFrame(imp.fit_transform(self.data[binary_vars]), columns=binary_vars)
+
+		self.data = pd.concat([tmp_nr, tmp_sb, tmp_bool], axis=1)
+		self.data.index = self.data.index
+		return self.data
 
 	def approach_1(self, img_out_path: str, file_out_path: str):
 		"""
