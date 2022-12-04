@@ -43,6 +43,7 @@ class OutliersImputation:
 
   def compute_drop_outliers(self) -> pd.DataFrame:
     numeric_vars = get_variable_types(self.data)['Numeric']
+    numeric_vars.remove("readmitted")
     if [] == numeric_vars:
         raise ValueError('There are no numeric variables.')
     print('Original data:', self.data.shape)
@@ -57,6 +58,7 @@ class OutliersImputation:
 
   def compute_median_outliers(self) -> pd.DataFrame:
     numeric_vars = get_variable_types(self.data)['Numeric']
+    numeric_vars.remove("readmitted")
     if [] == numeric_vars:
       raise ValueError('There are no numeric variables.')
 

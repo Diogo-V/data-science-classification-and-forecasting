@@ -5,8 +5,11 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import math
 import numpy as np
-from ds_charts import get_variable_types
+from ds_charts import get_variable_types, plot_confusion_matrix
 from scipy.stats import ttest_rel
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 
 class Scaling:
@@ -35,9 +38,9 @@ class Scaling:
 
     # Applies NB and KNN to check which one is better
     print("COMPUTING Z-SCORE...")
-    zscore_nb_acc, zscore_knn_acc = self.compute_naive_bayes_result(zscore), self.compute_knn_result(zscore)
+    zscore_nb_acc, zscore_knn_acc = self.evaluate_nb(zscore, 'zscore'), self.evaluate_knn(zscore, 'zscore')
     print("COMPUTING MIN-MAX...")
-    min_max_nb_acc, min_max_knn_acc = self.compute_naive_bayes_result(min_max), self.compute_knn_result(min_max)
+    min_max_nb_acc, min_max_knn_acc = self.evaluate_nb(min_max, 'minmax'), self.evaluate_knn(min_max, 'minmax')
 
     print("############ Result #############")
     print(f"ZSCORE -> NB: {zscore_nb_acc} | KNN: {zscore_knn_acc}")
@@ -45,14 +48,17 @@ class Scaling:
     print("#################################")
 
     print("GETTING BEST NEIGHBOR VALUE:")
-    self.compute_best_knn_neighbor(zscore)
+    # self.compute_best_knn_neighbor(zscore)
 
   def scale_min_max(self) -> pd.DataFrame:
-
+    
+    y = self.data["readmitted"].copy(deep=True)
     variable_types = get_variable_types(self.data)
     numeric_vars = variable_types['Numeric']
     symbolic_vars = variable_types['Symbolic']
     boolean_vars = variable_types['Binary']
+
+    numeric_vars.remove('readmitted')
 
     df_nr = self.data[numeric_vars]
     df_sb = self.data[symbolic_vars]
@@ -60,16 +66,18 @@ class Scaling:
 
     transf = MinMaxScaler(feature_range=(0, 1), copy=True).fit(df_nr)
     tmp = pd.DataFrame(transf.transform(df_nr), index=self.data.index, columns= numeric_vars)
-    norm_data_minmax = pd.concat([tmp, df_sb,  df_bool], axis=1)
-
+    norm_data_minmax = pd.concat([tmp, df_sb,  df_bool, y], axis=1)
     return norm_data_minmax
 
   def scale_zscore(self) -> pd.DataFrame:
-
+    
+    y = self.data["readmitted"].copy(deep=True)
     variable_types = get_variable_types(self.data)
     numeric_vars = variable_types['Numeric']
     symbolic_vars = variable_types['Symbolic']
     boolean_vars = variable_types['Binary']
+
+    numeric_vars.remove('readmitted')
 
     df_nr = self.data[numeric_vars]
     df_sb = self.data[symbolic_vars]
@@ -77,7 +85,7 @@ class Scaling:
 
     transf = StandardScaler(with_mean=True, with_std=True, copy=True).fit(df_nr)
     tmp = pd.DataFrame(transf.transform(df_nr), index=self.data.index, columns=numeric_vars)
-    norm_data_zscore = pd.concat([tmp, df_sb,  df_bool], axis=1)
+    norm_data_zscore = pd.concat([tmp, df_sb,  df_bool, y], axis=1)
     return norm_data_zscore
 
   def compute_naive_bayes_result(self, dataset: pd.DataFrame) -> float:
@@ -312,3 +320,61 @@ class Scaling:
     statistic, p_value = ttest_rel(knn_acc, mnb_acc, nan_policy="omit", alternative="two-sided")
 
     print(f"statistic: {statistic} | p_value: {p_value}")
+
+  def evaluate_knn(self, dataset: pd.DataFrame, approach: str):
+    data = dataset.copy(deep=True)
+    y = data.pop('readmitted').values
+    X = data.values
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+
+    labels = pd.unique(y)
+    labels.sort()
+
+    labels_str=["1", "2", "3"]	
+
+    knn = KNeighborsClassifier(n_neighbors=15)
+    knn.fit(X_train, y_train)
+    predict = knn.predict(X_test)
+    result = accuracy_score(y_test, predict)
+    print('Accuracy:', result)
+
+    plt.figure()
+    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
+    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
+    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
+    plt.tight_layout()
+    plt.savefig(f'health/records/preparation/scaling_knn_{approach}_results.png')
+
+    print(classification_report(y_test, predict,target_names=labels_str))
+
+    return result
+
+  def evaluate_nb(self, dataset: pd.DataFrame, approach: str):
+    data = dataset.copy(deep=True)
+    y = data.pop('readmitted').values
+    X = data.values
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+
+    labels = pd.unique(y)
+    labels.sort()
+
+    labels_str=["1", "2", "3"]	
+
+    nb = GaussianNB()	
+    nb.fit(X_train, y_train)
+    predict = nb.predict(X_test)
+    result = accuracy_score(y_test, predict)
+    print(result)
+
+    plt.figure()
+    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
+    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
+    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
+    plt.tight_layout()
+    plt.savefig(f'health/records/preparation/scaling_nb_{approach}_results.png')
+
+    print(classification_report(y_test, predict,target_names=labels_str))
+
+    return result

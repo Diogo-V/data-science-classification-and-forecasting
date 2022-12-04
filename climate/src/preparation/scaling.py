@@ -40,9 +40,9 @@ class Scaling:
 
     # Applies NB and KNN to check which one is better
     print("COMPUTING Z-SCORE...")
-    zscore_nb_acc, zscore_knn_acc = self.evaluate_nb(zscore), self.evaluate_knn(zscore)
+    zscore_nb_acc, zscore_knn_acc = self.evaluate_nb(zscore, 'zscore'), self.evaluate_knn(zscore, 'zscore')
     print("COMPUTING MIN-MAX...")
-    min_max_nb_acc, min_max_knn_acc = self.evaluate_nb(min_max), self.evaluate_knn(min_max)
+    min_max_nb_acc, min_max_knn_acc = self.evaluate_nb(min_max, 'minmax'), self.evaluate_knn(min_max, 'minmax')
 
     print("############ Result #############")
     print(f"ZSCORE -> NB: {zscore_nb_acc} | KNN: {zscore_knn_acc}")
@@ -50,7 +50,7 @@ class Scaling:
     print("#################################")
 
     print("GETTING BEST NEIGHBOR VALUE:")
-    self.compute_best_knn_neighbor(zscore)
+    # self.compute_best_knn_neighbor(zscore)
 
   def scale_min_max(self) -> pd.DataFrame:
 
@@ -319,58 +319,60 @@ class Scaling:
     print(f"statistic: {statistic} | p_value: {p_value}")
 
 
-  def evaluate_knn(self, data: pd.DataFrame):
-      y = data.pop('readmitted').values
-      X = data.values
+  def evaluate_knn(self, dataset: pd.DataFrame, approach: str):
+    data = dataset.copy(deep=True)
+    y = data.pop('class').values
+    X = data.values
 
-      X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
 
-      labels = pd.unique(y)
-      labels.sort()
+    labels = pd.unique(y)
+    labels.sort()
 
-      labels_str=["1", "2", "3"]	
+    labels_str=["1", "2"]	
 
-      knn = KNeighborsClassifier(n_neighbors=15)
-      knn.fit(X_train, y_train)
-      predict = knn.predict(X_test)
-      result = accuracy_score(y_test, predict)
-      print('Accuracy:', result)
+    knn = KNeighborsClassifier(n_neighbors=15)
+    knn.fit(X_train, y_train)
+    predict = knn.predict(X_test)
+    result = accuracy_score(y_test, predict)
+    print('Accuracy:', result)
 
-      plt.figure()
-      fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-      plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-      plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-      plt.tight_layout()
-      plt.savefig(f'health/records/preparation/scaling_knn_results.png')
+    plt.figure()
+    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
+    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
+    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
+    plt.tight_layout()
+    plt.savefig(f'climate/records/preparation/scaling_knn_{approach}_results.png')
 
-      print(classification_report(y_test, predict,target_names=labels_str))
+    print(classification_report(y_test, predict,target_names=labels_str))
 
-      return result
+    return result
 
-  def evaluate_nb(self, data: pd.DataFrame):
-      y = data.pop('readmitted').values
-      X = data.values
+  def evaluate_nb(self, dataset: pd.DataFrame, approach: str):
+    data = dataset.copy(deep=True)
+    y = data.pop('class').values
+    X = data.values
 
-      X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
 
-      labels = pd.unique(y)
-      labels.sort()
+    labels = pd.unique(y)
+    labels.sort()
 
-      labels_str=["1", "2", "3"]	
+    labels_str=["1", "2"]	
 
-      nb = GaussianNB()	
-      nb.fit(X_train, y_train)
-      predict = nb.predict(X_test)
-      result = accuracy_score(y_test, predict)
-      print(result)
+    nb = GaussianNB()	
+    nb.fit(X_train, y_train)
+    predict = nb.predict(X_test)
+    result = accuracy_score(y_test, predict)
+    print(result)
 
-      plt.figure()
-      fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-      plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-      plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-      plt.tight_layout()
-      plt.savefig(f'health/records/preparation/scaling_nb_results.png')
+    plt.figure()
+    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
+    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
+    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
+    plt.tight_layout()
+    plt.savefig(f'climate/records/preparation/scaling_nb_{approach}_results.png')
 
-      print(classification_report(y_test, predict,target_names=labels_str))
+    print(classification_report(y_test, predict,target_names=labels_str))
 
-      return result
+    return result
