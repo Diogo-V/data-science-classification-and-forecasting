@@ -1,10 +1,10 @@
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from ds_charts import get_variable_types, plot_evaluation_results_2, plot_confusion_matrix
+from ds_charts import plot_confusion_matrix
 import matplotlib.pyplot as plt
 from numpy import nan
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, recall_score
+from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import confusion_matrix, classification_report
