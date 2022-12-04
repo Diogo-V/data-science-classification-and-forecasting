@@ -12,7 +12,7 @@ from scipy.stats import ttest_rel
 class Scaling:
 
   DETERMINISM_FACTOR = 3
-  NEIGHBORS = [7, 9]
+  NEIGHBORS = [15]  # 15 is the best neighbor
   
   def __init__(self, data: pd.DataFrame) -> None:
     """
@@ -25,7 +25,7 @@ class Scaling:
     self.data: pd.DataFrame = data
   
   def compute_scale(self) -> pd.DataFrame:
-    return self.data  # TODO: decide best
+    return self.scale_zscore()  # z-score is the best one
 
   def explore_scaling(self):
 
@@ -37,7 +37,9 @@ class Scaling:
     min_max = min_max.drop(columns=['date'])
 
     # Applies NB and KNN to check which one is better
+    print("COMPUTING Z-SCORE...")
     zscore_nb_acc, zscore_knn_acc = self.compute_naive_bayes_result(zscore), self.compute_knn_result(zscore)
+    print("COMPUTING MIN-MAX...")
     min_max_nb_acc, min_max_knn_acc = self.compute_naive_bayes_result(min_max), self.compute_knn_result(min_max)
 
     print("############ Result #############")
@@ -46,7 +48,7 @@ class Scaling:
     print("#################################")
 
     print("GETTING BEST NEIGHBOR VALUE:")
-    self.compute_best_knn_neighbor(min_max)
+    self.compute_best_knn_neighbor(zscore)
 
   def scale_min_max(self) -> pd.DataFrame:
 
@@ -93,6 +95,8 @@ class Scaling:
       * float: accuracy found
     """
 
+    print("COMPUTING NB...")
+
     # Gets sub datasets to test
     X = dataset.drop("class", axis=1).to_numpy()
     y = dataset["class"].to_numpy()
@@ -120,21 +124,19 @@ class Scaling:
       # Uses testing data and gets model accuracy
       acc = gnb.score(X_test, y_test)
       test_acc.append(acc)
-      print("Acc using test data {:.3f}".format(acc))
 
       # Uses training data and gets model accuracy to determine over fitting
       acc = gnb.score(X_train, y_train)
       train_acc.append(acc)
-      print("Acc using training data {:.3f}".format(acc))
     
     # Calculates means for train and test to determine which one is over fitting less
     train_mean = sum(train_acc) / 10
     test_mean = sum(test_acc) / 10
     error = math.sqrt(np.square(np.subtract(train_acc, test_acc)).mean())
-    print("Training acc: {:.3f}".format(train_mean))
-    print("Test acc: {:.3f}".format(test_mean))
-    print("Diff between train and test: {:.3f}".format(train_mean - test_mean))
-    print("Root mean squared error: {:.3f}".format(error))
+    print("Training acc: {:.5f}".format(train_mean))
+    print("Test acc: {:.5f}".format(test_mean))
+    print("Diff between train and test: {:.5f}".format(train_mean - test_mean))
+    print("Root mean squared error: {:.5f}".format(error))
 
     return test_mean
 
@@ -150,11 +152,14 @@ class Scaling:
       * float: best accuracy found
     """
 
+    print("COMPUTING KNN...")
+
     # Gets sub datasets to test
     X = dataset.drop("class", axis=1).to_numpy()
     y = dataset["class"].to_numpy()
 
     best_test_acc = -1
+    best_neighbor = -1
 
     # We need to create a classifier for each number of neighbors
     for n in self.NEIGHBORS:
@@ -184,24 +189,24 @@ class Scaling:
           # Uses testing data and gets model accuracy
           acc = clf.score(X_test, y_test)
           test_acc.append(acc)
-          print("Acc using test data {:.3f}".format(acc))
 
           # Uses training data and gets model accuracy to determine over fitting
           acc = clf.score(X_train, y_train)
           train_acc.append(acc)
-          print("Acc using training data {:.3f}".format(acc))
 
       # Calculates means for train and test to determine which one is over fitting less
       train_mean = sum(train_acc) / 10
       test_mean = sum(test_acc) / 10
       error = math.sqrt(np.square(np.subtract(train_acc, test_acc)).mean())
-      print("Training acc: {:.3f}".format(train_mean))
-      print("Test acc: {:.3f}".format(test_mean))
-      print("Diff between train and test: {:.3f}".format(train_mean - test_mean))
-      print("Root mean squared error: {:.3f}".format(error))
+      print("Training acc: {:.5f}".format(train_mean))
+      print("Test acc: {:.5f}".format(test_mean))
+      print("Diff between train and test: {:.5f}".format(train_mean - test_mean))
+      print("Root mean squared error: {:.5f}".format(error))
 
       if test_mean > best_test_acc:
         best_test_acc = test_mean
+        best_neighbor = n
+    print(f"Best neighbor: {best_neighbor}")
 
     return best_test_acc
 
@@ -257,10 +262,10 @@ class Scaling:
       train_mean = sum(train_acc) / 10
       test_mean = sum(test_acc) / 10
       error = math.sqrt(np.square(np.subtract(train_acc, test_acc)).mean())
-      print("Training acc: {:.3f}".format(train_mean))
-      print("Test acc: {:.3f}".format(test_mean))
-      print("Diff between train and test: {:.3f}".format(train_mean - test_mean))
-      print("Root mean squared error: {:.3f}".format(error))
+      print("Training acc: {:.5f}".format(train_mean))
+      print("Test acc: {:.5f}".format(test_mean))
+      print("Diff between train and test: {:.5f}".format(train_mean - test_mean))
+      print("Root mean squared error: {:.5f}".format(error))
       print("########################")
 
   def compute_ttest(self, dataset: pd.DataFrame):
