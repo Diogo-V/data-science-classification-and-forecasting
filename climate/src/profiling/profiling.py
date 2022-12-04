@@ -58,3 +58,17 @@ class Profiler:
     savefig(f'{output_image_path}/granularity_{data_type}.png')
     if display:
       show()
+
+  def explore_count_data_types(self) -> None:
+    """
+    Description:
+      * Shows counts of variables per column and missing values percentage.
+    """
+    for col in self.data:
+      print(f"Col name: {col}")
+      series = self.data[col].value_counts(ascending=True)
+      print(series)
+      dc = series.to_dict()
+      if dc.get('?') is not None:
+        print(f"Percentage of missing values: {round(dc['?'] / sum(dc.values()) * 100, 2)}%")
+      print("###################################")

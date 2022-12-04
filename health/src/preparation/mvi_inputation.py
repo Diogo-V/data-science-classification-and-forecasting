@@ -10,8 +10,11 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import confusion_matrix, classification_report
 
 
-
 class Inputator:
+
+	DETERMINISM_FACTOR = 3
+	# NEIGHBORS = [3, 5, 7, 9, 11, 13]
+	NEIGHBORS = [7]
 
 	def __init__(self, data: pd.DataFrame, missing_values_str: str) -> None:
 		"""
@@ -105,18 +108,19 @@ class Inputator:
 		self.data.dropna(axis=0, how='any', inplace=True)
 
 	def evaluate_knn(self):
+
 		data = pd.DataFrame(self.data)
 		y = data.pop('readmitted').values
 		X = data.values
 
 		X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
 
-		labels = pd.unique(y_train)
+		labels = pd.unique(y)
 		labels.sort()
 
 		labels_str=["1", "2", "3"]	
 
-		knn = KNeighborsClassifier(n_neighbors=10)
+		knn = KNeighborsClassifier(n_neighbors=13)
 		knn.fit(X_train, y_train)
 		predict = knn.predict(X_test)
 		result = accuracy_score(y_test, predict)
@@ -127,25 +131,19 @@ class Inputator:
 		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
 		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
 		plt.tight_layout()
-		plt.savefig(f'health/records/preparation/knn_approach2_results.png')
+		plt.savefig(f'health/records/preparation/mvi_knn_approach2_results.png')
 
 		print(classification_report(y_test, predict,target_names=labels_str))
 
-		### FIXME: CANT USE THIS, NOT BINARY CLASS 
-		# prd_trn = knn.predict(X_train)
-		# prd_tst = knn.predict(X_test)
-
-		# plot_evaluation_results_2(labels, y_train, prd_trn, y_test, prd_tst)
-		# savefig(f'health/records/preparation/knn_approach2_results.png')
-
 	def evaluate_nb(self):
+
 		data = pd.DataFrame(self.data)
 		y = data.pop('readmitted').values
 		X = data.values
 
 		X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
 
-		labels = pd.unique(y_train)
+		labels = pd.unique(y)
 		labels.sort()
 
 		labels_str=["1", "2", "3"]	
@@ -161,17 +159,8 @@ class Inputator:
 		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
 		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
 		plt.tight_layout()
-		plt.savefig(f'health/records/preparation/nb_approach2_results.png')
+		plt.savefig(f'health/records/preparation/mvi_nb_approach2_results.png')
 
 		print(classification_report(y_test, predict,target_names=labels_str))
-
-		### FIXME: CANT USE THIS, NOT BINARY CLASS 
-		# prd_trn = nb.predict(X_train)
-		# prd_tst = nb.predict(X_test)
-
-		# plot_evaluation_results(labels, y_train, prd_trn, y_test, prd_tst)
-		# savefig(f'{self.img_out}/nb_approach1_results.png')
-
-		# plot_evaluation_results_2(labels, y_train, prd_trn, y_test, prd_tst)
 		
 
