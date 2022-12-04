@@ -13,8 +13,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 class Inputator:
 
 	DETERMINISM_FACTOR = 3
-	# NEIGHBORS = [3, 5, 7, 9, 11, 13]
-	NEIGHBORS = [7]
+	NEIGHBORS = [3, 5, 7, 9, 11, 13]
 
 	def __init__(self, data: pd.DataFrame, missing_values_str: str) -> None:
 		"""
