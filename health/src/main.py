@@ -21,12 +21,12 @@ INPUTATION_PATH = RECORDS_PATH + '/inputation'
 
 INPUT_FILE_PATH = 'health/resources/data/diabetic_data.csv'
 PREPARATION_OUT_FILE_PATH = 'health/resources/data/data_prepared.csv'
+MVI_OUT_FILE_PATH = 'health/resources/data/data_mvi_approach1.csv'
 INPUTATION_OUT_FILE_PATH = 'health/resources/data'
 MISSING_VALUES_REPR = '?'
 
 
 if __name__ == "__main__":
-  data = read_csv(INPUT_FILE_PATH, na_values='na')
 
   # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
   
@@ -55,13 +55,10 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  # parser = Parser(data, MISSING_VALUES_REPR)
-  # data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+  data = read_csv(INPUT_FILE_PATH, na_values='na')
 
-  data = read_csv(PREPARATION_OUT_FILE_PATH, na_values='na')
-
-  profiler0 = Profiler(data)
-  profiler0.explore_count_data_types()
+  parser = Parser(data, MISSING_VALUES_REPR)
+  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
 
   mvi = MVImputation(data, MISSING_VALUES_REPR)
   data = mvi.compute_mv_imputation()
@@ -69,19 +66,21 @@ if __name__ == "__main__":
   outliers = OutliersImputation(data)
   data = outliers.compute_outliers()
 
-  profiler0 = Profiler(data)
-  profiler0.explore_count_data_types()
+  scaling = Scaling(data)
+  data = scaling.compute_scale()
 
-  # scaling = Scaling(data)
-  # data = scaling.compute_scale()
-  # 
-  # profiler1 = Profiler(data)
-  # profiler1.explore_count_data_types()
+  # Removes single value columns
+  ms = [
+    'repaglinide', 'max_glu_serum', 'nateglinide', 'chlorpropamide', 'acetohexamide', 'acarbose', 'miglitol', 
+    'tolazamide', 'citoglipton', 'examide', 'glyburide-metformin', 'metformin-rosiglitazone', 'metformin-pioglitazone'
+  ]
+  data = data.drop(columns=ms)
 
-  # balancing = Balancing(data)
-  # data = balancing.compute_balancing()
-  # 
-  # profiler2 = Profiler(data)
-  # profiler2.explore_count_data_types()
-  # 
-  # data.to_csv(PREPARATION_OUT_FILE_PATH)
+  balancing = Balancing(data)
+  data = balancing.compute_balancing()
+  
+  data.to_csv(PREPARATION_OUT_FILE_PATH)
+
+  # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
+
+  # data = read_csv(PREPARATION_OUT_FILE_PATH, na_values='na')

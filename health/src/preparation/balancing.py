@@ -15,10 +15,10 @@ class Balancing:
     return self.data
 
   def get_symbolic_index_array(self) -> list[int]:
-    headers = ['diabetesMed', 'change', 'race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'readmitted', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
+    headers = ['diabetesMed', 'change', 'race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'A1Cresult', 'metformin', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'insulin', 'glipizide-metformin', 'glimepiride-pioglitazone', 'troglitazone', 'tolbutamide']
     result = []
     for h in headers:
-      result.append(self.data.columns.get_loc(h) - 1)
+      result.append(self.data.columns.get_loc(h))
     return result
 
   def explore_balancing(self, data: pd.DataFrame) -> pd.DataFrame:

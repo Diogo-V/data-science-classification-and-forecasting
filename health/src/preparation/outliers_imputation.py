@@ -27,7 +27,7 @@ class OutliersImputation:
     return top_threshold, bottom_threshold
 
   def compute_outliers(self) -> pd.DataFrame:
-    return self.compute_median_outliers()  # This is the best one
+    return self.compute_drop_outliers()  # This is the best one
 
   def explore_outliers(self) -> pd.DataFrame:
     data_drop = self.compute_drop_outliers()

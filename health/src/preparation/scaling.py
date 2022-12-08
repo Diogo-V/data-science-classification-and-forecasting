@@ -38,9 +38,9 @@ class Scaling:
 
     # Applies NB and KNN to check which one is better
     print("COMPUTING Z-SCORE...")
-    zscore_nb_acc, zscore_knn_acc = self.evaluate_nb(zscore, 'zscore'), self.evaluate_knn(zscore, 'zscore')
+    zscore_nb_acc, zscore_knn_acc = self.compute_naive_bayes_result(zscore), self.compute_knn_result(zscore)
     print("COMPUTING MIN-MAX...")
-    min_max_nb_acc, min_max_knn_acc = self.evaluate_nb(min_max, 'minmax'), self.evaluate_knn(min_max, 'minmax')
+    min_max_nb_acc, min_max_knn_acc = self.compute_naive_bayes_result(min_max), self.compute_knn_result(min_max)
 
     print("############ Result #############")
     print(f"ZSCORE -> NB: {zscore_nb_acc} | KNN: {zscore_knn_acc}")

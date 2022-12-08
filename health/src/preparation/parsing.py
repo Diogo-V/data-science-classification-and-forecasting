@@ -66,7 +66,6 @@ class Parser:
     Arguments:
       * output_path(str): output dataset path to be stored in
     """
-    self.data = self.drop_unnecessary_columns()
     for column, parse_func in self.func_map.items():
       print(f"Parsing column: [{column}]...")
       self.data[column] = self.data[column].apply(lambda x: self.missing_parsed if x == self.missing else parse_func(x))
@@ -74,11 +73,6 @@ class Parser:
     print("DONE :)")
     self.data.to_csv(output_path)
     return self.data
-
-  def drop_unnecessary_columns(self) -> pd.DataFrame:
-    data: pd.DataFrame = self.data
-    data = data.drop(columns=['encounter_id', 'patient_nbr'])
-    return data
 
   def _map_race(self, ele: str) -> int:
     """
