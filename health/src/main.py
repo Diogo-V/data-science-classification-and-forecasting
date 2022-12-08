@@ -10,6 +10,7 @@ from preparation.parsing import Parser
 from preparation.mvi_inputation import MVImputation
 from preparation.outliers_imputation import OutliersImputation
 from preparation.scaling import Scaling
+from preparation.balancing import Balancing
 
 register_matplotlib_converters()
 
@@ -59,13 +60,28 @@ if __name__ == "__main__":
 
   data = read_csv(PREPARATION_OUT_FILE_PATH, na_values='na')
 
+  profiler0 = Profiler(data)
+  profiler0.explore_count_data_types()
+
   mvi = MVImputation(data, MISSING_VALUES_REPR)
-  data = mvi.approach_2(INPUTATION_PATH, INPUTATION_OUT_FILE_PATH)
-  
-  # outliers = OutliersImputation(data)
-  # data = outliers.compute_outliers()
+  data = mvi.compute_mv_imputation()
+
+  outliers = OutliersImputation(data)
+  data = outliers.compute_outliers()
+
+  profiler0 = Profiler(data)
+  profiler0.explore_count_data_types()
 
   # scaling = Scaling(data)
   # data = scaling.compute_scale()
-  
+  # 
+  # profiler1 = Profiler(data)
+  # profiler1.explore_count_data_types()
+
+  # balancing = Balancing(data)
+  # data = balancing.compute_balancing()
+  # 
+  # profiler2 = Profiler(data)
+  # profiler2.explore_count_data_types()
+  # 
   # data.to_csv(PREPARATION_OUT_FILE_PATH)
