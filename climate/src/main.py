@@ -1,5 +1,6 @@
-from pandas import read_csv
+from pandas import read_csv, DataFrame, concat
 from pandas.plotting import register_matplotlib_converters
+from sklearn.model_selection import train_test_split
 
 from profiling.profiling import Profiler
 from profiling.sparsity import Sparsity
@@ -13,6 +14,8 @@ register_matplotlib_converters()
 
 RECORDS_PATH = 'climate/records'
 PREPARATION_OUT_FILE_PATH = 'climate/resources/data/data_prepared.csv'
+PREPARATION_OUT_FILE_PATH_TRAIN = 'climate/resources/data/data_prepared_train.csv'
+PREPARATION_OUT_FILE_PATH_TEST = 'climate/resources/data/data_prepared_test.csv'
 PROFILING_PATH = RECORDS_PATH + '/profiling'
 PREPARATION_DATA = RECORDS_PATH + '/preparation'
 FILE_PATH = 'climate/resources/data/drought.csv'
@@ -34,14 +37,21 @@ if __name__ == "__main__":
   ms = ['NVG_LAND', 'SQ5', 'SQ6']
   data = data.drop(columns=ms)
 
-  balancing = Balancing(data)
+  # Splits data before evaluation
+  X = data.drop("class", axis=1)
+  y = data["class"]
+  X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
+
+  data_train = concat([DataFrame(X_train), DataFrame(y_train)], axis=1)
+
+  balancing = Balancing(data_train)
   data = balancing.compute_balancing()
-
-  profiler = Profiler(data)
-  profiler.count_unique()
-
-  # data.to_csv(PREPARATION_OUT_FILE_PATH) 
+  data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN)
+  
+  data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
+  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
 
   # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
-  # data = read_csv(PREPARATION_OUT_FILE_PATH, na_values='na')
+  train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
+  test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')

@@ -1,6 +1,7 @@
-from pandas import read_csv
+from pandas import read_csv, DataFrame, concat
 from pandas.plotting import register_matplotlib_converters
-from numpy import nan
+from sklearn.model_selection import train_test_split
+import numpy as np
 
 from profiling.profiling import Profiler
 from profiling.sparsity import Sparsity
@@ -21,6 +22,8 @@ INPUTATION_PATH = RECORDS_PATH + '/inputation'
 
 INPUT_FILE_PATH = 'health/resources/data/diabetic_data.csv'
 PREPARATION_OUT_FILE_PATH = 'health/resources/data/data_prepared.csv'
+PREPARATION_OUT_FILE_PATH_TRAIN = 'health/resources/data/data_prepared_train.csv'
+PREPARATION_OUT_FILE_PATH_TEST = 'health/resources/data/data_prepared_test.csv'
 MVI_OUT_FILE_PATH = 'health/resources/data/data_mvi_approach1.csv'
 INPUTATION_OUT_FILE_PATH = 'health/resources/data'
 MISSING_VALUES_REPR = '?'
@@ -55,32 +58,42 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  # data = read_csv(INPUT_FILE_PATH, na_values='na')
+  data = read_csv(INPUT_FILE_PATH, na_values='na')
  
-  # parser = Parser(data, MISSING_VALUES_REPR)
-  # data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+  parser = Parser(data, MISSING_VALUES_REPR)
+  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
  
-  # mvi = MVImputation(data, MISSING_VALUES_REPR)
-  # data = mvi.compute_mv_imputation()
+  mvi = MVImputation(data, MISSING_VALUES_REPR)
+  data = mvi.compute_mv_imputation()
 
-  # outliers = OutliersImputation(data)
-  # data = outliers.compute_outliers()
+  outliers = OutliersImputation(data)
+  data = outliers.compute_outliers()
  
-  # scaling = Scaling(data)
-  # data = scaling.compute_scale()
+  scaling = Scaling(data)
+  data = scaling.compute_scale()
  
-  # # Removes single value columns
-  # ms = [
-  #   'repaglinide', 'max_glu_serum', 'nateglinide', 'chlorpropamide', 'acetohexamide', 'acarbose', 'miglitol', 
-  #   'tolazamide', 'citoglipton', 'examide', 'glyburide-metformin', 'metformin-rosiglitazone', 'metformin-pioglitazone'
-  # ]
-  # data = data.drop(columns=ms)
-  #  
-  # balancing = Balancing(data)
-  # data = balancing.compute_balancing()
-  # 
-  # data.to_csv(PREPARATION_OUT_FILE_PATH)
+  # Removes single value columns
+  ms = [
+    'repaglinide', 'max_glu_serum', 'nateglinide', 'chlorpropamide', 'acetohexamide', 'acarbose', 'miglitol', 
+    'tolazamide', 'citoglipton', 'examide', 'glyburide-metformin', 'metformin-rosiglitazone', 'metformin-pioglitazone'
+  ]
+  data = data.drop(columns=ms)
+
+  # Splits data before evaluation
+  X = data.drop("readmitted", axis=1)
+  y = data["readmitted"]
+  X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
+
+  data_train = concat([DataFrame(X_train), DataFrame(y_train)], axis=1)
+
+  balancing = Balancing(data_train)
+  data = balancing.compute_balancing()
+  data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN)
+  
+  data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
+  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
 
   # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
-  data = read_csv(PREPARATION_OUT_FILE_PATH, na_values='na')
+  train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
+  test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
