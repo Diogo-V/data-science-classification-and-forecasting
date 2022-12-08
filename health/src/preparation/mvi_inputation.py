@@ -37,7 +37,7 @@ class MVImputation:
 		
 		tmp_nr, tmp_sb, tmp_bool = None, None, None
 		## FIXME: since we enconde the data first, there is no way that this can know what variables are symbolic if they are also int
-		numeric_vars = ['encounter_id', 'patient_nbr', 'time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
+		numeric_vars = ['time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
 		symbolic_vars = ['race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'readmitted', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
 		binary_vars = ['diabetesMed', 'change']
 
@@ -61,7 +61,7 @@ class MVImputation:
 		- Drop column Weight
 		- Drop column Payer_Code
 		- Split Medical Specialty in binary: No (0) or Yes (1)
-		- Drop all other records with missing values
+		- Drop all other records with missing values (cincluding race and gender that have enconding for missing value)
 
 		- Evaluate with KNN
 		- Evaluate with NB
@@ -77,8 +77,8 @@ class MVImputation:
 
 		self.data.to_csv(f'{self.file_out}/data_mvi_approach1.csv')
 
-		self.evaluate_knn()
-		self.evaluate_nb()
+		self.evaluate_knn('approach1')
+		self.evaluate_nb('approach1')
 
 	def approach_2(self, img_out_path: str, file_out_path: str):
 		"""
@@ -100,7 +100,7 @@ class MVImputation:
 		
 		tmp_nr, tmp_sb, tmp_bool = None, None, None
 		## FIXME: since we enconde the data first, there is no way that this can know what variables are symbolic if they are also int
-		numeric_vars = ['encounter_id', 'patient_nbr', 'time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
+		numeric_vars = ['time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
 		symbolic_vars = ['race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'readmitted', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
 		binary_vars = ['diabetesMed', 'change']
 
@@ -120,8 +120,8 @@ class MVImputation:
 		self.data.to_csv(f'{self.file_out}/data_mvi_approach2.csv', index=True)
 		self.data.describe(include='all')
 
-		self.evaluate_knn()
-		self.evaluate_nb()
+		self.evaluate_knn('approach2')
+		self.evaluate_nb('approach2')
 
 	def drop_column(self, column_name: str):
 		self.data = self.data.drop(columns=[column_name])	
@@ -132,7 +132,7 @@ class MVImputation:
 	def drop_records(self):
 		self.data.dropna(axis=0, how='any', inplace=True)
 
-	def evaluate_knn(self):
+	def evaluate_knn(self, approach: str):
 
 		data = pd.DataFrame(self.data)
 		y = data.pop('readmitted').values
@@ -156,11 +156,11 @@ class MVImputation:
 		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
 		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
 		plt.tight_layout()
-		plt.savefig(f'health/records/preparation/mvi_knn_approach2_results.png')
+		plt.savefig(f'health/records/preparation/mvi_{approach}_knn.png')
 
 		print(classification_report(y_test, predict,target_names=labels_str))
 
-	def evaluate_nb(self):
+	def evaluate_nb(self, approach: str):
 
 		data = pd.DataFrame(self.data)
 		y = data.pop('readmitted').values
@@ -177,14 +177,14 @@ class MVImputation:
 		nb.fit(X_train, y_train)
 		predict = nb.predict(X_test)
 		result = accuracy_score(y_test, predict)
-		print(result)
+		print('Accuracy:', result)
 
 		plt.figure()
 		fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
 		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
 		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
 		plt.tight_layout()
-		plt.savefig(f'health/records/preparation/mvi_nb_approach2_results.png')
+		plt.savefig(f'health/records/preparation/mvi_{approach}_nb.png')
 
 		print(classification_report(y_test, predict,target_names=labels_str))
 		
