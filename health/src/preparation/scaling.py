@@ -50,6 +50,15 @@ class Scaling:
     print("GETTING BEST NEIGHBOR VALUE:")
     # self.compute_best_knn_neighbor(zscore)
 
+    fig, axs = plt.subplots(1, 3, figsize=(20,10),squeeze=False)
+    axs[0, 0].set_title('Original data')
+    self.data.boxplot(ax=axs[0, 0], rot=45, fontsize=4)
+    axs[0, 1].set_title('Z-score normalization')
+    zscore.boxplot(ax=axs[0, 1], rot=45, fontsize=4)
+    axs[0, 2].set_title('MinMax normalization')
+    min_max.boxplot(ax=axs[0, 2], rot=45, fontsize=4)
+    plt.savefig(f'health/records/preparation/scaling_boxplots.png')
+
   def scale_min_max(self) -> pd.DataFrame:
     
     y = self.data["readmitted"].copy(deep=True)
