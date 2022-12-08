@@ -72,3 +72,11 @@ class Profiler:
       if dc.get('?') is not None:
         print(f"Percentage of missing values: {round(dc['?'] / sum(dc.values()) * 100, 2)}%")
       print("###################################")
+
+  def count_unique(self) -> None:
+    # for col in self.data:
+    #   print(f"column: {col} -> nr unique: {len(self.data[col].unique())}")
+    for col in self.data:
+      if len(self.data[col].unique()) == 1:
+        print(f"column: {col} -> nr unique: {len(self.data[col].unique())}")
+    
