@@ -55,32 +55,32 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  data = read_csv(INPUT_FILE_PATH, na_values='na')
+  # data = read_csv(INPUT_FILE_PATH, na_values='na')
+ 
+  # parser = Parser(data, MISSING_VALUES_REPR)
+  # data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+ 
+  # mvi = MVImputation(data, MISSING_VALUES_REPR)
+  # data = mvi.compute_mv_imputation()
 
-  parser = Parser(data, MISSING_VALUES_REPR)
-  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
-
-  mvi = MVImputation(data, MISSING_VALUES_REPR)
-  data = mvi.compute_mv_imputation()
-
-  outliers = OutliersImputation(data)
-  data = outliers.compute_outliers()
-
-  scaling = Scaling(data)
-  data = scaling.compute_scale()
-
-  # Removes single value columns
-  ms = [
-    'repaglinide', 'max_glu_serum', 'nateglinide', 'chlorpropamide', 'acetohexamide', 'acarbose', 'miglitol', 
-    'tolazamide', 'citoglipton', 'examide', 'glyburide-metformin', 'metformin-rosiglitazone', 'metformin-pioglitazone'
-  ]
-  data = data.drop(columns=ms)
-
-  balancing = Balancing(data)
-  data = balancing.compute_balancing()
-  
-  data.to_csv(PREPARATION_OUT_FILE_PATH)
+  # outliers = OutliersImputation(data)
+  # data = outliers.compute_outliers()
+ 
+  # scaling = Scaling(data)
+  # data = scaling.compute_scale()
+ 
+  # # Removes single value columns
+  # ms = [
+  #   'repaglinide', 'max_glu_serum', 'nateglinide', 'chlorpropamide', 'acetohexamide', 'acarbose', 'miglitol', 
+  #   'tolazamide', 'citoglipton', 'examide', 'glyburide-metformin', 'metformin-rosiglitazone', 'metformin-pioglitazone'
+  # ]
+  # data = data.drop(columns=ms)
+  #  
+  # balancing = Balancing(data)
+  # data = balancing.compute_balancing()
+  # 
+  # data.to_csv(PREPARATION_OUT_FILE_PATH)
 
   # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
-  # data = read_csv(PREPARATION_OUT_FILE_PATH, na_values='na')
+  data = read_csv(PREPARATION_OUT_FILE_PATH, na_values='na')
