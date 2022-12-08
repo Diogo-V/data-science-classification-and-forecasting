@@ -16,6 +16,9 @@ class Parser:
     self.missing: str = missing_values_str
     self.missing_parsed: int = -1
 
+    self.data = self.data.drop(columns=['encounter_id'])
+    self.data = self.data.drop(columns=['patient_nbr'])
+
     # Holds mapping between columns and functions used to transform them
     self.func_map: dict[str, Callable[[str], int]] = {
       'age': self._map_age, 
@@ -87,8 +90,7 @@ class Parser:
       'Asian': 2,
       'Caucasian': 3,
       'Hispanic': 4,
-      'Other': 5,
-      'Unknown': 6,
+      'Other': 5
     }
     return mapper[ele]
 
@@ -106,7 +108,7 @@ class Parser:
     mapper: dict[str, int] = {
       'Female': 1,
       'Male': 2,
-      'Unknown/Invalid': 3,
+      'Unknown/Invalid': -1,
     }
     return mapper[ele]
   
@@ -147,15 +149,15 @@ class Parser:
       * int: corresponding value
     """
     mapper: dict[int, int] = {
-      800: 8,
-      780: 8,
-      760: 7,
-      740: 6,
-      710: 5,
-      680: 4,
-      630: 3,
-      580: 2,
-      520: 1,
+      800: 17,
+      780: 16,
+      760: 15,
+      740: 14,
+      710: 13,
+      680: 12,
+      630: 11,
+      580: 10,
+      520: 9,
       460: 8,
       390: 7,
       320: 6,
@@ -177,7 +179,14 @@ class Parser:
           return value
     
     except:
-      return 8  # If eval throws an error, we know its a string, and thus is number 8
+
+      if ele[0] == "V":
+        return 18
+      
+      elif ele[0] == "E":
+        return 19
+
+       # If eval throws an error, we know its a string, and thus is either 18 or 19
 
 
   def _map_max_glu_serum(self, ele: str) -> int:
@@ -214,7 +223,7 @@ class Parser:
       '>7': 3,
       '>8': 4,
       'Norm': 2,
-      'None': 1
+      'None': 1 
     }
     return mapper[ele]
 

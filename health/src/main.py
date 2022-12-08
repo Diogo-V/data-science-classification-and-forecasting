@@ -54,16 +54,18 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  parser = Parser(data, MISSING_VALUES_REPR)
-  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+  # parser = Parser(data, MISSING_VALUES_REPR)
+  # data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+
+  data = read_csv(PREPARATION_OUT_FILE_PATH, na_values='na')
 
   mvi = MVImputation(data, MISSING_VALUES_REPR)
-  data = mvi.compute_mv_imputation()
+  data = mvi.approach_2(INPUTATION_PATH, INPUTATION_OUT_FILE_PATH)
   
-  outliers = OutliersImputation(data)
-  data = outliers.compute_outliers()
+  # outliers = OutliersImputation(data)
+  # data = outliers.compute_outliers()
 
-  scaling = Scaling(data)
-  data = scaling.compute_scale()
+  # scaling = Scaling(data)
+  # data = scaling.compute_scale()
   
   # data.to_csv(PREPARATION_OUT_FILE_PATH)
