@@ -12,6 +12,7 @@ from preparation.mvi_inputation import MVImputation
 from preparation.outliers_imputation import OutliersImputation
 from preparation.scaling import Scaling
 from preparation.balancing import Balancing
+from evaluation.knn_classifier import Knn_classifier
 
 register_matplotlib_converters()
 
@@ -58,7 +59,7 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  data = read_csv(INPUT_FILE_PATH, na_values='na')
+  """ data = read_csv(INPUT_FILE_PATH, na_values='na')
  
   parser = Parser(data, MISSING_VALUES_REPR)
   data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
@@ -90,9 +91,13 @@ if __name__ == "__main__":
   data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN)
   
   data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
-  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
+  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST) """
 
   # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
   train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
   test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
+
+  knn_class = Knn_classifier(train, test)
+  k, approach = knn_class.explore_best_k_value()
+  knn_class.compute_knn_best_results(k , approach)
