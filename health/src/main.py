@@ -12,6 +12,7 @@ from preparation.mvi_inputation import MVImputation
 from preparation.outliers_imputation import OutliersImputation
 from preparation.scaling import Scaling
 from preparation.balancing import Balancing
+from evaluation.nb_classifier import NBClassifier
 
 register_matplotlib_converters()
 
@@ -97,3 +98,6 @@ if __name__ == "__main__":
 
   train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
   test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
+
+  nbClassifier = NBClassifier(train, test)
+  nbClassifier.explore_nb()
