@@ -75,8 +75,7 @@ if __name__ == "__main__":
  
   # Removes single value columns
   ms = [
-    'repaglinide', 'max_glu_serum', 'nateglinide', 'chlorpropamide', 'acetohexamide', 'acarbose', 'miglitol', 
-    'tolazamide', 'citoglipton', 'examide', 'glyburide-metformin', 'metformin-rosiglitazone', 'metformin-pioglitazone'
+    'acetohexamide', 'examide', 'citoglipton', 'metformin-rosiglitazone'
   ]
   data = data.drop(columns=ms)
 

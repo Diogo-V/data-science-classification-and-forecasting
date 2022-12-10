@@ -6,6 +6,7 @@ from profiling.profiling import Profiler
 from profiling.sparsity import Sparsity
 from profiling.distribution import Distribution
 
+from preparation.parsing import Parser
 from preparation.scaling import Scaling
 from preparation.outliers_imputation import OutliersImputation
 from preparation.balancing import Balancing
@@ -26,6 +27,9 @@ if __name__ == "__main__":
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
   data = read_csv(FILE_PATH, na_values='na')
+
+  parser = Parser(data)
+  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
 
   outliers = OutliersImputation(data)
   data = outliers.compute_outliers()
