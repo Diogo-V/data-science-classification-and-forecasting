@@ -33,7 +33,7 @@ class MVImputation:
 	def compute_mv_imputation(self) -> pd.DataFrame:
 		self.drop_column('weight')
 		self.drop_column('payer_code')
-		self.fill_missing_values('medical_specialty', 'most_frequent')
+		self.drop_column('medical_specialty')
 		self.drop_records()
 		return self.data
 
@@ -53,7 +53,6 @@ class MVImputation:
 
 		self.drop_column('weight')
 		self.drop_column('payer_code')
-		self.fill_missing_values('medical_specialty', 'most_frequent')
 		self.drop_records()
 
 		self.data.to_csv(f'{self.file_out}/data_mvi_approach1.csv')

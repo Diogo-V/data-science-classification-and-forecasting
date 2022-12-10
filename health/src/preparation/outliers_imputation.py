@@ -14,6 +14,7 @@ class OutliersImputation:
   
   def __init__(self, data: pd.DataFrame) -> None:
     self.data = data
+    self.outliers_columns = ['num_lab_procedures', 'num_medications', 'time_in_hospital', 'num_procedures', 'number_outpatient', 'number_emergency', 'number_inpatient', 'number_diagnoses']
 
   def determine_outlier_thresholds(self, summary5: pd.DataFrame, var: str):
     if 'iqr' == OPTION:
@@ -42,14 +43,10 @@ class OutliersImputation:
     self.compute_knn_result(data_truncate)
 
   def compute_drop_outliers(self) -> pd.DataFrame:
-    numeric_vars = get_variable_types(self.data)['Numeric']
-    numeric_vars.remove("readmitted")
-    if [] == numeric_vars:
-        raise ValueError('There are no numeric variables.')
     print('Original data:', self.data.shape)
     summary5 = self.data.describe(include='number')
     df = self.data.copy(deep=True)
-    for var in numeric_vars:
+    for var in self.outliers_columns:
         top_threshold, bottom_threshold = self.determine_outlier_thresholds(summary5, var)
         outliers = df[(df[var] > top_threshold) | (df[var] < bottom_threshold)]
         df.drop(outliers.index, axis=0, inplace=True)
@@ -57,14 +54,9 @@ class OutliersImputation:
     return df
 
   def compute_median_outliers(self) -> pd.DataFrame:
-    numeric_vars = get_variable_types(self.data)['Numeric']
-    numeric_vars.remove("readmitted")
-    if [] == numeric_vars:
-      raise ValueError('There are no numeric variables.')
-
     summary5 = self.data.describe(include='number')
     df = self.data.copy(deep=True)
-    for var in numeric_vars:
+    for var in self.outliers_columns:
       top_threshold, bottom_threshold = self.determine_outlier_thresholds(summary5, var)
       median = df[var].median()
       df[var] = df[var].apply(lambda x: median if x > top_threshold or x < bottom_threshold else x)
@@ -73,14 +65,9 @@ class OutliersImputation:
     return df
 
   def compute_truncate_outliers(self) -> pd.DataFrame:
-    numeric_vars = get_variable_types(self.data)['Numeric']
-    numeric_vars.remove("readmitted")
-    if [] == numeric_vars:
-      raise ValueError('There are no numeric variables.')
-
     summary5 = self.data.describe(include='number')
     df = self.data.copy(deep=True)
-    for var in numeric_vars:
+    for var in self.outliers_columns:
       top_threshold, bottom_threshold = self.determine_outlier_thresholds(summary5, var)
       df[var] = df[var].apply(lambda x: top_threshold if x > top_threshold else bottom_threshold if x < bottom_threshold else x)
 
