@@ -55,5 +55,7 @@ class Knn_classifier:
         fig, axs = subplots(1, 2, figsize=(8, 4), squeeze=False)
         plot_confusion_matrix(confusion_matrix(self.test_y, predict, labels=labels), labels, ax=axs[0,0], )
         plot_confusion_matrix(confusion_matrix(self.test_y, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
+        props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+        axs[0,0].text(0.05,0.95,f'Best approach: K = {k_value} with {approach} metric', transform=axs[0,0].transAxes, position=(0, 1.2), fontsize=12, verticalalignment='top', bbox=props)
         tight_layout()
         savefig(f'climate/records/evaluation/knn_k_distance_best_results.png')

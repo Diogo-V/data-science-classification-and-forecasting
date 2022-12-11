@@ -13,7 +13,7 @@ class Balancing:
     self.data = self.explore_balancing(self.data)
     return self.data
 
-  def get_symbolic_index_array(self) -> list[int]:
+  def get_symbolic_index_array(self):
     headers = ['fips', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ7']
     result = []
     for h in headers:

@@ -15,7 +15,7 @@ class Balancing:
     self.data = self.explore_balancing_smote(self.data)
     return self.data
 
-  def _get_symbolic_index_array(self) -> list[int]:
+  def _get_symbolic_index_array(self):
     headers = ['diabetesMed', 'change', 'race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'A1Cresult', 'metformin', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'insulin', 'glipizide-metformin', 'glimepiride-pioglitazone', 'troglitazone', 'tolbutamide', 'metformin-rosiglitazone']
     result = []
     for h in headers:
