@@ -30,48 +30,40 @@ class MVImputation:
 		for c in self.data:
 			self.data[c] = self.data[c].map(lambda x: nan if x == missing_values_str or x == -1 else x)
 
-	def compute_mv_imputation(self) -> pd.DataFrame:
-		self.drop_column('weight')
-		self.drop_column('payer_code')
-		self.drop_column('medical_specialty')
-		self.drop_records()
-		return self.data
+	def compute_mv_imputation(self, file_out_path: str) -> pd.DataFrame:
+		return self.approach_2(file_out_path)
 
-	def approach_1(self, img_out_path: str, file_out_path: str):
+	def approach_1(self, file_out_path: str) -> pd.DataFrame:
 		"""
 		- Drop column Weight
 		- Drop column Payer_Code
-		- Split Medical Specialty in binary: No (0) or Yes (1)
+		- Drop column Medical Speciality
 		- Drop all other records with missing values (cincluding race and gender that have enconding for missing value)
 
 		- Evaluate with KNN
 		- Evaluate with NB
 		"""
 
-		self.img_out = img_out_path
-		self.file_out = file_out_path
-
 		self.drop_column('weight')
 		self.drop_column('payer_code')
+		self.drop_column('medical_specialty')
 		self.drop_records()
 
-		self.data.to_csv(f'{self.file_out}/data_mvi_approach1.csv')
+		self.data.to_csv(f'{file_out_path}/data_mvi_approach1.csv')
 
-		self.evaluate_knn('approach1')
-		self.evaluate_nb('approach1')
+		return self.data
 
-	def approach_2(self, img_out_path: str, file_out_path: str):
+	def approach_2(self, file_out_path: str):
 		"""
 		- Drop column Weight
 		- Drop column Payer_Code
 		- Drop column Medical Speciality
-		- Substitute missing values with mode/mean value
+		- Substitute missing values with mean/most frequent value value
 
 		- Evaluate with KNN
 		- Evaluate with NB
 		"""
 
-		self.img_out = img_out_path
 		self.file_out = file_out_path
 
 		self.drop_column('weight')
@@ -79,7 +71,7 @@ class MVImputation:
 		self.drop_column('medical_specialty')
 		
 		tmp_nr, tmp_sb, tmp_bool = None, None, None
-		## FIXME: since we enconde the data first, there is no way that this can know what variables are symbolic if they are also int
+
 		numeric_vars = ['time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
 		symbolic_vars = ['race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'readmitted', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
 		binary_vars = ['diabetesMed', 'change']
@@ -100,8 +92,7 @@ class MVImputation:
 		self.data.to_csv(f'{self.file_out}/data_mvi_approach2.csv', index=True)
 		self.data.describe(include='all')
 
-		self.evaluate_knn('approach2')
-		self.evaluate_nb('approach2')
+		return self.data
 
 	def drop_column(self, column_name: str):
 		self.data = self.data.drop(columns=[column_name])	

@@ -62,12 +62,12 @@ class Scaling:
   def scale_min_max(self) -> pd.DataFrame:
     
     y = self.data["readmitted"].copy(deep=True)
-    variable_types = get_variable_types(self.data)
-    numeric_vars = variable_types['Numeric']
-    symbolic_vars = variable_types['Symbolic']
-    boolean_vars = variable_types['Binary']
 
-    numeric_vars.remove('readmitted')
+    numeric_vars = ['time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
+
+    symbolic_vars = ['race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
+    
+    boolean_vars = ['diabetesMed', 'change']
 
     df_nr = self.data[numeric_vars]
     df_sb = self.data[symbolic_vars]
@@ -81,12 +81,12 @@ class Scaling:
   def scale_zscore(self) -> pd.DataFrame:
     
     y = self.data["readmitted"].copy(deep=True)
-    variable_types = get_variable_types(self.data)
-    numeric_vars = variable_types['Numeric']
-    symbolic_vars = variable_types['Symbolic']
-    boolean_vars = variable_types['Binary']
 
-    numeric_vars.remove('readmitted')
+    numeric_vars = ['time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
+
+    symbolic_vars = ['race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
+    
+    boolean_vars = ['diabetesMed', 'change']
 
     df_nr = self.data[numeric_vars]
     df_sb = self.data[symbolic_vars]
@@ -94,7 +94,16 @@ class Scaling:
 
     transf = StandardScaler(with_mean=True, with_std=True, copy=True).fit(df_nr)
     tmp = pd.DataFrame(transf.transform(df_nr), index=self.data.index, columns=numeric_vars)
+
+    # TODO: Sofia -> take it off
+    # for var in numeric_vars:
+    #   minimum = tmp[var].min()
+    #   tmp[var] = tmp[var] - minimum
+
     norm_data_zscore = pd.concat([tmp, df_sb,  df_bool, y], axis=1)
+    
+    self.data.to_csv(f'health/resources/data/data_scaling_zscore.csv', index=True)
+
     return norm_data_zscore
 
   def compute_naive_bayes_result(self, dataset: pd.DataFrame) -> float:

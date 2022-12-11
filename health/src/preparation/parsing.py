@@ -67,10 +67,7 @@ class Parser:
       * output_path(str): output dataset path to be stored in
     """
     for column, parse_func in self.func_map.items():
-      print(f"Parsing column: [{column}]...")
       self.data[column] = self.data[column].apply(lambda x: self.missing_parsed if x == self.missing else parse_func(x))
-    print(f"Storing resulting dataset in [{output_path}]...")
-    print("DONE :)")
     self.data.to_csv(output_path)
     return self.data
 

@@ -15,7 +15,7 @@ class Balancing:
     return self.data
 
   def get_symbolic_index_array(self) -> list[int]:
-    headers = ['diabetesMed', 'change', 'race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'A1Cresult', 'metformin', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'insulin', 'glipizide-metformin', 'glimepiride-pioglitazone', 'troglitazone', 'tolbutamide']
+    headers = ['diabetesMed', 'change', 'race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'A1Cresult', 'metformin', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'insulin', 'glipizide-metformin', 'glimepiride-pioglitazone', 'troglitazone', 'tolbutamide', 'metformin-rosiglitazone']
     result = []
     for h in headers:
       result.append(self.data.columns.get_loc(h))
