@@ -32,7 +32,7 @@ class Balancing:
     print('Proportion:', round(target_count[positive_class] / target_count[negative_class], 2), ': 1')
     values = {'Original': [target_count[positive_class], target_count[negative_class]]}
 
-    smote = SMOTENC(self.get_symbolic_index_array(), sampling_strategy='minority', random_state=self.DETERMINISTIC_FACTOR)
+    smote = SMOTENC(self.get_symbolic_index_array(), sampling_strategy='auto', k_neighbors=15, random_state=self.DETERMINISTIC_FACTOR)
     y = data.pop(class_var).values
     X = data.values
     smote_X, smote_y = smote.fit_resample(X, y)
@@ -45,7 +45,7 @@ class Balancing:
     print('Majority class=', negative_class, ':', smote_target_count[negative_class])
     print('Proportion:', round(smote_target_count[positive_class] / smote_target_count[negative_class], 2), ': 1')
 
-    print(df_smote['class'].value_counts())
+    print(df_smote[class_var].value_counts())
 
     return df_smote
 
