@@ -101,9 +101,7 @@ if __name__ == "__main__":
 
   nbClassifier = NBClassifier(data_train, data_test)
   nbClassifier.explore_nb()
-  train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
-  test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
 
-  knn_class = Knn_classifier(train, test)
+  knn_class = Knn_classifier(data_train, data_test)
   k, approach = knn_class.explore_best_k_value()
   knn_class.compute_knn_best_results(k , approach)
