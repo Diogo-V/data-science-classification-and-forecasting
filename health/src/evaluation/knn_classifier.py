@@ -1,8 +1,11 @@
 import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from matplotlib.pyplot import figure, savefig, show, subplots, tight_layout
-from ds_charts import plot_evaluation_results, multiple_line_chart, plot_overfitting_study, plot_confusion_matrix
+from ds_charts import plot_evaluation_results_2, multiple_line_chart, plot_confusion_matrix
+import math
+import numpy as np
+
 
 class Knn_classifier:
 
@@ -47,15 +50,23 @@ class Knn_classifier:
 
         knn = KNeighborsClassifier(n_neighbors=k_value, metric=approach)
         knn.fit(self.train_data, self.train_y)
-        predict = knn.predict(self.test_data)
-        result = accuracy_score(self.test_y, predict)
-        print('Accuracy:', result)
-        
-        figure()
-        fig, axs = subplots(1, 2, figsize=(8, 4), squeeze=False)
-        plot_confusion_matrix(confusion_matrix(self.test_y, predict, labels=labels), labels, ax=axs[0,0], )
-        plot_confusion_matrix(confusion_matrix(self.test_y, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-        props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-        axs[0,0].text(0.05,0.95,f'Best approach: K = {k_value} with {approach} metric', transform=axs[0,0].transAxes, position=(0, 1.2), fontsize=12, verticalalignment='top', bbox=props)
-        tight_layout()
-        savefig(f'health/records/evaluation/knn_k_distance_best_results.png')
+        prd_trn = knn.predict(self.train_data)
+        prd_tst = knn.predict(self.test_data)
+        train_acc = accuracy_score(self.train_y, prd_trn)
+        test_acc = accuracy_score(self.test_y, prd_tst)
+        error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
+
+        plot_evaluation_results_2(labels, self.train_y, prd_trn, self.test_y, prd_tst)
+        savefig('health/records/evaluation/knn_best.png')
+
+        f= open('health/records/evaluation/knn_best_details.txt', 'w')
+        f.write(f'Best approach: K = {k_value} with {approach} metric\n')
+        f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+        f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+        f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+        f.write("Root mean squared error: {:.5f}\n".format(error))
+        f.write("########################\n")
+        f.write("Train\n")
+        f.write(classification_report(self.train_y, prd_trn,target_names=labels_str))
+        f.write("Test\n")
+        f.write(classification_report(self.test_y, prd_tst,target_names=labels_str))

@@ -20,10 +20,10 @@ class NBClassifier:
                       'MultinomialNB': MultinomialNB(),
                       'BernoulliNB': BernoulliNB(),
                       #'CategoricalNB': CategoricalNB(),
-                      'ComplementNB': ComplementNB()
+                      # 'ComplementNB': ComplementNB()
                       }
 
-  def evaluate_nb(self):
+  def compute_nb_best_results(self):
     trnY: ndarray = self.data_train.pop(self.target).values
     trnX: ndarray = self.data_train.values
 
@@ -59,7 +59,7 @@ class NBClassifier:
     f.write(classification_report(tstY, prd_tst,target_names=labels_str))
 
 
-  def explore_nb(self):
+  def explore_best_nb_value(self):
 
     trnY: ndarray = self.data_train.pop(self.target).values
     trnX: ndarray = self.data_train.values

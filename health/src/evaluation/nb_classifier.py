@@ -2,9 +2,11 @@ import pandas as pd
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, CategoricalNB, ComplementNB
 from sklearn.metrics import accuracy_score, classification_report
 from numpy import ndarray
-from pandas import DataFrame, read_csv, unique
+from pandas import DataFrame, unique
 from matplotlib.pyplot import figure, savefig, show
 from ds_charts import plot_evaluation_results_2, bar_chart
+import math
+import numpy as np
 
 target = 'readmitted'
 
@@ -21,7 +23,7 @@ class NBClassifier:
     self.data_train = data_train
     self.data_test = data_test
 
-  def evaluate_nb(self):
+  def compute_nb_best_results(self):
     trnY: ndarray = self.data_train.pop(target).values
     trnX: ndarray = self.data_train.values
 
@@ -37,10 +39,23 @@ class NBClassifier:
     clf.fit(trnX, trnY)
     prd_trn = clf.predict(trnX)
     prd_tst = clf.predict(tstX)
+    train_acc = accuracy_score(trnY, prd_trn)
+    test_acc = accuracy_score(tstY, prd_tst)
+    error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
+
     plot_evaluation_results_2(labels, trnY, prd_trn, tstY, prd_tst)
-    print(classification_report(tstY, prd_tst,target_names=labels_str))
     savefig('health/records/evaluation/nb_best.png')
-    show()
+
+    f= open('health/records/evaluation/nb_best_details.txt', 'w')
+    f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+    f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+    f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+    f.write("Root mean squared error: {:.5f}\n".format(error))
+    f.write("########################\n")
+    f.write("Train\n")
+    f.write(classification_report(trnY, prd_trn,target_names=labels_str))
+    f.write("Test\n")
+    f.write(classification_report(tstY, prd_tst,target_names=labels_str))
 
   
   def change_negative_to_positive_values(self, data: DataFrame) -> DataFrame:
@@ -53,7 +68,7 @@ class NBClassifier:
     return data
 
 
-  def explore_nb(self):
+  def explore_best_nb_value(self):
     
     self.data_train = self.change_negative_to_positive_values(self.data_train)
     self.data_test = self.change_negative_to_positive_values(self.data_test)
