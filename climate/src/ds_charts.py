@@ -20,7 +20,7 @@ import config as cfg
 
 
 
-FONT_TEXT = fm.FontProperties(size=8)
+FONT_TEXT = fm.FontProperties(size=6)
 TEXT_MARGIN = 0.05
 
 _reset_epoch_test_example()
@@ -127,11 +127,13 @@ def plot_evaluation_results(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
         'Accuracy': [(tn_trn + tp_trn) / (tn_trn + tp_trn + fp_trn + fn_trn), (tn_tst + tp_tst) / (tn_tst + tp_tst + fp_tst + fn_tst)],
         'Recall': [tp_trn / (tp_trn + fn_trn), tp_tst / (tp_tst + fn_tst)],
         'Specificity': [tn_trn / (tn_trn + fp_trn), tn_tst / (tn_tst + fp_tst)],
-        'Precision': [tp_trn / (tp_trn + fp_trn), tp_tst / (tp_tst + fp_tst)]}
+        'Precision': [tp_trn / (tp_trn + fp_trn), tp_tst / (tp_tst + fp_tst)],
+        'F1-Score': [ 2*tp_trn /( 2*tp_trn + fp_trn + fn_trn), 2*tp_tst /( 2*tp_tst + fp_tst + fn_tst) ]}
 
-    _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
+    _, axs = subplots(1, 3, figsize=(3 * HEIGHT, HEIGHT))
     multiple_bar_chart(['Train', 'Test'], evaluation, ax=axs[0], title="Model's performance over Train and Test sets", percentage=True)
     plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[1], title='Test')
+    plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[2], title='Test', normalize=True)
 
 
 def horizontal_bar_chart(elements: list, values: list, error: list, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = ''):

@@ -1,0 +1,25 @@
+Accuracy Train: 0.12327
+Accuracy Test: 0.12214
+Diff between train and test: 0.00112
+Root mean squared error: 0.00079
+########################
+Train
+              precision    recall  f1-score   support
+
+           1       0.81      0.01      0.03     38405
+           2       0.45      0.02      0.03     24881
+           3       0.11      0.99      0.20      7950
+
+    accuracy                           0.12     71236
+   macro avg       0.46      0.34      0.09     71236
+weighted avg       0.61      0.12      0.05     71236
+Test
+              precision    recall  f1-score   support
+
+           1       0.82      0.01      0.02     16459
+           2       0.45      0.02      0.03     10664
+           3       0.11      0.98      0.20      3407
+
+    accuracy                           0.12     30530
+   macro avg       0.46      0.34      0.09     30530
+weighted avg       0.61      0.12      0.05     30530

@@ -1,18 +1,19 @@
 import pandas as pd
-from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, CategoricalNB
-from sklearn.metrics import accuracy_score
+from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, CategoricalNB, ComplementNB
+from sklearn.metrics import accuracy_score, classification_report
 from numpy import ndarray
 from pandas import DataFrame, read_csv, unique
 from matplotlib.pyplot import figure, savefig, show
 from ds_charts import plot_evaluation_results_2, bar_chart
 
+target = 'readmitted'
+
 estimators = {'GaussianNB': GaussianNB(),
               'MultinomialNB': MultinomialNB(),
               'BernoulliNB': BernoulliNB(),
-              #'CategoricalNB': CategoricalNB()
+              # 'CategoricalNB': CategoricalNB()
+              # 'ComplementNB': ComplementNB(),
               }
-
-target = 'readmitted'
 
 class NBClassifier:
   
@@ -27,6 +28,8 @@ class NBClassifier:
     labels = unique(trnY)
     labels.sort()
 
+    labels_str=["Class 1", "Class 2", "Class 3"]	
+
     tstY: ndarray = self.data_test.pop(target).values
     tstX: ndarray = self.data_test.values
 
@@ -35,6 +38,7 @@ class NBClassifier:
     prd_trn = clf.predict(trnX)
     prd_tst = clf.predict(tstX)
     plot_evaluation_results_2(labels, trnY, prd_trn, tstY, prd_tst)
+    print(classification_report(tstY, prd_tst,target_names=labels_str))
     savefig('health/records/evaluation/nb_best.png')
     show()
 
@@ -50,7 +54,7 @@ class NBClassifier:
 
 
   def explore_nb(self):
-
+    
     self.data_train = self.change_negative_to_positive_values(self.data_train)
     self.data_test = self.change_negative_to_positive_values(self.data_test)
 

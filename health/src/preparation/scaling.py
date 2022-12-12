@@ -5,9 +5,9 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import math
 import numpy as np
-from ds_charts import get_variable_types, plot_confusion_matrix
+from ds_charts import plot_evaluation_results_2
 from scipy.stats import ttest_rel
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, classification_report, recall_score, precision_score, f1_score
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
@@ -38,9 +38,9 @@ class Scaling:
 
     # Applies NB and KNN to check which one is better
     print("COMPUTING Z-SCORE...")
-    zscore_nb_acc, zscore_knn_acc = self.compute_naive_bayes_result(zscore), self.compute_knn_result(zscore)
+    zscore_nb_acc, zscore_knn_acc = self.evaluate_nb(zscore, 'zscore'), self.evaluate_knn(zscore, 'zscore')
     print("COMPUTING MIN-MAX...")
-    min_max_nb_acc, min_max_knn_acc = self.compute_naive_bayes_result(min_max), self.compute_knn_result(min_max)
+    min_max_nb_acc, min_max_knn_acc = self.evaluate_nb(min_max, 'minmax'), self.evaluate_knn(min_max, 'minmax')
 
     print("############ Result #############")
     print(f"ZSCORE -> NB: {zscore_nb_acc} | KNN: {zscore_knn_acc}")
@@ -94,11 +94,6 @@ class Scaling:
 
     transf = StandardScaler(with_mean=True, with_std=True, copy=True).fit(df_nr)
     tmp = pd.DataFrame(transf.transform(df_nr), index=self.data.index, columns=numeric_vars)
-
-    # TODO: Sofia -> take it off
-    # for var in numeric_vars:
-    #   minimum = tmp[var].min()
-    #   tmp[var] = tmp[var] - minimum
 
     norm_data_zscore = pd.concat([tmp, df_sb,  df_bool, y], axis=1)
     
@@ -160,6 +155,8 @@ class Scaling:
     print("Test acc: {:.5f}".format(test_mean))
     print("Diff between train and test: {:.5f}".format(train_mean - test_mean))
     print("Root mean squared error: {:.5f}".format(error))
+
+
 
     return test_mean
 
@@ -344,7 +341,7 @@ class Scaling:
     y = data.pop('readmitted').values
     X = data.values
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=self.DETERMINISM_FACTOR)
 
     labels = pd.unique(y)
     labels.sort()
@@ -353,27 +350,34 @@ class Scaling:
 
     knn = KNeighborsClassifier(n_neighbors=15)
     knn.fit(X_train, y_train)
-    predict = knn.predict(X_test)
-    result = accuracy_score(y_test, predict)
-    print('Accuracy:', result)
+    prd_train = knn.predict(X_train)
+    prd_tst = knn.predict(X_test)
+    train_acc = accuracy_score(y_train, prd_train)
+    test_acc = accuracy_score(y_test, prd_tst)
+    error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-    plt.figure()
-    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-    plt.tight_layout()
-    plt.savefig(f'health/records/preparation/scaling_knn_{approach}_results.png')
+    plot_evaluation_results_2(labels, y_train, prd_train, y_test, prd_tst)
+    plt.savefig(f'health/records/preparation/scaling_{approach}_knn_results.png')
 
-    print(classification_report(y_test, predict,target_names=labels_str))
+    f= open(f'health/records/preparation/scaling_{approach}_knn_results_details.txt', 'w')
+    f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+    f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+    f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+    f.write("Root mean squared error: {:.5f}\n".format(error))
+    f.write("########################\n")
+    f.write("Train\n")
+    f.write(classification_report(y_train, prd_train,target_names=labels_str))
+    f.write("Test\n")
+    f.write(classification_report(y_test, prd_tst,target_names=labels_str))
 
-    return result
+    return test_acc
 
   def evaluate_nb(self, dataset: pd.DataFrame, approach: str):
     data = dataset.copy(deep=True)
     y = data.pop('readmitted').values
     X = data.values
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=self.DETERMINISM_FACTOR)
 
     labels = pd.unique(y)
     labels.sort()
@@ -382,17 +386,25 @@ class Scaling:
 
     nb = GaussianNB()	
     nb.fit(X_train, y_train)
-    predict = nb.predict(X_test)
-    result = accuracy_score(y_test, predict)
-    print(result)
+    prd_train = nb.predict(X_train)
+    prd_tst = nb.predict(X_test)
+    train_acc = accuracy_score(y_train, prd_train)
+    test_acc = accuracy_score(y_test, prd_tst)
+    error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-    plt.figure()
-    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-    plt.tight_layout()
-    plt.savefig(f'health/records/preparation/scaling_nb_{approach}_results.png')
+    plot_evaluation_results_2(labels, y_train, prd_train, y_test, prd_tst)
+    plt.savefig(f'health/records/preparation/scaling_{approach}_nb_results.png')
 
-    print(classification_report(y_test, predict,target_names=labels_str))
+    f= open(f'health/records/preparation/scaling_{approach}_nb_results_details.txt', 'w')
+    f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+    f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+    f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+    f.write("Root mean squared error: {:.5f}\n".format(error))
+    f.write("########################\n")
+    f.write("Train\n")
+    f.write(classification_report(y_train, prd_train,target_names=labels_str))
+    f.write("Test\n")
+    f.write(classification_report(y_test, prd_tst,target_names=labels_str))
 
-    return result
+
+    return test_acc

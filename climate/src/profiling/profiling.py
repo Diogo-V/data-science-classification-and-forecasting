@@ -8,7 +8,6 @@ class Profiler:
 
   def __init__(self, data: pd.DataFrame) -> None:
     self.data: pd.DataFrame = data
-    data['fips'] = data['fips'].astype('category')
     data['SQ1'] = data['SQ1'].astype('category')
     data['SQ2'] = data['SQ2'].astype('category')
     data['SQ3'] = data['SQ3'].astype('category')

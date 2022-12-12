@@ -1,8 +1,9 @@
 import pandas as pd
 from sklearn.impute import SimpleImputer
-from ds_charts import plot_confusion_matrix
+from ds_charts import plot_confusion_matrix, plot_evaluation_results_2
 import matplotlib.pyplot as plt
-from numpy import nan
+import math
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -26,9 +27,9 @@ class MVImputation:
 		"""
 
 		self.data: pd.DataFrame = data
-		# self.data.replace({missing_values_str, nan}, regex=True, inplace=True)
+		# self.data.replace({missing_values_str, np.nan}, regex=True, inplace=True)
 		for c in self.data:
-			self.data[c] = self.data[c].map(lambda x: nan if x == missing_values_str or x == -1 else x)
+			self.data[c] = self.data[c].map(lambda x: np.nan if x == missing_values_str or x == -1 else x)
 
 	def compute_mv_imputation(self, file_out_path: str) -> pd.DataFrame:
 		return self.approach_2(file_out_path)
@@ -50,6 +51,9 @@ class MVImputation:
 		self.drop_records()
 
 		self.data.to_csv(f'{file_out_path}/data_mvi_approach1.csv')
+
+		self.evaluate_knn('approach_1')
+		self.evaluate_nb('approach_1')
 
 		return self.data
 
@@ -78,19 +82,22 @@ class MVImputation:
 
 		tmp_nr, tmp_sb, tmp_bool = None, None, None
 		if len(numeric_vars) > 0:
-			imp = SimpleImputer(strategy='mean', missing_values=nan, copy=True)
+			imp = SimpleImputer(strategy='mean', missing_values=np.nan, copy=True)
 			tmp_nr = pd.DataFrame(imp.fit_transform(self.data[numeric_vars]), columns=numeric_vars)
 		if len(symbolic_vars) > 0:
-			imp = SimpleImputer(strategy='most_frequent', missing_values=nan, copy=True)
+			imp = SimpleImputer(strategy='most_frequent', missing_values=np.nan, copy=True)
 			tmp_sb = pd.DataFrame(imp.fit_transform(self.data[symbolic_vars]), columns=symbolic_vars)
 		if len(binary_vars) > 0:
-			imp = SimpleImputer(strategy='most_frequent', missing_values=nan, copy=True)
+			imp = SimpleImputer(strategy='most_frequent', missing_values=np.nan, copy=True)
 			tmp_bool = pd.DataFrame(imp.fit_transform(self.data[binary_vars]), columns=binary_vars)
 
 		self.data = pd.concat([tmp_nr, tmp_sb, tmp_bool], axis=1)
 		self.data.index = self.data.index
 		self.data.to_csv(f'{self.file_out}/data_mvi_approach2.csv', index=True)
 		self.data.describe(include='all')
+
+		self.evaluate_knn('approach_2')
+		self.evaluate_nb('approach_2')
 
 		return self.data
 
@@ -109,7 +116,7 @@ class MVImputation:
 		y = data.pop('readmitted').values
 		X = data.values
 
-		X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+		X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=self.DETERMINISM_FACTOR)
 
 		labels = pd.unique(y)
 		labels.sort()
@@ -118,18 +125,26 @@ class MVImputation:
 
 		knn = KNeighborsClassifier(n_neighbors=13)
 		knn.fit(X_train, y_train)
-		predict = knn.predict(X_test)
-		result = accuracy_score(y_test, predict)
-		print('Accuracy:', result)
+		prd_train = knn.predict(X_train)
+		prd_tst = knn.predict(X_test)
+		train_acc = accuracy_score(y_train, prd_train)
+		test_acc = accuracy_score(y_test, prd_tst)
+		error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-		plt.figure()
-		fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-		plt.tight_layout()
+		plot_evaluation_results_2(labels, y_train, prd_train, y_test, prd_tst)
 		plt.savefig(f'health/records/preparation/mvi_{approach}_knn.png')
 
-		print(classification_report(y_test, predict,target_names=labels_str))
+		f= open(f'health/records/preparation/mvi_{approach}_knn_details.txt', 'w')
+		f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+		f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+		f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+		f.write("Root mean squared error: {:.5f}\n".format(error))
+		f.write("########################\n")
+		f.write("Train\n")
+		f.write(classification_report(y_train, prd_train,target_names=labels_str))
+		f.write("Test\n")
+		f.write(classification_report(y_test, prd_tst,target_names=labels_str))
+
 
 	def evaluate_nb(self, approach: str):
 
@@ -137,7 +152,7 @@ class MVImputation:
 		y = data.pop('readmitted').values
 		X = data.values
 
-		X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+		X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=self.DETERMINISM_FACTOR)
 
 		labels = pd.unique(y)
 		labels.sort()
@@ -146,17 +161,24 @@ class MVImputation:
 
 		nb = GaussianNB()	
 		nb.fit(X_train, y_train)
-		predict = nb.predict(X_test)
-		result = accuracy_score(y_test, predict)
-		print('Accuracy:', result)
+		prd_train = nb.predict(X_train)
+		prd_tst = nb.predict(X_test)
+		train_acc = accuracy_score(y_train, prd_train)
+		test_acc = accuracy_score(y_test, prd_tst)
+		error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-		plt.figure()
-		fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-		plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-		plt.tight_layout()
+		plot_evaluation_results_2(labels, y_train, prd_train, y_test, prd_tst)
 		plt.savefig(f'health/records/preparation/mvi_{approach}_nb.png')
 
-		print(classification_report(y_test, predict,target_names=labels_str))
+		f= open(f'health/records/preparation/mvi_{approach}_nb_details.txt', 'w')
+		f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+		f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+		f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+		f.write("Root mean squared error: {:.5f}\n".format(error))
+		f.write("########################\n")
+		f.write("Train\n")
+		f.write(classification_report(y_train, prd_train,target_names=labels_str))
+		f.write("Test\n")
+		f.write(classification_report(y_test, prd_tst,target_names=labels_str))
 		
 

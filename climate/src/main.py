@@ -12,6 +12,7 @@ from preparation.outliers_imputation import OutliersImputation
 from preparation.balancing import Balancing
 
 from evaluation.knn_classifier import Knn_classifier
+from evaluation.nb_classifier import NBClassifier
 
 register_matplotlib_converters()
 
@@ -57,11 +58,15 @@ if __name__ == "__main__":
   data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
   data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
 
-  # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
+  # # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
-  train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
-  test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
+  data_train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
+  data_test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
 
-  knn_class = Knn_classifier(train, test)
-  k, approach = knn_class.explore_best_k_value()
-  knn_class.compute_knn_best_results(k , approach)
+  nbClassifier = NBClassifier(data_train, data_test)
+  #nbClassifier.explore_nb()
+  nbClassifier.evaluate_nb()
+
+  # knn_class = Knn_classifier(train, test)
+  # k, approach = knn_class.explore_best_k_value()
+  # knn_class.compute_knn_best_results(k , approach)
