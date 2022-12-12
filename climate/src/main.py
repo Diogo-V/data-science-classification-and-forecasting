@@ -29,34 +29,34 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  data = read_csv(FILE_PATH, na_values='na')
+  # data = read_csv(FILE_PATH, na_values='na')
 
-  parser = Parser(data)
-  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+  # parser = Parser(data)
+  # data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
 
-  outliers = OutliersImputation(data)
-  data = outliers.compute_outliers()
+  # outliers = OutliersImputation(data)
+  # data = outliers.compute_outliers()
   
-  scaling = Scaling(data)
-  data = scaling.compute_scale()
+  # scaling = Scaling(data)
+  # data = scaling.compute_scale()
 
-  # Remove single values columns
-  ms = ['NVG_LAND', 'SQ5', 'SQ6']
-  data = data.drop(columns=ms)
+  # # Remove single values columns
+  # ms = ['NVG_LAND', 'SQ5', 'SQ6']
+  # data = data.drop(columns=ms)
 
-  # Splits data before evaluation
-  X = data.drop("class", axis=1)
-  y = data["class"]
-  X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
+  # # Splits data before evaluation
+  # X = data.drop("class", axis=1)
+  # y = data["class"]
+  # X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
 
-  data_train = concat([DataFrame(X_train), DataFrame(y_train)], axis=1)
+  # data_train = concat([DataFrame(X_train), DataFrame(y_train)], axis=1)
 
-  balancing = Balancing(data_train)
-  data = balancing.compute_balancing()
-  data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN)
+  # balancing = Balancing(data_train)
+  # data = balancing.compute_balancing()
+  # data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN)
   
-  data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
-  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
+  # data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
+  # data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
 
   # # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
