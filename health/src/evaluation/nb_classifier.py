@@ -1,9 +1,9 @@
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, CategoricalNB, ComplementNB
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, f1_score
 from numpy import ndarray
 from pandas import DataFrame, unique
-from matplotlib.pyplot import figure, savefig, show
+from matplotlib.pyplot import figure, savefig, show, subplots
 from ds_charts import plot_evaluation_results_2, bar_chart
 import math
 import numpy as np
@@ -16,6 +16,8 @@ estimators = {'GaussianNB': GaussianNB(),
               # 'CategoricalNB': CategoricalNB()
               # 'ComplementNB': ComplementNB(),
               }
+
+HEIGHT: int = 4
 
 class NBClassifier:
   
@@ -83,17 +85,19 @@ class NBClassifier:
     tstX: ndarray = self.data_test.values
 
     xvalues = []
-    yvalues = []
+    yvalues_acc_score = []
+    yvalues_f1_score = []
 
     for clf in estimators:
         xvalues.append(clf)
         estimators[clf].fit(trnX, trnY)
         prdY = estimators[clf].predict(tstX)
-        yvalues.append(accuracy_score(tstY, prdY))
+        yvalues_acc_score.append(accuracy_score(tstY, prdY))
+        yvalues_f1_score.append(f1_score(tstY, prdY, average="macro"))
 
-    figure()
-    bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
-    savefig(f'health/records/evaluation/nb_study.png')
-    show()
+    _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
+    bar_chart(xvalues, yvalues_acc_score, ax=axs[0], title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
+    bar_chart(xvalues, yvalues_f1_score, ax=axs[1], title='Comparison of Naive Bayes Models', ylabel='f1_score', percentage=True)
+    savefig('health/records/evaluation/nb_study.png')
 
 
