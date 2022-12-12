@@ -1,24 +1,24 @@
 Best approach: K = 3 with manhattan metric
-Accuracy Train: 0.77154
-Accuracy Test: 0.50641
-Diff between train and test: 0.26514
-Root mean squared error: 0.18748
+Accuracy Train: 0.76640
+Accuracy Test: 0.51594
+Diff between train and test: 0.25046
+Root mean squared error: 0.17710
 ########################
 Train
               precision    recall  f1-score   support
 
-     Class 1       0.78      0.76      0.77      8704
-     Class 2       0.77      0.78      0.77      8704
+     Class 1       0.77      0.76      0.77      8718
+     Class 2       0.76      0.77      0.77      8718
 
-    accuracy                           0.77     17408
-   macro avg       0.77      0.77      0.77     17408
-weighted avg       0.77      0.77      0.77     17408
+    accuracy                           0.77     17436
+   macro avg       0.77      0.77      0.77     17436
+weighted avg       0.77      0.77      0.77     17436
 Test
               precision    recall  f1-score   support
 
-     Class 1       0.50      0.82      0.62      3566
-     Class 2       0.55      0.21      0.30      3772
+     Class 1       0.50      0.83      0.63      3580
+     Class 2       0.57      0.22      0.31      3758
 
-    accuracy                           0.51      7338
-   macro avg       0.52      0.52      0.46      7338
-weighted avg       0.53      0.51      0.46      7338
+    accuracy                           0.52      7338
+   macro avg       0.54      0.52      0.47      7338
+weighted avg       0.54      0.52      0.47      7338
