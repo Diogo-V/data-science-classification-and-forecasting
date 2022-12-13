@@ -4,7 +4,7 @@ from sklearn.metrics import accuracy_score, classification_report, f1_score
 from numpy import ndarray
 from pandas import DataFrame, unique
 from matplotlib.pyplot import figure, savefig, show, subplots
-from ds_charts import plot_evaluation_results_2, bar_chart
+from ds_charts import plot_evaluation_results_2_train_test_matrixes, bar_chart
 import math
 import numpy as np
 
@@ -45,7 +45,7 @@ class NBClassifier:
     test_acc = accuracy_score(tstY, prd_tst)
     error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-    plot_evaluation_results_2(labels, trnY, prd_trn, tstY, prd_tst)
+    plot_evaluation_results_2_train_test_matrixes(labels, trnY, prd_trn, tstY, prd_tst)
     savefig('health/records/evaluation/nb_best.png')
 
     f= open('health/records/evaluation/nb_best_details.txt', 'w')
