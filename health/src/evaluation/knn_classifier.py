@@ -15,7 +15,7 @@ class Knn_classifier:
         self.test_data = test_data
         self.test_y = self.test_data.pop('readmitted').values
         self.neighbours = [3,5,7,9,11,13,15,17,19,21]
-        self.large_neighbours = [921, 971, 1021, 1071, 1121, 1171, 1201]
+        self.large_neighbours = [621, 821, 1021, 1221, 1421]
         self.dist = ['manhattan', 'euclidean', 'chebyshev']
 
     def explore_best_k_value(self, method="def"):
