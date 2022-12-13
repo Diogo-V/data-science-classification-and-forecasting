@@ -105,5 +105,5 @@ if __name__ == "__main__":
   # # nbClassifier.compute_nb_best_results()
 
   knn_class = Knn_classifier(data_train, data_test)
-  k, approach = knn_class.explore_best_k_value()
+  k, approach = knn_class.explore_best_k_value(method="large")
   knn_class.compute_knn_best_results(k , approach)

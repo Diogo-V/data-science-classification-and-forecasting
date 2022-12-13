@@ -1,26 +1,26 @@
-Best approach: K = 21 with manhattan metric
-Accuracy Train: 0.73908
-Accuracy Test: 0.33874
-Diff between train and test: 0.40033
-Root mean squared error: 0.28308
+Best approach: K = 1021 with manhattan metric
+Accuracy Train: 0.72431
+Accuracy Test: 0.35381
+Diff between train and test: 0.37050
+Root mean squared error: 0.26199
 ########################
 Train
               precision    recall  f1-score   support
 
-           1       0.58      0.90      0.70     27303
-           2       0.80      0.51      0.62     27303
-           3       1.00      0.81      0.89     27303
+           1       0.55      0.99      0.71     27254
+           2       0.98      0.37      0.54     27254
+           3       1.00      0.81      0.89     27254
 
-    accuracy                           0.74     81909
-   macro avg       0.79      0.74      0.74     81909
-weighted avg       0.79      0.74      0.74     81909
+    accuracy                           0.72     81762
+   macro avg       0.84      0.72      0.71     81762
+weighted avg       0.84      0.72      0.71     81762
 Test
               precision    recall  f1-score   support
 
-           1       0.55      0.42      0.48     11765
-           2       0.38      0.19      0.26      7267
-           3       0.10      0.39      0.16      2282
+           1       0.55      0.49      0.52     11814
+           2       0.40      0.12      0.19      7280
+           3       0.10      0.38      0.16      2220
 
-    accuracy                           0.34     21314
-   macro avg       0.34      0.33      0.30     21314
-weighted avg       0.44      0.34      0.37     21314
+    accuracy                           0.35     21314
+   macro avg       0.35      0.33      0.29     21314
+weighted avg       0.45      0.35      0.37     21314
