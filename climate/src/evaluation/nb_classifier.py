@@ -1,12 +1,14 @@
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB, CategoricalNB, ComplementNB
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, f1_score
 from numpy import ndarray
 from pandas import unique
-from matplotlib.pyplot import figure, savefig, show
-from ds_charts import plot_evaluation_results, bar_chart
+from matplotlib.pyplot import figure, savefig, show, subplots
+from ds_charts import plot_evaluation_results_train_test_matrixes, bar_chart
 import math
 import numpy as np
+
+HEIGHT: int = 4
 
 
 class NBClassifier:
@@ -35,7 +37,7 @@ class NBClassifier:
     tstY: ndarray = self.data_test.pop(self.target).values
     tstX: ndarray = self.data_test.values
 
-    clf = GaussianNB()
+    clf = BernoulliNB()
     clf.fit(trnX, trnY)
     prd_trn = clf.predict(trnX)
     prd_tst = clf.predict(tstX)
@@ -44,7 +46,7 @@ class NBClassifier:
     error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
 
-    plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
+    plot_evaluation_results_train_test_matrixes(labels, trnY, prd_trn, tstY, prd_tst)
     savefig('climate/records/evaluation/nb_best.png')
 
     f= open('climate/records/evaluation/nb_best_details.txt', 'w')
@@ -71,17 +73,19 @@ class NBClassifier:
     tstX: ndarray = self.data_test.values
 
     xvalues = []
-    yvalues = []
+    yvalues_acc_score = []
+    yvalues_f1_score = []
 
     for clf in self.estimators:
         xvalues.append(clf)
         self.estimators[clf].fit(trnX, trnY)
         prdY = self.estimators[clf].predict(tstX)
-        yvalues.append(accuracy_score(tstY, prdY))
+        yvalues_acc_score.append(accuracy_score(tstY, prdY))
+        yvalues_f1_score.append(f1_score(tstY, prdY))
 
-    figure()
-    bar_chart(xvalues, yvalues, title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
+    _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
+    bar_chart(xvalues, yvalues_acc_score, ax=axs[0], title='Comparison of Naive Bayes Models', ylabel='accuracy', percentage=True)
+    bar_chart(xvalues, yvalues_f1_score, ax=axs[1], title='Comparison of Naive Bayes Models', ylabel='f1_score', percentage=True)
     savefig('climate/records/evaluation/nb_study.png')
-    show()
 
 

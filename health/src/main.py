@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
   # nbClassifier = NBClassifier(data_train, data_test)
   # nbClassifier.explore_best_nb_value()
-  # # nbClassifier.compute_nb_best_results()
+  # nbClassifier.compute_nb_best_results()
 
   knn_class = Knn_classifier(data_train, data_test)
   k, approach = knn_class.explore_best_k_value(method="large")

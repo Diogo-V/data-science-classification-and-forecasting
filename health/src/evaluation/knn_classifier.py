@@ -6,6 +6,7 @@ from ds_charts import plot_evaluation_results_2, plot_evaluation_results_2_train
 import math
 import numpy as np
 
+HEIGHT: int = 4
 
 class Knn_classifier:
 
@@ -53,7 +54,10 @@ class Knn_classifier:
 
         print(values)
         figure()
-        multiple_line_chart(K, values, title='KNN variants', xlabel='n', ylabel="Accuracy Score", percentage=True)
+        figure()
+        _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
+        multiple_line_chart(K, values, ax=axs[0], title='KNN variants', xlabel='n', ylabel="Accuracy Score", percentage=True)
+        multiple_line_chart(K, values, ax=axs[1], title='KNN variants', xlabel='n', ylabel="F1 Score", percentage=True)
         if method == "def":
             savefig(f'health/records/evaluation/knn_k_distance_exploration.png')
         else:
