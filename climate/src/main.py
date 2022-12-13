@@ -63,10 +63,10 @@ if __name__ == "__main__":
   data_train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
   data_test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
 
-  nbClassifier = NBClassifier(data_train, data_test)
-  nbClassifier.explore_best_nb_value()
+  # nbClassifier = NBClassifier(data_train, data_test)
+  # nbClassifier.explore_best_nb_value()
   # nbClassifier.compute_nb_best_results()
 
-  # knn_class = Knn_classifier(data_train, data_test)
-  # k, approach = knn_class.explore_best_k_value()
-  # knn_class.compute_knn_best_results(k , approach)
+  knn_class = Knn_classifier(data_train, data_test)
+  k, approach = knn_class.explore_best_k_value(method="large")
+  knn_class.compute_knn_best_results(k , approach)

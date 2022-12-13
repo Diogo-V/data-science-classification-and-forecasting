@@ -1,10 +1,12 @@
 import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, f1_score, classification_report
-from matplotlib.pyplot import figure, savefig
+from matplotlib.pyplot import figure, savefig, subplots
 from ds_charts import plot_evaluation_results, plot_evaluation_results_train_test_matrixes, multiple_line_chart
 import math
 import numpy as np
+
+HEIGHT: int = 4
 
 class Knn_classifier:
 
@@ -13,22 +15,27 @@ class Knn_classifier:
         self.train_y = self.train_data.pop('class').values
         self.test_data = test_data
         self.test_y = self.test_data.pop('class').values
-        self.neighbours = [3,5,7,9,11,13,15,17,19,21]
+        self.neighbours = [601, 621, 641, 661, 681, 701, 721, 741, 761, 781, 801]
+        self.large_neighbours = [21,61,91, 301, 501, 601, 701, 801]
         self.dist = ['manhattan', 'euclidean', 'chebyshev']
 
-    def explore_best_k_value(self):
+    def explore_best_k_value(self, method="def"):
         print(self.train_data)
         print(self.test_data)
         values = {}
         best = (0, '')
         last_best = 0
+        if method == "def":
+            K = self.neighbours
+        else:
+            K = self.large_neighbours
         for dist in self.dist:
             print(f"Dist: {dist}")
             y_test_values = []
             y_train_values = []
             y_test_values_f1 = []
             y_train_values_f1 = []
-            for k in self.neighbours:
+            for k in K:
                 print(f"K: {k}")
                 knn = KNeighborsClassifier(n_neighbors=k, metric=dist)
                 knn.fit(self.train_data, self.train_y)
@@ -42,13 +49,19 @@ class Knn_classifier:
                     best = (k, dist)
                     last_best = y_test_values[-1]
             values[dist] = y_test_values
-            self.plot_overfitting_study(self.neighbours, y_train_values, y_test_values, f'KNN_{dist}','K', dist)
-            self.plot_overfitting_study(self.neighbours, y_train_values_f1, y_test_values_f1, f'KNN_{dist}_F1','K', dist)
+            self.plot_overfitting_study(K, y_train_values, y_test_values, f'KNN_{dist}_{k}','K', dist)
+            self.plot_overfitting_study(K, y_train_values_f1, y_test_values_f1, f'KNN_{dist}_{k}_F1','K', dist)
 
         print(values)
+        
         figure()
-        multiple_line_chart(self.neighbours, values, title='KNN variants', xlabel='n', ylabel="Accuracy Score", percentage=True)
-        savefig(f'climate/records/evaluation/knn_k_distance_exploration.png')
+        _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
+        multiple_line_chart(K, values, ax=axs[0], title='KNN variants', xlabel='n', ylabel="Accuracy Score", percentage=True)
+        multiple_line_chart(K, values, ax=axs[1], title='KNN variants', xlabel='n', ylabel="F1 Score", percentage=True)
+        if method == "def":
+            savefig(f'climate/records/evaluation/knn_k_distance_exploration.png')
+        else:
+            savefig(f'climate/records/evaluation/knn_k_distance_exploration_{method}.png')
         print('Best results with %d neighbors and %s'%(best[0], best[1]))
         return best[0], best[1]
 

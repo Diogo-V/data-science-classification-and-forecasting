@@ -347,7 +347,7 @@ class Scaling:
     prd_train = knn.predict(X_train)
     prd_tst = knn.predict(X_test)
     train_acc = accuracy_score(y_train, prd_train)
-    test_acc = accuracy_score(y_test, prd_tst)
+    test_acc = accuracy_score(  y_test, prd_tst)
     error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
     plot_evaluation_results(labels, y_train, prd_train, y_test, prd_tst)
