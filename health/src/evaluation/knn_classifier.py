@@ -54,7 +54,6 @@ class Knn_classifier:
 
         print(values)
         figure()
-        figure()
         _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
         multiple_line_chart(K, values, ax=axs[0], title='KNN variants', xlabel='n', ylabel="Accuracy Score", percentage=True)
         multiple_line_chart(K, values, ax=axs[1], title='KNN variants', xlabel='n', ylabel="F1 Score", percentage=True)

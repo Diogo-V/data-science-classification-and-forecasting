@@ -13,6 +13,7 @@ from preparation.balancing import Balancing
 
 from evaluation.knn_classifier import Knn_classifier
 from evaluation.nb_classifier import NBClassifier
+from evaluation.random_forest_classifier import RTClassifier
 
 register_matplotlib_converters()
 
@@ -67,6 +68,9 @@ if __name__ == "__main__":
   # nbClassifier.explore_best_nb_value()
   # nbClassifier.compute_nb_best_results()
 
-  knn_class = Knn_classifier(data_train, data_test)
-  k, approach = knn_class.explore_best_k_value(method="large")
-  knn_class.compute_knn_best_results(k , approach)
+  # knn_class = Knn_classifier(data_train, data_test)
+  # k, approach = knn_class.explore_best_k_value(method="large")
+  # knn_class.compute_knn_best_results(k , approach)
+
+  rtClassifier = RTClassifier(data_train, data_test)
+  rtClassifier.explore_best_rt()

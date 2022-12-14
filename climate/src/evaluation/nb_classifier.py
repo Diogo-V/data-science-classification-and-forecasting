@@ -10,7 +10,6 @@ import numpy as np
 
 HEIGHT: int = 4
 
-
 class NBClassifier:
   
   def __init__(self, data_train: pd.DataFrame, data_test: pd.DataFrame) -> None:
