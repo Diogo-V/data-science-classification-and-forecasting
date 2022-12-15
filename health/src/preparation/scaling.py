@@ -5,9 +5,9 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import math
 import numpy as np
-from ds_charts import get_variable_types, plot_confusion_matrix
+from ds_charts import plot_evaluation_results_2
 from scipy.stats import ttest_rel
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, classification_report, recall_score, precision_score, f1_score
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
@@ -50,15 +50,24 @@ class Scaling:
     print("GETTING BEST NEIGHBOR VALUE:")
     # self.compute_best_knn_neighbor(zscore)
 
+    fig, axs = plt.subplots(1, 3, figsize=(20,10),squeeze=False)
+    axs[0, 0].set_title('Original data')
+    self.data.boxplot(ax=axs[0, 0], rot=45, fontsize=4)
+    axs[0, 1].set_title('Z-score normalization')
+    zscore.boxplot(ax=axs[0, 1], rot=45, fontsize=4)
+    axs[0, 2].set_title('MinMax normalization')
+    min_max.boxplot(ax=axs[0, 2], rot=45, fontsize=4)
+    plt.savefig(f'health/records/preparation/scaling_boxplots.png')
+
   def scale_min_max(self) -> pd.DataFrame:
     
     y = self.data["readmitted"].copy(deep=True)
-    variable_types = get_variable_types(self.data)
-    numeric_vars = variable_types['Numeric']
-    symbolic_vars = variable_types['Symbolic']
-    boolean_vars = variable_types['Binary']
 
-    numeric_vars.remove('readmitted')
+    numeric_vars = ['time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
+
+    symbolic_vars = ['race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
+    
+    boolean_vars = ['diabetesMed', 'change']
 
     df_nr = self.data[numeric_vars]
     df_sb = self.data[symbolic_vars]
@@ -72,12 +81,12 @@ class Scaling:
   def scale_zscore(self) -> pd.DataFrame:
     
     y = self.data["readmitted"].copy(deep=True)
-    variable_types = get_variable_types(self.data)
-    numeric_vars = variable_types['Numeric']
-    symbolic_vars = variable_types['Symbolic']
-    boolean_vars = variable_types['Binary']
 
-    numeric_vars.remove('readmitted')
+    numeric_vars = ['time_in_hospital', 'num_lab_procedures', 'num_procedures', 'num_medications', 'number_outpatient', 'number_emergency', 'number_diagnoses', 'number_inpatient']
+
+    symbolic_vars = ['race', 'gender', 'age', 'admission_type_id', 'discharge_disposition_id', 'admission_source_id', 'diag_1', 'diag_2', 'diag_3', 'max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide', 'chlorpropamide', 'glimepiride', 'glipizide', 'glyburide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol', 'tolazamide', 'examide', 'citoglipton', 'insulin', 'glyburide-metformin', 'glipizide-metformin', 'glimepiride-pioglitazone', 'metformin-rosiglitazone', 'metformin-pioglitazone', 'acetohexamide', 'troglitazone', 'tolbutamide']
+    
+    boolean_vars = ['diabetesMed', 'change']
 
     df_nr = self.data[numeric_vars]
     df_sb = self.data[symbolic_vars]
@@ -85,7 +94,11 @@ class Scaling:
 
     transf = StandardScaler(with_mean=True, with_std=True, copy=True).fit(df_nr)
     tmp = pd.DataFrame(transf.transform(df_nr), index=self.data.index, columns=numeric_vars)
+
     norm_data_zscore = pd.concat([tmp, df_sb,  df_bool, y], axis=1)
+    
+    self.data.to_csv(f'health/resources/data/data_scaling_zscore.csv', index=True)
+
     return norm_data_zscore
 
   def compute_naive_bayes_result(self, dataset: pd.DataFrame) -> float:
@@ -142,6 +155,8 @@ class Scaling:
     print("Test acc: {:.5f}".format(test_mean))
     print("Diff between train and test: {:.5f}".format(train_mean - test_mean))
     print("Root mean squared error: {:.5f}".format(error))
+
+
 
     return test_mean
 
@@ -326,7 +341,7 @@ class Scaling:
     y = data.pop('readmitted').values
     X = data.values
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=self.DETERMINISM_FACTOR)
 
     labels = pd.unique(y)
     labels.sort()
@@ -335,27 +350,34 @@ class Scaling:
 
     knn = KNeighborsClassifier(n_neighbors=15)
     knn.fit(X_train, y_train)
-    predict = knn.predict(X_test)
-    result = accuracy_score(y_test, predict)
-    print('Accuracy:', result)
+    prd_train = knn.predict(X_train)
+    prd_tst = knn.predict(X_test)
+    train_acc = accuracy_score(y_train, prd_train)
+    test_acc = accuracy_score(y_test, prd_tst)
+    error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-    plt.figure()
-    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-    plt.tight_layout()
-    plt.savefig(f'health/records/preparation/scaling_knn_{approach}_results.png')
+    plot_evaluation_results_2(labels, y_train, prd_train, y_test, prd_tst)
+    plt.savefig(f'health/records/preparation/scaling_{approach}_knn_results.png')
 
-    print(classification_report(y_test, predict,target_names=labels_str))
+    f= open(f'health/records/preparation/scaling_{approach}_knn_results_details.txt', 'w')
+    f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+    f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+    f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+    f.write("Root mean squared error: {:.5f}\n".format(error))
+    f.write("########################\n")
+    f.write("Train\n")
+    f.write(classification_report(y_train, prd_train,target_names=labels_str))
+    f.write("Test\n")
+    f.write(classification_report(y_test, prd_tst,target_names=labels_str))
 
-    return result
+    return test_acc
 
   def evaluate_nb(self, dataset: pd.DataFrame, approach: str):
     data = dataset.copy(deep=True)
     y = data.pop('readmitted').values
     X = data.values
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=self.DETERMINISM_FACTOR)
 
     labels = pd.unique(y)
     labels.sort()
@@ -364,17 +386,25 @@ class Scaling:
 
     nb = GaussianNB()	
     nb.fit(X_train, y_train)
-    predict = nb.predict(X_test)
-    result = accuracy_score(y_test, predict)
-    print(result)
+    prd_train = nb.predict(X_train)
+    prd_tst = nb.predict(X_test)
+    train_acc = accuracy_score(y_train, prd_train)
+    test_acc = accuracy_score(y_test, prd_tst)
+    error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-    plt.figure()
-    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-    plt.tight_layout()
-    plt.savefig(f'health/records/preparation/scaling_nb_{approach}_results.png')
+    plot_evaluation_results_2(labels, y_train, prd_train, y_test, prd_tst)
+    plt.savefig(f'health/records/preparation/scaling_{approach}_nb_results.png')
 
-    print(classification_report(y_test, predict,target_names=labels_str))
+    f= open(f'health/records/preparation/scaling_{approach}_nb_results_details.txt', 'w')
+    f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+    f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+    f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+    f.write("Root mean squared error: {:.5f}\n".format(error))
+    f.write("########################\n")
+    f.write("Train\n")
+    f.write(classification_report(y_train, prd_train,target_names=labels_str))
+    f.write("Test\n")
+    f.write(classification_report(y_test, prd_tst,target_names=labels_str))
 
-    return result
+
+    return test_acc

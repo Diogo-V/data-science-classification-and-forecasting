@@ -85,7 +85,7 @@ class OutliersImputation:
     print('data after truncating outliers:', df.shape)
     return df
 
-  def compute_knn_result(self, dataset: pd.DataFrame) -> tuple[float, float]:
+  def compute_knn_result(self, dataset: pd.DataFrame):
     """
     Description:
       * Computes KNN accuracy using StratifiedKFold with a different number of neighbors.

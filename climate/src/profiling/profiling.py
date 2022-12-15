@@ -8,7 +8,6 @@ class Profiler:
 
   def __init__(self, data: pd.DataFrame) -> None:
     self.data: pd.DataFrame = data
-    data['fips'] = data['fips'].astype('category')
     data['SQ1'] = data['SQ1'].astype('category')
     data['SQ2'] = data['SQ2'].astype('category')
     data['SQ3'] = data['SQ3'].astype('category')
@@ -72,3 +71,11 @@ class Profiler:
       if dc.get('?') is not None:
         print(f"Percentage of missing values: {round(dc['?'] / sum(dc.values()) * 100, 2)}%")
       print("###################################")
+
+  def count_unique(self) -> None:
+    # for col in self.data:
+    #   print(f"column: {col} -> nr unique: {len(self.data[col].unique())}")
+    for col in self.data:
+      if len(self.data[col].unique()) == 1:
+        print(f"column: {col} -> nr unique: {len(self.data[col].unique())}")
+    

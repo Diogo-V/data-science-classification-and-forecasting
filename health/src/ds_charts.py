@@ -126,16 +126,18 @@ def plot_evaluation_results(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
         'Accuracy': [(tn_trn + tp_trn) / (tn_trn + tp_trn + fp_trn + fn_trn), (tn_tst + tp_tst) / (tn_tst + tp_tst + fp_tst + fn_tst)],
         'Recall': [tp_trn / (tp_trn + fn_trn), tp_tst / (tp_tst + fn_tst)],
         'Specificity': [tn_trn / (tn_trn + fp_trn), tn_tst / (tn_tst + fp_tst)],
-        'Precision': [tp_trn / (tp_trn + fp_trn), tp_tst / (tp_tst + fp_tst)]}
+        'Precision': [tp_trn / (tp_trn + fp_trn), tp_tst / (tp_tst + fp_tst)],
+        'F1-Score': [ 2*tp_trn /( 2*tp_trn + fp_trn + fn_trn), 2*tp_tst /( 2*tp_tst + fp_tst + fn_tst) ]}
 
-    _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
+    _, axs = subplots(1, 3, figsize=(6 * HEIGHT, HEIGHT))
     multiple_bar_chart(['Train', 'Test'], evaluation, ax=axs[0], title="Model's performance over Train and Test sets", percentage=True)
     plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[1], title='Test')
+    plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[2], title='Test', normalize=True)
 
 
 def plot_evaluation_results_2(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
     cnf_mtx_trn = confusion_matrix(trn_y, prd_trn, labels=labels)
-    print(cnf_mtx_trn)
+
     # t line row
     t00_trn, t01_trn, t02_trn, t10_trn, t11_trn, t12_trn, t20_trn, t21_trn, t22_trn = cnf_mtx_trn.ravel()
 
@@ -172,28 +174,108 @@ def plot_evaluation_results_2(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
     class3_fn_tst = t20_tst + t21_tst;
     class3_tn_tst =  t00_tst + t01_tst + t10_tst + t11_tst;
 
-    evaluation = {
+    evaluation_class_1 = {
         'Accuracy Class 1': [(class1_tn_trn + class1_tp_trn) / (class1_tp_trn + class1_tn_trn + class1_fp_trn + class1_fn_trn), (class1_tp_tst + class1_tn_tst) / (class1_tp_tst + class1_tn_tst + class1_fp_tst + class1_fp_tst)],
-        'Accuracy Class 2': [(class2_tn_trn + class2_tp_trn) / (class2_tp_trn + class2_tn_trn + class2_fp_trn + class2_fn_trn), (class2_tp_tst + class2_tn_tst) / (class2_tp_tst + class2_tn_tst + class2_fp_tst + class2_fp_tst)],
-        'Accuracy Class 3': [(class3_tn_trn + class3_tp_trn) / (class3_tp_trn + class3_tn_trn + class3_fp_trn + class3_fn_trn), (class3_tp_tst + class3_tn_tst) / (class3_tp_tst + class3_tn_tst + class3_fp_tst + class3_fp_tst)],
-
         'Recall Class 1': [class1_tp_trn / (class1_tp_trn + class1_fn_trn), class1_tp_tst / (class1_tp_tst + class1_fn_tst)],
-        'Recall Class 2': [class2_tp_trn / (class2_tp_trn + class2_fn_trn), class2_tp_tst / (class2_tp_tst + class2_fn_tst)],
-        'Recall Class 3': [class3_tp_trn / (class3_tp_trn + class3_fn_trn), class3_tp_tst / (class3_tp_tst + class3_fn_tst)],
-
         'Specificity Class 1': [class1_tn_trn / (class1_tn_trn + class1_fp_trn), class1_tn_tst / (class1_tn_tst + class1_fp_tst)],
-        'Specificity Class 2': [class2_tn_trn / (class2_tn_trn + class2_fp_trn), class2_tn_tst / (class2_tn_tst + class2_fp_tst)],
-        'Specificity Class 3': [class3_tn_trn / (class3_tn_trn + class3_fp_trn), class3_tn_tst / (class3_tn_tst + class3_fp_tst)],
-
         'Precision Class 1': [class1_tp_trn / (class1_tp_trn + class1_fp_trn), class1_tp_tst / (class1_tp_tst + class1_fp_tst)],
-        'Precision Class 2': [class2_tp_trn / (class2_tp_trn + class2_fp_trn), class2_tp_tst / (class2_tp_tst + class2_fp_tst)],
-        'Precision Class 3': [class3_tp_trn / (class3_tp_trn + class3_fp_trn), class3_tp_tst / (class3_tp_tst + class3_fp_tst)],
+        'F1-Score Class 1': [ 2*class1_tp_trn /( 2*class1_tp_trn + class1_fp_trn + class1_fn_trn), 2*class1_tp_tst /( 2*class1_tp_tst + class1_fp_tst + class1_fn_tst) ]
     }
 
-    _, axs = subplots(1, 2, figsize=(2 * HEIGHT, HEIGHT))
-    # multiple_bar_chart(['Train', 'Test'], evaluation, ax=axs[0], title="Model's performance over Train and Test sets", percentage=True)
-    plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[1], title='Test')
+    evaluation_class_2 = {
+        'Accuracy Class 2': [(class2_tn_trn + class2_tp_trn) / (class2_tp_trn + class2_tn_trn + class2_fp_trn + class2_fn_trn), (class2_tp_tst + class2_tn_tst) / (class2_tp_tst + class2_tn_tst + class2_fp_tst + class2_fp_tst)],
+        'Recall Class 2': [class2_tp_trn / (class2_tp_trn + class2_fn_trn), class2_tp_tst / (class2_tp_tst + class2_fn_tst)],
+        'Specificity Class 2': [class2_tn_trn / (class2_tn_trn + class2_fp_trn), class2_tn_tst / (class2_tn_tst + class2_fp_tst)],
+        'Precision Class 2': [class2_tp_trn / (class2_tp_trn + class2_fp_trn), class2_tp_tst / (class2_tp_tst + class2_fp_tst)],
+        'F1-Score Class 1': [ 2*class2_tp_trn /( 2*class2_tp_trn + class2_fp_trn + class2_fn_trn), 2*class2_tp_tst /( 2*class2_tp_tst + class2_fp_tst + class2_fn_tst) ]
+    }
 
+    evaluation_class_3 = {
+        'Accuracy Class 3': [(class3_tn_trn + class3_tp_trn) / (class3_tp_trn + class3_tn_trn + class3_fp_trn + class3_fn_trn), (class3_tp_tst + class3_tn_tst) / (class3_tp_tst + class3_tn_tst + class3_fp_tst + class3_fp_tst)],
+        'Recall Class 3': [class3_tp_trn / (class3_tp_trn + class3_fn_trn), class3_tp_tst / (class3_tp_tst + class3_fn_tst)],
+        'Specificity Class 3': [class3_tn_trn / (class3_tn_trn + class3_fp_trn), class3_tn_tst / (class3_tn_tst + class3_fp_tst)],
+        'Precision Class 3': [class3_tp_trn / (class3_tp_trn + class3_fp_trn), class3_tp_tst / (class3_tp_tst + class3_fp_tst)],
+        'F1-Score Class 1': [ 2*class3_tp_trn /( 2*class3_tp_trn + class3_fp_trn + class3_fn_trn), 2*class3_tp_tst /( 2*class3_tp_tst + class3_fp_tst + class3_fn_tst) ]
+    }
+
+    _, axs = subplots(1, 5, figsize=(8 * HEIGHT, HEIGHT))
+    multiple_bar_chart(['Train', 'Test'], evaluation_class_1, ax=axs[0], title="Model performance Class 1", percentage=True)
+    multiple_bar_chart(['Train', 'Test'], evaluation_class_2, ax=axs[1], title="Model performance Class 2", percentage=True)
+    multiple_bar_chart(['Train', 'Test'], evaluation_class_3, ax=axs[2], title="Model performance Class 3", percentage=True)
+    plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[3], title='Test')
+    plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[4], title='Test', normalize=True)
+
+def plot_evaluation_results_2_train_test_matrixes(labels: ndarray, trn_y, prd_trn, tst_y, prd_tst):
+    cnf_mtx_trn = confusion_matrix(trn_y, prd_trn, labels=labels)
+
+    # t line row
+    t00_trn, t01_trn, t02_trn, t10_trn, t11_trn, t12_trn, t20_trn, t21_trn, t22_trn = cnf_mtx_trn.ravel()
+
+    class1_tp_trn = t00_trn;
+    class1_fp_trn = t10_trn + t20_trn;
+    class1_fn_trn = t01_trn + t02_trn;
+    class1_tn_trn =  t11_trn + t12_trn + t21_trn + t22_trn;
+
+    class2_tp_trn = t11_trn;
+    class2_fp_trn = t01_trn + t21_trn;
+    class2_fn_trn = t10_trn + t12_trn;
+    class2_tn_trn =  t00_trn + t02_trn + t20_trn + t22_trn;
+
+    class3_tp_trn = t22_trn;
+    class3_fp_trn = t02_trn + t12_trn;
+    class3_fn_trn = t20_trn + t21_trn;
+    class3_tn_trn =  t00_trn + t01_trn + t10_trn + t11_trn;
+
+    cnf_mtx_tst = confusion_matrix(tst_y, prd_tst, labels=labels)
+    t00_tst, t01_tst, t02_tst, t10_tst, t11_tst, t12_tst, t20_tst, t21_tst, t22_tst = cnf_mtx_tst.ravel()
+
+    class1_tp_tst = t00_tst;
+    class1_fp_tst = t10_tst + t20_tst;
+    class1_fn_tst = t01_tst + t02_tst;
+    class1_tn_tst =  t11_tst + t12_tst + t21_tst + t22_tst;
+
+    class2_tp_tst = t11_tst;
+    class2_fp_tst = t01_tst + t21_tst;
+    class2_fn_tst = t10_tst + t12_tst;
+    class2_tn_tst =  t00_tst + t02_tst + t20_tst + t22_tst;
+
+    class3_tp_tst = t22_tst;
+    class3_fp_tst = t02_tst + t12_tst;
+    class3_fn_tst = t20_tst + t21_tst;
+    class3_tn_tst =  t00_tst + t01_tst + t10_tst + t11_tst;
+
+    evaluation_class_1 = {
+        'Accuracy Class 1': [(class1_tn_trn + class1_tp_trn) / (class1_tp_trn + class1_tn_trn + class1_fp_trn + class1_fn_trn), (class1_tp_tst + class1_tn_tst) / (class1_tp_tst + class1_tn_tst + class1_fp_tst + class1_fp_tst)],
+        'Recall Class 1': [class1_tp_trn / (class1_tp_trn + class1_fn_trn), class1_tp_tst / (class1_tp_tst + class1_fn_tst)],
+        'Specificity Class 1': [class1_tn_trn / (class1_tn_trn + class1_fp_trn), class1_tn_tst / (class1_tn_tst + class1_fp_tst)],
+        'Precision Class 1': [class1_tp_trn / (class1_tp_trn + class1_fp_trn), class1_tp_tst / (class1_tp_tst + class1_fp_tst)],
+        'F1-Score Class 1': [ 2*class1_tp_trn /( 2*class1_tp_trn + class1_fp_trn + class1_fn_trn), 2*class1_tp_tst /( 2*class1_tp_tst + class1_fp_tst + class1_fn_tst) ]
+    }
+
+    evaluation_class_2 = {
+        'Accuracy Class 2': [(class2_tn_trn + class2_tp_trn) / (class2_tp_trn + class2_tn_trn + class2_fp_trn + class2_fn_trn), (class2_tp_tst + class2_tn_tst) / (class2_tp_tst + class2_tn_tst + class2_fp_tst + class2_fp_tst)],
+        'Recall Class 2': [class2_tp_trn / (class2_tp_trn + class2_fn_trn), class2_tp_tst / (class2_tp_tst + class2_fn_tst)],
+        'Specificity Class 2': [class2_tn_trn / (class2_tn_trn + class2_fp_trn), class2_tn_tst / (class2_tn_tst + class2_fp_tst)],
+        'Precision Class 2': [class2_tp_trn / (class2_tp_trn + class2_fp_trn), class2_tp_tst / (class2_tp_tst + class2_fp_tst)],
+        'F1-Score Class 1': [ 2*class2_tp_trn /( 2*class2_tp_trn + class2_fp_trn + class2_fn_trn), 2*class2_tp_tst /( 2*class2_tp_tst + class2_fp_tst + class2_fn_tst) ]
+    }
+
+    evaluation_class_3 = {
+        'Accuracy Class 3': [(class3_tn_trn + class3_tp_trn) / (class3_tp_trn + class3_tn_trn + class3_fp_trn + class3_fn_trn), (class3_tp_tst + class3_tn_tst) / (class3_tp_tst + class3_tn_tst + class3_fp_tst + class3_fp_tst)],
+        'Recall Class 3': [class3_tp_trn / (class3_tp_trn + class3_fn_trn), class3_tp_tst / (class3_tp_tst + class3_fn_tst)],
+        'Specificity Class 3': [class3_tn_trn / (class3_tn_trn + class3_fp_trn), class3_tn_tst / (class3_tn_tst + class3_fp_tst)],
+        'Precision Class 3': [class3_tp_trn / (class3_tp_trn + class3_fp_trn), class3_tp_tst / (class3_tp_tst + class3_fp_tst)],
+        'F1-Score Class 1': [ 2*class3_tp_trn /( 2*class3_tp_trn + class3_fp_trn + class3_fn_trn), 2*class3_tp_tst /( 2*class3_tp_tst + class3_fp_tst + class3_fn_tst) ]
+    }
+
+    _, axs = subplots(1, 7, figsize=(8 * HEIGHT, HEIGHT))
+    multiple_bar_chart(['Train', 'Test'], evaluation_class_1, ax=axs[0], title="Model performance Class 1", percentage=True)
+    multiple_bar_chart(['Train', 'Test'], evaluation_class_2, ax=axs[1], title="Model performance Class 2", percentage=True)
+    multiple_bar_chart(['Train', 'Test'], evaluation_class_3, ax=axs[2], title="Model performance Class 3", percentage=True)
+    plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[3], title='Test')
+    plot_confusion_matrix(cnf_mtx_tst, labels, ax=axs[4], title='Test', normalize=True)
+    plot_confusion_matrix(cnf_mtx_trn, labels, ax=axs[5], title='Train')
+    plot_confusion_matrix(cnf_mtx_trn, labels, ax=axs[6], title='Train', normalize=True)
 
 def horizontal_bar_chart(elements: list, values: list, error: list, ax: Axes = None, title: str = '', xlabel: str = '', ylabel: str = ''):
     ax = set_elements(ax=ax, title=title, xlabel=xlabel, ylabel=ylabel)

@@ -1,0 +1,26 @@
+Best approach: K = 1221 with euclidean metric
+Accuracy Train: 0.72512
+Accuracy Test: 0.35202
+Diff between train and test: 0.37310
+Root mean squared error: 0.26382
+########################
+Train
+              precision    recall  f1-score   support
+
+           1       0.55      0.99      0.71     27303
+           2       0.98      0.37      0.54     27303
+           3       1.00      0.81      0.89     27303
+
+    accuracy                           0.73     81909
+   macro avg       0.84      0.73      0.71     81909
+weighted avg       0.84      0.73      0.71     81909
+Test
+              precision    recall  f1-score   support
+
+           1       0.55      0.48      0.51     11765
+           2       0.40      0.13      0.19      7267
+           3       0.10      0.39      0.16      2282
+
+    accuracy                           0.37     21314
+   macro avg       0.33      0.33      0.32     21314
+weighted avg       0.43      0.37      0.39     21314

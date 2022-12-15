@@ -5,7 +5,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import math
 import numpy as np
-from ds_charts import get_variable_types, plot_confusion_matrix
+from ds_charts import plot_confusion_matrix, plot_evaluation_results
 from scipy.stats import ttest_rel
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from sklearn.model_selection import train_test_split
@@ -27,7 +27,7 @@ class Scaling:
     self.data: pd.DataFrame = data
   
   def compute_scale(self) -> pd.DataFrame:
-    return self.scale_zscore()  # z-score is the best one
+    return self.scale_min_max()  # min max is the best one
 
   def explore_scaling(self):
 
@@ -35,8 +35,8 @@ class Scaling:
     zscore = self.scale_zscore()
     min_max = self.scale_min_max()
 
-    zscore = zscore.drop(columns=['date'])
-    min_max = min_max.drop(columns=['date'])
+    zscore = zscore.drop(columns=['month', 'day', 'year'])
+    min_max = min_max.drop(columns=['month', 'day', 'year'])
 
     # Applies NB and KNN to check which one is better
     print("COMPUTING Z-SCORE...")
@@ -52,12 +52,22 @@ class Scaling:
     print("GETTING BEST NEIGHBOR VALUE:")
     # self.compute_best_knn_neighbor(zscore)
 
+    fig, axs = plt.subplots(1, 3, figsize=(20,10),squeeze=False)
+    axs[0, 0].set_title('Original data')
+    self.data.boxplot(ax=axs[0, 0], rot=45, fontsize=4)
+    axs[0, 1].set_title('Z-score normalization')
+    zscore.boxplot(ax=axs[0, 1], rot=45, fontsize=4)
+    axs[0, 2].set_title('MinMax normalization')
+    min_max.boxplot(ax=axs[0, 2], rot=45, fontsize=4)
+    plt.savefig(f'climate/records/preparation/scaling_boxplots.png')
+
   def scale_min_max(self) -> pd.DataFrame:
 
-    variable_types = get_variable_types(self.data)
-    numeric_vars = variable_types['Numeric']
-    symbolic_vars = variable_types['Symbolic']
-    boolean_vars = variable_types['Binary']
+    numeric_vars = ['fips', 'PRECTOT', 'PS', 'QV2M', 'T2M', 'T2MDEW', 'T2MWET', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'TS', 'WS10M', 'WS10M_MAX', 'WS10M_MIN', 'WS10M_RANGE', 'WS50M', 'WS50M_MAX', 'WS50M_MIN', 'WS50M_RANGE', 'lat', 'lon', 'elevation', 'slope1', 'slope2', 'slope3', 'slope4', 'slope5', 'slope6', 'slope7', 'slope8', 'aspectN', 'aspectE', 'aspectS', 'aspectW', 'aspectUnknown', 'WAT_LAND', 'NVG_LAND', 'URB_LAND', 'GRS_LAND', 'FOR_LAND', 'CULTRF_LAND', 'CULTIR_LAND', 'CULT_LAND']
+
+    symbolic_vars = ['day', 'month', 'year', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ5', 'SQ6', 'SQ7']
+    
+    boolean_vars = ['class']
 
     df_nr = self.data[numeric_vars]
     df_sb = self.data[symbolic_vars]
@@ -70,11 +80,11 @@ class Scaling:
     return norm_data_minmax
 
   def scale_zscore(self) -> pd.DataFrame:
+    numeric_vars = ['fips', 'PRECTOT', 'PS', 'QV2M', 'T2M', 'T2MDEW', 'T2MWET', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'TS', 'WS10M', 'WS10M_MAX', 'WS10M_MIN', 'WS10M_RANGE', 'WS50M', 'WS50M_MAX', 'WS50M_MIN', 'WS50M_RANGE', 'lat', 'lon', 'elevation', 'slope1', 'slope2', 'slope3', 'slope4', 'slope5', 'slope6', 'slope7', 'slope8', 'aspectN', 'aspectE', 'aspectS', 'aspectW', 'aspectUnknown', 'WAT_LAND', 'NVG_LAND', 'URB_LAND', 'GRS_LAND', 'FOR_LAND', 'CULTRF_LAND', 'CULTIR_LAND', 'CULT_LAND']
 
-    variable_types = get_variable_types(self.data)
-    numeric_vars = variable_types['Numeric']
-    symbolic_vars = variable_types['Symbolic']
-    boolean_vars = variable_types['Binary']
+    symbolic_vars = ['day', 'month', 'year', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ5', 'SQ6', 'SQ7']
+
+    boolean_vars = ['class']
 
     df_nr = self.data[numeric_vars]
     df_sb = self.data[symbolic_vars]
@@ -270,6 +280,7 @@ class Scaling:
       print("Root mean squared error: {:.5f}".format(error))
       print("########################")
 
+
   def compute_ttest(self, dataset: pd.DataFrame):
     # Gets sub datasets to test
     X = dataset.drop("class", axis=1).to_numpy()
@@ -324,7 +335,7 @@ class Scaling:
     y = data.pop('class').values
     X = data.values
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=self.DETERMINISM_FACTOR)
 
     labels = pd.unique(y)
     labels.sort()
@@ -333,27 +344,34 @@ class Scaling:
 
     knn = KNeighborsClassifier(n_neighbors=15)
     knn.fit(X_train, y_train)
-    predict = knn.predict(X_test)
-    result = accuracy_score(y_test, predict)
-    print('Accuracy:', result)
+    prd_train = knn.predict(X_train)
+    prd_tst = knn.predict(X_test)
+    train_acc = accuracy_score(y_train, prd_train)
+    test_acc = accuracy_score(  y_test, prd_tst)
+    error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-    plt.figure()
-    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-    plt.tight_layout()
-    plt.savefig(f'climate/records/preparation/scaling_knn_{approach}_results.png')
+    plot_evaluation_results(labels, y_train, prd_train, y_test, prd_tst)
+    plt.savefig(f'climate/records/preparation/scaling_{approach}_knn_results.png')
 
-    print(classification_report(y_test, predict,target_names=labels_str))
-
-    return result
+    f= open(f'climate/records/preparation/scaling_{approach}_knn_results_details.txt', 'w')
+    f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+    f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+    f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+    f.write("Root mean squared error: {:.5f}\n".format(error))
+    f.write("########################\n")
+    f.write("Train\n")
+    f.write(classification_report(y_train, prd_train,target_names=labels_str))
+    f.write("Test\n")
+    f.write(classification_report(y_test, prd_tst,target_names=labels_str))
+    
+    return test_acc
 
   def evaluate_nb(self, dataset: pd.DataFrame, approach: str):
     data = dataset.copy(deep=True)
     y = data.pop('class').values
     X = data.values
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, stratify=y, random_state=self.DETERMINISM_FACTOR)
 
     labels = pd.unique(y)
     labels.sort()
@@ -362,17 +380,24 @@ class Scaling:
 
     nb = GaussianNB()	
     nb.fit(X_train, y_train)
-    predict = nb.predict(X_test)
-    result = accuracy_score(y_test, predict)
-    print(result)
+    prd_train = nb.predict(X_train)
+    prd_tst = nb.predict(X_test)
+    train_acc = accuracy_score(y_train, prd_train)
+    test_acc = accuracy_score(y_test, prd_tst)
+    error = math.sqrt(np.square(np.subtract(train_acc, test_acc)) / 2)
 
-    plt.figure()
-    fig, axs = plt.subplots(1, 2, figsize=(8, 4), squeeze=False)
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,0], )
-    plot_confusion_matrix(confusion_matrix(y_test, predict, labels=labels), labels, ax=axs[0,1], normalize=True)
-    plt.tight_layout()
-    plt.savefig(f'climate/records/preparation/scaling_nb_{approach}_results.png')
+    plot_evaluation_results(labels, y_train, prd_train, y_test, prd_tst)
+    plt.savefig(f'climate/records/preparation/scaling_{approach}_nb_results.png')
 
-    print(classification_report(y_test, predict,target_names=labels_str))
+    f= open(f'climate/records/preparation/scaling_{approach}_nb_results_details.txt', 'w')
+    f.write("Accuracy Train: {:.5f}\n".format(train_acc))
+    f.write("Accuracy Test: {:.5f}\n".format(test_acc))
+    f.write("Diff between train and test: {:.5f}\n".format(train_acc - test_acc))
+    f.write("Root mean squared error: {:.5f}\n".format(error))
+    f.write("########################\n")
+    f.write("Train\n")
+    f.write(classification_report(y_train, prd_train,target_names=labels_str))
+    f.write("Test\n")
+    f.write(classification_report(y_test, prd_tst,target_names=labels_str))
 
-    return result
+    return test_acc
