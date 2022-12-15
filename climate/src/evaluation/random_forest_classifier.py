@@ -68,12 +68,11 @@ class RTClassifier:
     
     rf = RandomForestClassifier(n_estimators=estimators, max_depth=depth, max_features=features)
     rf.fit(self.train_data, self.train_y)
-
-    # First, plot general results
     prd_trn = rf.predict(self.train_data)
     prd_tst = rf.predict(self.test_data)
 
-    labels = unique(self.train_y)
+    # First, plot general results
+    """ labels = unique(self.train_y)
     labels.sort()
     figure()
     plot_evaluation_results_train_test_matrixes(labels, self.train_y, prd_trn, self.test_y, prd_tst)
@@ -91,7 +90,7 @@ class RTClassifier:
     figure()
     horizontal_bar_chart(elems, importances[indices], stdevs[indices], title='Random Forest Features importance', xlabel='importance', ylabel='variables')
     savefig(f'climate/records/evaluation/rf_best_feature_rankings.png')
-
+     """
     # Then, plot overfitting
     y_tst_values = []
     y_trn_values = []
@@ -108,8 +107,8 @@ class RTClassifier:
       y_trn_values.append(accuracy_score(self.train_y, prd_trn_Y))
       y_tst_values_f1.append(f1_score(self.test_y, prd_tst_Y))
       y_trn_values_f1.append(f1_score(self.train_y, prd_trn_Y))
-    plot_overfitting_study(self.estimators, y_trn_values, y_tst_values, name=f'RF_depth={depth}_vars={features}', xlabel='nr_estimators', ylabel="accuracy score")
-    plot_overfitting_study(self.estimators, y_trn_values_f1, y_tst_values_f1, name=f'RF_depth={depth}_vars={features}_f1', xlabel='nr_estimators', ylabel="accuracy score")
+    self.plot_overfitting_study(self.n_estimators, y_trn_values, y_tst_values, name=f'RF_depth={depth}_vars={features}', xlabel='nr_estimators', ylabel="accuracy score")
+    self.plot_overfitting_study(self.n_estimators, y_trn_values_f1, y_tst_values_f1, name=f'RF_depth={depth}_vars={features}_f1', xlabel='nr_estimators', ylabel="accuracy score")
 
   def plot_overfitting_study(self, xvalues, prd_trn, prd_tst, name, xlabel, ylabel):
     evals = {'Train': prd_trn, 'Test': prd_tst}
