@@ -73,4 +73,5 @@ if __name__ == "__main__":
   # knn_class.compute_knn_best_results(k , approach)
 
   rtClassifier = RTClassifier(data_train, data_test)
-  rtClassifier.explore_best_rt()
+  # rtClassifier.explore_best_rt()
+  rtClassifier.compute_best_rt_results(25, 0.7, 200)
