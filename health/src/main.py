@@ -14,6 +14,7 @@ from preparation.scaling import Scaling
 from preparation.balancing import Balancing
 from evaluation.nb_classifier import NBClassifier
 from evaluation.knn_classifier import Knn_classifier
+from evaluation.decision_tree_classifier import DTClassifier
 
 register_matplotlib_converters()
 
@@ -104,6 +105,13 @@ if __name__ == "__main__":
   # nbClassifier.explore_best_nb_value()
   # nbClassifier.compute_nb_best_results()
 
-  knn_class = Knn_classifier(data_train, data_test)
-  k, approach = knn_class.explore_best_k_value(method="large")
+  # knn_class = Knn_classifier(data_train, data_test)
+  # k, approach = knn_class.explore_best_k_value(method="large")
   # knn_class.compute_knn_best_results(k , approach)
+
+  dt_classifier = DTClassifier(data_train, data_test)
+  criteria, depth, impurity = dt_classifier.compute_best_dt()
+  dt_classifier.explore_best_tree_graph_light()
+  dt_classifier.compute_dt_best_matrix_results(depth, criteria, impurity)
+  dt_classifier.compute_dt_feature_importance()
+  dt_classifier.compute_best_dt_overfit(criteria, impurity)
