@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  data = read_csv(FILE_PATH, na_values='na')
+  """  data = read_csv(FILE_PATH, na_values='na')
 
   parser = Parser(data)
   data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
@@ -67,7 +67,7 @@ if __name__ == "__main__":
   data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN, index=False)
   
   data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
-  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST, index=False)
+  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST, index=False) """
 
   # # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
@@ -82,13 +82,13 @@ if __name__ == "__main__":
   # k, approach = knn_class.explore_best_k_value(method="large")
   # knn_class.compute_knn_best_results(k , approach)
 
-  # rtClassifier = RTClassifier(data_train, data_test)
+  rtClassifier = RTClassifier(data_train, data_test)
   # rtClassifier.explore_best_rt()
-  # rtClassifier.compute_best_rt_results(25, 0.7, 200)
+  rtClassifier.compute_best_rt_results(25, 0.7, 400)
 
-  dt_classifier = DTClassifier(data_train, data_test)
-  criteria, depth, impurity = dt_classifier.compute_best_dt()
-  dt_classifier.explore_best_tree_graph_light()
-  dt_classifier.explore_dt_best_matrix_results(depth, criteria, impurity)
-  dt_classifier.explore_dt_feature_importance()
-  dt_classifier.explore_best_dt_overfit(criteria, impurity)
+  # dt_classifier = DTClassifier(data_train, data_test)
+  # criteria, depth, impurity = dt_classifier.compute_best_dt()
+  # dt_classifier.explore_best_tree_graph_light()
+  # dt_classifier.explore_dt_best_matrix_results(depth, criteria, impurity)
+  # dt_classifier.explore_dt_feature_importance()
+  # dt_classifier.explore_best_dt_overfit(criteria, impurity)

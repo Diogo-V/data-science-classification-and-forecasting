@@ -72,7 +72,7 @@ class RTClassifier:
     prd_tst = rf.predict(self.test_data)
 
     # First, plot general results
-    """ labels = unique(self.train_y)
+    labels = unique(self.train_y)
     labels.sort()
     figure()
     plot_evaluation_results_train_test_matrixes(labels, self.train_y, prd_trn, self.test_y, prd_tst)
@@ -90,7 +90,7 @@ class RTClassifier:
     figure()
     horizontal_bar_chart(elems, importances[indices], stdevs[indices], title='Random Forest Features importance', xlabel='importance', ylabel='variables')
     savefig(f'climate/records/evaluation/rf_best_feature_rankings.png')
-     """
+     
     # Then, plot overfitting
     y_tst_values = []
     y_trn_values = []
