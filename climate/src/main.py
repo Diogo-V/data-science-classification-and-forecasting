@@ -83,8 +83,8 @@ if __name__ == "__main__":
   # knn_class.compute_knn_best_results(k , approach)
 
   rtClassifier = RTClassifier(data_train, data_test)
-  # rtClassifier.explore_best_rt()
-  rtClassifier.compute_best_rt_results(25, 0.7, 400)
+  depth, features, estimators =  rtClassifier.explore_best_rt()
+  rtClassifier.compute_best_rt_results(depth, features, estimators)
 
   # dt_classifier = DTClassifier(data_train, data_test)
   # criteria, depth, impurity = dt_classifier.compute_best_dt()
