@@ -1,24 +1,24 @@
-Best approach: Depth 25 with criterion gini and impurity decrease 2.5e-05
-Accuracy Train: 0.99663
-Accuracy Test: 0.88444
-Diff between train and test: 0.11219
-Root mean squared error: 0.07933
+Best approach: Depth 15 with criterion gini and impurity decrease 2.5e-05
+Accuracy Train: 0.97685
+Accuracy Test: 0.89084
+Diff between train and test: 0.08601
+Root mean squared error: 0.06082
 ########################
 Train
               precision    recall  f1-score   support
 
-     Class 1       1.00      1.00      1.00      8758
-     Class 2       1.00      1.00      1.00      8758
+     Class 1       0.98      0.98      0.98      8725
+     Class 2       0.98      0.98      0.98      8725
 
-    accuracy                           1.00     17516
-   macro avg       1.00      1.00      1.00     17516
-weighted avg       1.00      1.00      1.00     17516
+    accuracy                           0.98     17450
+   macro avg       0.98      0.98      0.98     17450
+weighted avg       0.98      0.98      0.98     17450
 Test
               precision    recall  f1-score   support
 
-     Class 1       0.89      0.88      0.88      3620
-     Class 2       0.88      0.89      0.89      3718
+     Class 1       0.89      0.89      0.89      3587
+     Class 2       0.89      0.89      0.89      3751
 
-    accuracy                           0.88      7338
-   macro avg       0.88      0.88      0.88      7338
-weighted avg       0.88      0.88      0.88      7338
+    accuracy                           0.89      7338
+   macro avg       0.89      0.89      0.89      7338
+weighted avg       0.89      0.89      0.89      7338
