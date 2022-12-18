@@ -12,6 +12,8 @@ from preparation.mvi_inputation import MVImputation
 from preparation.outliers_imputation import OutliersImputation
 from preparation.scaling import Scaling
 from preparation.balancing import Balancing
+from preparation.feature_selection import FeatureSelection
+
 from evaluation.nb_classifier import NBClassifier
 from evaluation.knn_classifier import Knn_classifier
 from evaluation.decision_tree_classifier import DTClassifier
@@ -25,6 +27,7 @@ INPUTATION_PATH = RECORDS_PATH + '/inputation'
 
 INPUT_FILE_PATH = 'health/resources/data/diabetic_data.csv'
 PREPARATION_OUT_FILE_PATH = 'health/resources/data/data_prepared.csv'
+FEATURE_SELECTION_OUT_FILE_PATH_TRAIN = 'health/resources/data/data_feature_selected.csv'
 PREPARATION_OUT_FILE_PATH_TRAIN = 'health/resources/data/data_prepared_train.csv'
 PREPARATION_OUT_FILE_PATH_TEST = 'health/resources/data/data_prepared_test.csv'
 MVI_OUT_FILE_PATH = 'health/resources/data/data_mvi_approach2.csv'
@@ -61,45 +64,51 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  # data = read_csv(INPUT_FILE_PATH, na_values='na')
+  data = read_csv(INPUT_FILE_PATH, na_values='na')
  
-  # parser = Parser(data, MISSING_VALUES_REPR)
-  # data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+  parser = Parser(data, MISSING_VALUES_REPR)
+  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
  
-  # mvi = MVImputation(data, MISSING_VALUES_REPR)
-  # data = mvi.compute_mv_imputation(INPUTATION_OUT_FILE_PATH)
+  mvi = MVImputation(data, MISSING_VALUES_REPR)
+  data = mvi.compute_mv_imputation(INPUTATION_OUT_FILE_PATH)
 
-  # outliers = OutliersImputation(data)
-  # data = outliers.compute_outliers()
+  outliers = OutliersImputation(data)
+  data = outliers.compute_outliers()
   
-  # scaling = Scaling(data)
-  # data = scaling.compute_scale()
+  scaling = Scaling(data)
+  data = scaling.compute_scale()
+
+  # Feature Selection
+  feature_Selection = FeatureSelection(data)
+  vars_2drop = feature_Selection.explore_redundat()
+  data = feature_Selection.drop_redundant(vars_2drop)
+  data.to_csv(FEATURE_SELECTION_OUT_FILE_PATH_TRAIN)
   
-  # # Removes single value columns
-  # ms = [
-  #   'acetohexamide', 'examide', 'citoglipton', 
-  # ]
-  # data = data.drop(columns=ms)
+  # Removes single value columns
+  ms = [
+    'acetohexamide', 'examide', 'citoglipton', 
+  ]
+  data = data.drop(columns=ms)
 
-  # # Splits data before evaluation
-  # X = data.drop("readmitted", axis=1)
-  # y = data["readmitted"]
-  # X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
+  # Splits data before evaluation
+  X = data.drop("readmitted", axis=1)
+  y = data["readmitted"]
+  X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
 
-  # data_train = concat([DataFrame(X_train), DataFrame(y_train)], axis=1)
+  data_train = concat([DataFrame(X_train), DataFrame(y_train)], axis=1)
 
-  # balancing = Balancing(data_train)
-  # data = balancing.compute_balancing()
+  balancing = Balancing(data_train)
+  data = balancing.compute_balancing()
 
-  # data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN)
+  data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN)
   
-  # data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
-  # data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
+  data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
+  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
 
   # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
-  data_train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
-  data_test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
+  # data_train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
+  # data_test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
 
   # nbClassifier = NBClassifier(data_train, data_test)
   # nbClassifier.explore_best_nb_value()
@@ -109,9 +118,9 @@ if __name__ == "__main__":
   # k, approach = knn_class.explore_best_k_value(method="large")
   # knn_class.compute_knn_best_results(k , approach)
 
-  dt_classifier = DTClassifier(data_train, data_test)
-  criteria, depth, impurity = dt_classifier.compute_best_dt()
-  dt_classifier.explore_best_tree_graph_light()
-  dt_classifier.compute_dt_best_matrix_results(depth, criteria, impurity)
-  dt_classifier.compute_dt_feature_importance()
-  dt_classifier.compute_best_dt_overfit(criteria, impurity)
+  # dt_classifier = DTClassifier(data_train, data_test)
+  # criteria, depth, impurity = dt_classifier.compute_best_dt()
+  # dt_classifier.explore_best_tree_graph_light()
+  # dt_classifier.compute_dt_best_matrix_results(depth, criteria, impurity)
+  # dt_classifier.compute_dt_feature_importance()
+  # dt_classifier.compute_best_dt_overfit(criteria, impurity)

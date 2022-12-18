@@ -14,7 +14,7 @@ class Balancing:
     return self.data
 
   def get_symbolic_index_array(self):
-    headers = ['fips', 'SQ1', 'SQ2', 'SQ3', 'SQ4', 'SQ7']
+    headers = ['fips', 'SQ1', 'SQ3', 'SQ4']
     result = []
     for h in headers:
       result.append(self.data.columns.get_loc(h))
