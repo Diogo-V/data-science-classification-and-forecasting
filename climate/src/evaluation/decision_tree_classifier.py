@@ -62,11 +62,13 @@ class DTClassifier:
 
     return best[0], best[1], best[2]
 
-  def explore_best_tree_graph_light(self):
+  def explore_best_tree_graph_light(self, depth, criteria, impurity):
     if self.best_model is None:
       print("You have to run the explore best dt before this function :)")
     labels = [str(value) for value in self.labels]
-    sklearn_tree.plot_tree(self.best_model, feature_names=self.data_train.columns, class_names=labels)
+    tree = DecisionTreeClassifier(max_depth=depth, criterion=criteria, min_impurity_decrease=impurity)
+    tree.fit(self.trnX, self.trnY)
+    sklearn_tree.plot_tree(tree, feature_names=self.data_train.columns, class_names=labels)
     savefig('climate/records/evaluation/dt_tree_light.png')
 
   def explore_dt_best_matrix_results(self, depth: int, criteria: str, impurity: int):
