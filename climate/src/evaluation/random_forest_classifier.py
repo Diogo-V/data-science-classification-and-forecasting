@@ -29,8 +29,8 @@ class RTClassifier:
     figure()
     fig, axs = subplots(1, cols, figsize=(cols*HEIGHT, HEIGHT), squeeze=False)
     for k in range(len(self.max_depths)):
-        print(f"Depth: {k}")
         d = self.max_depths[k]
+        print(f"Depth: {d}")
         values = {}
         for f in self.max_features:
             print(f"Features: {f}")

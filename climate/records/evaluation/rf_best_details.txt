@@ -1,1 +1,1 @@
-Best approach: Max Depth = 25 with 0.7 features and 200 estimators
+Best approach: Max Depth = 25 with 0.7 features and 400 estimators

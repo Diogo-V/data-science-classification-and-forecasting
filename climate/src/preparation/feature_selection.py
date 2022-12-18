@@ -25,7 +25,7 @@ class FeatureSelection:
 
         return drop
 
-    def select_redundant(self, corr_mtx) -> tuple[dict, pd.DataFrame]:
+    def select_redundant(self, corr_mtx):
         if corr_mtx.empty:
             return {}
 
