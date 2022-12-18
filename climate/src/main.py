@@ -64,10 +64,10 @@ if __name__ == "__main__":
 
   # balancing = Balancing(data_train)
   # data = balancing.compute_balancing()
-  # data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN)
+  # data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN, index=False)
   
   # data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
-  # data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST)
+  # data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST, index=False)
 
   # # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
