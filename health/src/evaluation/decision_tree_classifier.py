@@ -69,7 +69,7 @@ class DTClassifier:
     sklearn_tree.plot_tree(self.best_model, feature_names=self.data_train.columns, class_names=labels)
     savefig('health/records/evaluation/dt_tree_light.png')
 
-  def compute_dt_best_matrix_results(self, depth: int, criteria: str, impurity: int):
+  def explore_dt_best_matrix_results(self, depth: int, criteria: str, impurity: int):
     print('Computing best Decision Tree results...')
     labels = pd.unique(self.tstY)
     labels.sort()
@@ -99,7 +99,7 @@ class DTClassifier:
     f.write("Test\n")
     f.write(classification_report(self.tstY, prd_tst,target_names=labels_str))
 
-  def compute_dt_feature_importance(self):
+  def explore_dt_feature_importance(self):
     if self.best_model is None:
       print("You have to run the explore best dt before this function :)")
     
@@ -118,7 +118,7 @@ class DTClassifier:
     horizontal_bar_chart(elems, imp_values, error=None, title='Decision Tree Features importance', xlabel='importance', ylabel='variables')
     savefig(f'health/records/evaluation/dt_feature_ranking.png')
 
-  def compute_best_dt_overfit(self, criteria: str, impurity: int):
+  def explore_best_dt_overfit(self, criteria: str, impurity: int):
 
     def plot_overfitting_study(t, xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=True):
       evals = {'Train': prd_trn, 'Test': prd_tst}

@@ -33,50 +33,50 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation -------  ---------------------- #
 
-  # data = read_csv(FILE_PATH, na_values='na')
+  data = read_csv(FILE_PATH, na_values='na')
 
-  # parser = Parser(data)
-  # data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
+  parser = Parser(data)
+  data = parser.parse_dataset(PREPARATION_OUT_FILE_PATH)
 
-  # outliers = OutliersImputation(data)
-  # data = outliers.compute_outliers()
+  outliers = OutliersImputation(data)
+  data = outliers.compute_outliers()
   
-  # scaling = Scaling(data)
-  # data = scaling.compute_scale()
+  scaling = Scaling(data)
+  data = scaling.compute_scale()
 
-  # # Feature Selection
-  # feature_Selection = FeatureSelection(data)
-  # vars_2drop = feature_Selection.explore_redundat()
-  # data = feature_Selection.drop_redundant(vars_2drop)
-  # data.to_csv(FEATURE_SELECTION_OUT_FILE_PATH_TRAIN)
-  # feature_Selection.select_low_variance(data)
+  # Feature Selection
+  feature_Selection = FeatureSelection(data)
+  vars_2drop = feature_Selection.explore_redundat()
+  data = feature_Selection.drop_redundant(vars_2drop)
+  data.to_csv(FEATURE_SELECTION_OUT_FILE_PATH_TRAIN)
+  feature_Selection.select_low_variance(data)
   
-  # # Remove single values columns
-  # ms = ['NVG_LAND', 'SQ5', 'SQ6']
-  # data = data.drop(columns=ms)
+  # Remove single values columns
+  ms = ['NVG_LAND', 'SQ5', 'SQ6']
+  data = data.drop(columns=ms)
 
-  # # Splits data before evaluation
-  # X = data.drop("class", axis=1)
-  # y = data["class"]
-  # X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
+  # Splits data before evaluation
+  X = data.drop("class", axis=1)
+  y = data["class"]
+  X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7)
 
-  # data_train = concat([DataFrame(X_train), DataFrame(y_train)], axis=1)
+  data_train = concat([DataFrame(X_train), DataFrame(y_train)], axis=1)
 
-  # balancing = Balancing(data_train)
-  # data = balancing.compute_balancing()
-  # data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN, index=False)
+  balancing = Balancing(data_train)
+  data = balancing.compute_balancing()
+  data.to_csv(PREPARATION_OUT_FILE_PATH_TRAIN, index=False)
   
-  # data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
-  # data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST, index=False)
+  data_test = concat([DataFrame(X_test), DataFrame(y_test)], axis=1)
+  data_test.to_csv(PREPARATION_OUT_FILE_PATH_TEST, index=False)
 
   # # ----------------------------- 3º Phase -> Evaluation -------  ---------------------- #
 
   data_train = read_csv(PREPARATION_OUT_FILE_PATH_TRAIN, na_values='na')
   data_test = read_csv(PREPARATION_OUT_FILE_PATH_TEST, na_values='na')
 
-  nbClassifier = NBClassifier(data_train, data_test)
+  # nbClassifier = NBClassifier(data_train, data_test)
   # nbClassifier.explore_best_nb_value()
-  nbClassifier.compute_nb_best_results()
+  # nbClassifier.compute_nb_best_results()
 
   # knn_class = Knn_classifier(data_train, data_test)
   # k, approach = knn_class.explore_best_k_value(method="large")
@@ -86,9 +86,9 @@ if __name__ == "__main__":
   # rtClassifier.explore_best_rt()
   # rtClassifier.compute_best_rt_results(25, 0.7, 200)
 
-  # dt_classifier = DTClassifier(data_train, data_test)
-  # criteria, depth, impurity = dt_classifier.compute_best_dt()
-  # dt_classifier.explore_best_tree_graph_light()
-  # dt_classifier.compute_dt_best_matrix_results(depth, criteria, impurity)
-  # dt_classifier.compute_dt_feature_importance()
-  # dt_classifier.compute_best_dt_overfit(criteria, impurity)
+  dt_classifier = DTClassifier(data_train, data_test)
+  criteria, depth, impurity = dt_classifier.compute_best_dt()
+  dt_classifier.explore_best_tree_graph_light()
+  dt_classifier.explore_dt_best_matrix_results(depth, criteria, impurity)
+  dt_classifier.explore_dt_feature_importance()
+  dt_classifier.explore_best_dt_overfit(criteria, impurity)
