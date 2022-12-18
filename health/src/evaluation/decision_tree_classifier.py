@@ -31,7 +31,7 @@ class DTClassifier:
     self.tstX: ndarray = data_test.values
 
     self.min_impurity_decrease = [0.01, 0.005, 0.0025, 0.001, 0.0005]
-    self.max_depths = [2, 5, 10, 15, 20, 25]
+    self.max_depths = [2, 5, 10, 15, 20, 25, 35, 40]
     self.criteria = ['entropy', 'gini']
     self.best = ('',  0, 0.0)
     self.last_best = 0
@@ -120,18 +120,19 @@ class DTClassifier:
 
   def compute_best_dt_overfit(self, criteria: str, impurity: int):
 
-    def plot_overfitting_study(xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=True):
+    def plot_overfitting_study(t, xvalues, prd_trn, prd_tst, name, xlabel, ylabel, pct=True):
       evals = {'Train': prd_trn, 'Test': prd_tst}
       figure()
       multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=pct)
-      savefig('health/records/evaluation/dt_overfitting_exploration.png')
+      savefig(f'health/records/evaluation/dt_overfitting_exploration_{t}.png')
 
     print("Computing best decision tree overfitting....")
     imp = impurity
     f = criteria
-    eval_metric = accuracy_score
     y_tst_values = []
     y_trn_values = []
+    y_test_values_f1 = []
+    y_train_values_f1 = []
     figure()
     for d in self.max_depths:
         tree = DecisionTreeClassifier(max_depth=d, criterion=f, min_impurity_decrease=imp)
@@ -139,6 +140,9 @@ class DTClassifier:
         prdY = tree.predict(self.tstX)
         prd_tst_Y = tree.predict(self.tstX)
         prd_trn_Y = tree.predict(self.trnX)
-        y_tst_values.append(eval_metric(self.tstY, prd_tst_Y))
-        y_trn_values.append(eval_metric(self.trnY, prd_trn_Y))
-    plot_overfitting_study(self.max_depths, y_trn_values, y_tst_values, name=f'DT=imp{imp}_{f}', xlabel='max_depth', ylabel=str(eval_metric))
+        y_tst_values.append(accuracy_score(self.tstY, prd_tst_Y))
+        y_trn_values.append(accuracy_score(self.trnY, prd_trn_Y))
+        y_test_values_f1.append(f1_score(self.tstY, prd_tst_Y, average="macro"))
+        y_train_values_f1.append(f1_score(self.trnY, prd_trn_Y, average="macro"))
+    plot_overfitting_study('accuracy', self.max_depths, y_trn_values, y_tst_values, name=f'DT=imp{imp}_{f}_accuracy', xlabel='max_depth', ylabel=str(accuracy_score))
+    plot_overfitting_study('f1', self.max_depths, y_train_values_f1, y_test_values_f1, name=f'DT=imp{imp}_{f}_f1', xlabel='max_depth', ylabel=str(f1_score))
