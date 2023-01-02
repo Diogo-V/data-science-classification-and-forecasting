@@ -1,4 +1,6 @@
 climate/resources
 health/resources
+climate-forecasting/resources
+health-forecasting/resources
 
 __pycache__
