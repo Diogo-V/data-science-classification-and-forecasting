@@ -4,9 +4,6 @@ from sklearn.model_selection import train_test_split
 
 from profiling.profiling import Profiler
 
-RECORDS_PATH = 'health/records'
-PROFILING_PATH = RECORDS_PATH + '/profiling'
-
 INPUT_FILE_PATH = 'climate-forecasting/resources/data/drought.forecasting_dataset.csv'
 
 if __name__ == "__main__":
@@ -18,4 +15,9 @@ if __name__ == "__main__":
 #   profiler.explore_dimensionality()
 #   profiler.explore_granularity()
 #   profiler.explore_distribution_boxplots()
-  profiler.explore_distribution_histograms()
+#   profiler.explore_distribution_histograms()
+  profiler.explore_count_data_types()
+
+  # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
+  
+  ## As shown by explore_count_data_types, there are no missing values for this dataset

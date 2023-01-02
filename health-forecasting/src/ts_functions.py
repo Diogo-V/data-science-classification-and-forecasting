@@ -98,6 +98,36 @@ def plot_forecasting_series(trn, tst, prd_trn, prd_tst, figname: str, x_label: s
     ax.plot(tst.index, prd_tst, '--r', label='test prediction')
     ax.legend(prop={'size': 5})
 
+def plot_series_multivariate(series, ax: Axes = None, title: str = '', x_label: str = '', y_label: str = '',
+                percentage=False, show_std=False):
+    if ax is None:
+        ax = gca()
+    ax.set_title(title)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    if percentage:
+        ax.set_ylim(0.0, 1.0)
+
+    legend: list = []
+    i = 0
+    for name in series.keys():
+        y = series[name]
+        ax.set_xlim(y.index[0], y.index[-1])
+        std = y.std()
+        ax.plot(y, c=cfg.ACTIVE_COLORS[i], label=name, alpha=0.5)
+        if show_std:
+            y1 = y.add(-std)
+            y2 = y.add(std)
+            ax.fill_between(y.index, y1.values, y2.values, color=cfg.ACTIVE_COLORS[i], alpha=0.2)
+        i += 1
+        legend.append(name)
+    ax.legend(legend)
+
+    locator = mdates.AutoDateLocator()
+    formatter = mdates.DateFormatter('%Y-%m-%d')
+    ax.xaxis.set_major_locator(locator)
+    ax.xaxis.set_major_formatter(formatter)
+
 def plot_series(series, ax: Axes = None, title: str = '', x_label: str = '', y_label: str = '',
                 percentage=False, show_std=False):
     if ax is None:
@@ -140,4 +170,3 @@ def plot_components(series: Series,  x_label: str = 'time', y_label:str =''):
         axs[i].set_ylabel(y_label)
         axs[i].set_xlabel(x_label)
         axs[i].plot(lst[i][1])
-

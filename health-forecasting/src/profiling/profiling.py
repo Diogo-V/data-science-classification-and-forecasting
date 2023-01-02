@@ -2,6 +2,7 @@ from matplotlib import legend
 import pandas as pd
 from matplotlib.pyplot import figure, xticks, savefig, subplots, show
 from ts_functions import plot_series_multivariate, HEIGHT
+import numpy as np
 
 class Profiler:
 
