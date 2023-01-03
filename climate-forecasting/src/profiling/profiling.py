@@ -1,7 +1,8 @@
 from matplotlib import legend
 import pandas as pd
 from matplotlib.pyplot import figure, xticks, savefig, subplots, show
-from ts_functions import plot_series_multivariate, HEIGHT
+from ts_functions import plot_series_multivariate, HEIGHT, plot_series
+from numpy import ones
 
 class Profiler:
 
@@ -109,3 +110,22 @@ class Profiler:
             axs[j].legend(loc="upper right", prop={'size': 5})
     
         savefig(f'climate-forecasting/records/profiling/distribution_histograms_{g}.png')
+
+  def explore_stationary(self):
+    BINS = 10
+    line = []
+
+    dt_series = pd.Series(self.data['QV2M'])
+
+    n = len(dt_series)
+    for i in range(BINS):
+        b = dt_series[i*n//BINS:(i+1)*n//BINS]
+        mean = [b.mean()] * (n//BINS)
+        line += mean
+    line += [line[-1]] * (n - len(line))
+    mean_line = pd.Series(line, index=dt_series.index)
+    series = {'QV2M': dt_series, 'mean': mean_line}
+    figure(figsize=(3*HEIGHT, HEIGHT))
+    plot_series(series, x_label='time', y_label='consumptions', title='Stationary study', show_std=True)
+    
+    savefig(f'climate-forecasting/records/profiling/stationary.png')

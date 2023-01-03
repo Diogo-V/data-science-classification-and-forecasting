@@ -16,7 +16,8 @@ if __name__ == "__main__":
 #   profiler.explore_granularity()
 #   profiler.explore_distribution_boxplots()
 #   profiler.explore_distribution_histograms()
-  profiler.explore_count_data_types()
+#   profiler.explore_count_data_types()
+  profiler.explore_stationary()
 
   # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
   
