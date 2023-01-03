@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split
 from profiling.profiling import Profiler
 from preparation.scaling import Scaling
 
+from transformation.differentiation import Differentiation
+
 INPUT_FILE_PATH = 'climate-forecasting/resources/data/drought.forecasting_dataset.csv'
 
 if __name__ == "__main__":
@@ -26,4 +28,8 @@ if __name__ == "__main__":
   ## As shown by explore_count_data_types, there are no missing values for this dataset
   
   scaling = Scaling(data)
-  data = scaling.explore_scaling()
+  data = scaling.compute_scale()
+
+  differentiation = Differentiation(data)
+  data = differentiation.explore_differentiation()
+
