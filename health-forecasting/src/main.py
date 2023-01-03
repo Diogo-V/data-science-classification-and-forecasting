@@ -13,22 +13,22 @@ INPUT_FILE_PATH = 'health-forecasting/resources/data/glucose.csv'
 if __name__ == "__main__":
 
     # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
-    data = read_csv(INPUT_FILE_PATH, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+    data = read_csv(INPUT_FILE_PATH, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
 
     #  profiler = Profiler(data)
     #  profiler.explore_count_data_types()
 
     # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
-    # mvi = MVImputation(data)
-    # data = mvi.approach_1()
-    # data = mvi.approach_2()
+    mvi = MVImputation(data)
+    mvi.explore_mv_imputation()
+    data = mvi.compute_mv_imputation("approach_2")
 
     ## Does it even make sense to apply scaling?
     # scaling = Scaling(data)
     # data = scaling.explore_scaling()
     
     # TODO: @Carlos -> After solving MVI, remove the following line:
-    data = data.dropna(inplace=False)
+    # data = data.dropna(inplace=False)
 
-    differentiation = Differentiation(data)
-    data = differentiation.explore_differentiation()
+    # differentiation = Differentiation(data)
+    # data = differentiation.explore_differentiation()

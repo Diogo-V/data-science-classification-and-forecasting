@@ -23,6 +23,12 @@ class MVImputation:
 
         self.data: pd.DataFrame = data
 
+    def explore_mv_imputation(self):
+        self.approach_1()
+        self.data = pd.read_csv('health-forecasting/resources/data/glucose.csv', index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+        self.approach_2()
+        self.data = pd.read_csv('health-forecasting/resources/data/glucose.csv', index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
+
     def compute_mv_imputation(self, approach) -> pd.DataFrame:
         if approach == "1":
             return self.approach_1_compute()
@@ -37,24 +43,14 @@ class MVImputation:
         - Evaluate with Rolling Mean
         """
 
-        date_var = ["Date"]
-        other_vars = ["Insulin", "Glucose"]
-
         imputer = SimpleImputer(strategy='mean', missing_values=np.nan, copy=True)
-        temp_df = pd.DataFrame(imputer.fit_transform(self.data[other_vars]), columns=other_vars)
-
-        self.data = pd.concat([self.data[date_var], temp_df], axis=1)
-        self.data.index = self.data.index
-
-        self.data.to_csv(f'health-forecasting/resources/data/data_mvi_approach1.csv', index=False)
-        self.data = pd.read_csv(f'health-forecasting/resources/data/data_mvi_approach1.csv', index_col="Date", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
-
+        temp_df = pd.DataFrame(imputer.fit_transform(self.data), columns=["Insulin", "Glucose"])
+        temp_df.index = self.data.index
+        self.data = temp_df
         self.simple_average("approach_1")
+        self.rolling_mean("approach_1")
 
-
-        return self.data
-
-    def approach_2(self) -> pd.DataFrame:
+    def approach_2(self):
         """
         - Drop all records with missing values
 
@@ -63,13 +59,8 @@ class MVImputation:
         """
 
         self.drop_records()
-
-        self.data.to_csv(f'health-forecasting/resources/data/data_mvi_approach2.csv', index=False)
-        self.data = pd.read_csv(f'health-forecasting/resources/data/data_mvi_approach2.csv', index_col="Date", sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
-
         self.simple_average("approach_2")
-
-        return self.data
+        self.rolling_mean("approach_2")
 
     def approach_1_compute(self) -> pd.DataFrame:
         """
@@ -78,6 +69,12 @@ class MVImputation:
         - Evaluate with Simple Average
         - Evaluate with Rolling Mean
         """
+        imputer = SimpleImputer(strategy='mean', missing_values=np.nan, copy=True)
+        temp_df = pd.DataFrame(imputer.fit_transform(self.data), columns=["Insulin", "Glucose"])
+        temp_df.index = self.data.index
+
+        self.data = temp_df
+        #self.data.to_csv(f'health-forecasting/resources/data/data_mvi_approach1.csv', index=True)
 
     def approach_2_compute(self) -> pd.DataFrame:
         """
@@ -86,6 +83,9 @@ class MVImputation:
         - Evaluate with Simple Average
         - Evaluate with Rolling Mean
         """
+
+        self.drop_records()
+        #self.data.to_csv(f'health-forecasting/resources/data/data_mvi_approach2.csv', index=True)
 
     def drop_column(self, column_name: str):
         self.data = self.data.drop(columns=[column_name])	
@@ -116,10 +116,7 @@ class MVImputation:
 
     def simple_average(self, approach):
 
-        print(self.data.head())
-
         train, test = self.split_dataframe(trn_pct=0.75)
-        flag_pct = False
         eval_results = {}
 
         measure = "R2"
@@ -137,6 +134,26 @@ class MVImputation:
         self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/preparation/{approach}_{measure}_simple_avg_plots', x_label="Date", y_label="Glucose")
         plt.savefig(f'health-forecasting/records/preparation/{approach}_{measure}_simple_avg_plots.png')
 
+    def rolling_mean(self, approach: str) -> None:
+
+        train, test = self.split_dataframe(trn_pct=0.75)
+        eval_results = {}
+
+        fr_mod = RollingMeanRegressor()
+        fr_mod.fit(train)
+        prd_trn = fr_mod.predict(train)
+        prd_tst = fr_mod.predict(test)
+
+        measure = "R2"
+        eval_results['RollingMean'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
+        print(eval_results)
+        
+        plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/preparation/{approach}_{measure}_rolling_mean_eval')
+        plt.savefig(f'health-forecasting/records/preparation/{approach}_{measure}_rolling_mean_eval.png')
+        self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/preparation/{approach}_{measure}_rolling_mean_plots', x_label="Date", y_label="Glucose")
+        plt.savefig(f'health-forecasting/records/preparation/{approach}_{measure}_rolling_mean_plots.png')
+
+
 class SimpleAvgRegressor (RegressorMixin):
     def __init__(self):
         super().__init__()
@@ -147,4 +164,19 @@ class SimpleAvgRegressor (RegressorMixin):
 
     def predict(self, X: pd.DataFrame):
         prd =  len(X) * [self.mean]
+        return prd
+
+
+class RollingMeanRegressor (RegressorMixin):
+    def __init__(self, win: int = 3):
+        super().__init__()
+        self.win_size = win
+
+    def fit(self, X: pd.DataFrame):
+        None
+
+    def predict(self, X: pd.DataFrame):
+        prd = len(X) * [0]
+        for i in range(len(X)):
+            prd[i] = X[max(0, i-self.win_size+1):i+1].mean()
         return prd
