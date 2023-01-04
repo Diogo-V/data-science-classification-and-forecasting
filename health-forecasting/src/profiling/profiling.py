@@ -1,13 +1,18 @@
-from matplotlib import legend
 import pandas as pd
-from matplotlib.pyplot import figure, xticks, savefig, subplots, show
+from matplotlib.pyplot import figure, xticks, savefig, subplots
 from ts_functions import plot_series_multivariate, HEIGHT, plot_series
-from numpy import ones
 
 class Profiler:
 
   def __init__(self, data: pd.DataFrame) -> None:
     self.data = data
+
+    self.data = self.data.drop(columns=['Insulin'])	
+
+    index = self.data.index.to_period('D')
+    self.daily_df = self.data.copy().groupby(index).mean()
+    self.daily_df['date'] = index.drop_duplicates().to_timestamp()
+    self.daily_df.set_index('date', drop=True, inplace=True)
 
     index = self.data.index.to_period('W')
     self.week_df = self.data.copy().groupby(index).mean()
@@ -27,11 +32,11 @@ class Profiler:
 
   def explore_dimensionality(self):
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.data, x_label='date', y_label='values', title='DROUGHT')
+    plot_series_multivariate(self.data, x_label='Time', title='Glucose')
     xticks(rotation = 45)
-    savefig('climate-forecasting/records/profiling/distribution.png')
+    savefig('health-forecasting/records/profiling/distribution.png')
 
-    f = open('climate-forecasting/records/profiling/distribution_details.txt', 'w')
+    f = open('health-forecasting/records/profiling/distribution_details.txt', 'w')
     f.write(f"Nr. Records = {self.data.shape[0]}\n")
     f.write(f"First Date = {self.data.index[0]}\n")
     f.write(f"Last Date = {self.data.index[-1]}\n")
@@ -41,22 +46,27 @@ class Profiler:
   def explore_granularity(self):
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.data, title='Daily values', x_label='date', y_label='consumption')
+    plot_series_multivariate(self.daily_df, title='Hour values', x_label='date', y_label='glucose')
     xticks(rotation = 45)
-    savefig('climate-forecasting/records/profiling/granularity_day.png')
+    savefig('health-forecasting/records/profiling/granularity_hour.png')
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.week_df, title='Weekly values', x_label='date', y_label='consumption')
+    plot_series_multivariate(self.daily_df, title='Daily values', x_label='date', y_label='glucose')
     xticks(rotation = 45)
-    savefig('climate-forecasting/records/profiling/granularity_week.png')
+    savefig('health-forecasting/records/profiling/granularity_day.png')
+
+    figure(figsize=(3*HEIGHT, 3*HEIGHT))
+    plot_series_multivariate(self.week_df, title='Weekly values', x_label='date', y_label='glucose')
+    xticks(rotation = 45)
+    savefig('health-forecasting/records/profiling/granularity_week.png')
     
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series_multivariate(self.month_df, title='Monthly values', x_label='date', y_label='consumption')
-    savefig('climate-forecasting/records/profiling/granularity_month.png')
+    plot_series_multivariate(self.month_df, title='Monthly values', x_label='date', y_label='glucose')
+    savefig('health-forecasting/records/profiling/granularity_month.png')
 
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series_multivariate(self.quarter_df, title='Quarterly values', x_label='date', y_label='consumption')
-    savefig('climate-forecasting/records/profiling/granularity_quaterly.png')
+    plot_series_multivariate(self.quarter_df, title='Quarterly values', x_label='date',  y_label='glucose')
+    savefig('health-forecasting/records/profiling/granularity_quaterly.png')
 
 
   def explore_count_data_types(self) -> None:
@@ -80,7 +90,7 @@ class Profiler:
     Analizes distribution through the 5-number summary and boxplots. It is doing for the most atomic time series (daily)
   """ 
   def explore_distribution_boxplots(self):
-    f = open('climate-forecasting/records/profiling/distribution_boxplot_daily_details.txt', 'w')
+    f = open('health-forecasting/records/profiling/distribution_boxplot_hourly_details.txt', 'w')
     f.write(f"Daily\n")
     f.write(str(self.data.describe()))
     f.close()
@@ -88,28 +98,25 @@ class Profiler:
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
     self.data.boxplot()
-    savefig('climate-forecasting/records/profiling/distribution_boxplot_daily.png')
+    savefig('health-forecasting/records/profiling/distribution_boxplot_hourly.png')
 
 
   def explore_distribution_histograms(self):
-    labels = ["PRECTOT", "PS", "T2M", "T2MDEW", "T2MWET", "TS", "QV2M"]
 
-    granularity = ['daily', 'weekly', 'monthly']
+    granularity = ['hourly', 'daily', 'weekly', 'monthly']
 
-    data = [self.data, self.week_df, self.month_df]
+    data = [self.data, self.daily_df, self.week_df, self.month_df]
 
     for g in granularity:
         index = granularity.index(g)
         bins = (10, 25, 50)
         _, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT, HEIGHT))
         for j in range(len(bins)):
-            axs[j].set_title(f'Histogram for {g} {bins[j]} bins')
-            axs[j].set_xlabel('consumption')
+            axs[j].set_title(f'Histogram for {g} Glucose {bins[j]} bins')
             axs[j].set_ylabel('Nr records')
-            axs[j].hist(data[index].values, bins=bins[j], label=labels)
-            axs[j].legend(loc="upper right", prop={'size': 5})
+            axs[j].hist(data[index].values, bins=bins[j])
     
-        savefig(f'climate-forecasting/records/profiling/distribution_histograms_{g}.png')
+        savefig(f'health-forecasting/records/profiling/distribution_histograms_{g}.png')
 
   def explore_stationary(self):
     BINS = 10
@@ -126,6 +133,6 @@ class Profiler:
     mean_line = pd.Series(line, index=dt_series.index)
     series = {'QV2M': dt_series, 'mean': mean_line}
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series(series, x_label='time', y_label='consumptions', title='Stationary study', show_std=True)
+    plot_series(series, x_label='Time', title='Stationary study', show_std=True,  y_label='glucose')
     
-    savefig(f'climate-forecasting/records/profiling/stationary.png')
+    savefig(f'health-forecasting/records/profiling/stationary.png')

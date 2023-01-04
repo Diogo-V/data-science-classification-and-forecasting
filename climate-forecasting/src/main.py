@@ -12,24 +12,25 @@ INPUT_FILE_PATH = 'climate-forecasting/resources/data/drought.forecasting_datase
 if __name__ == "__main__":
 
   # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
-  # data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+  data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst= True)
 
-  # profiler = Profiler(data)
-  # profiler.explore_dimensionality()
-  # profiler.explore_granularity()
-  # profiler.explore_distribution_boxplots()
-  # profiler.explore_distribution_histograms()
+  profiler = Profiler(data)
+  profiler.explore_dimensionality()
+  profiler.explore_granularity()
+  profiler.explore_distribution_boxplots()
+  profiler.explore_distribution_histograms()
+  profiler.explore_stationary()
   # profiler.explore_count_data_types()
 
   # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
   
-  data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+  # data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
 
-  ## As shown by explore_count_data_types, there are no missing values for this dataset
+  # ## As shown by explore_count_data_types, there are no missing values for this dataset
   
-  scaling = Scaling(data)
-  data = scaling.compute_scale()
+  # scaling = Scaling(data)
+  # data = scaling.compute_scale()
 
-  differentiation = Differentiation(data)
-  data = differentiation.explore_differentiation()
+  # differentiation = Differentiation(data)
+  # data = differentiation.explore_differentiation()
 

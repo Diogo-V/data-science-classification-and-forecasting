@@ -15,13 +15,17 @@ if __name__ == "__main__":
     # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
     data = read_csv(INPUT_FILE_PATH, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
 
-    #  profiler = Profiler(data)
-    #  profiler.explore_count_data_types()
+    profiler = Profiler(data)
+    profiler.explore_dimensionality()
+    profiler.explore_granularity()
+    profiler.explore_distribution_boxplots()
+    profiler.explore_distribution_histograms()
+    profiler.explore_stationary()
 
     # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
-    mvi = MVImputation(data)
-    mvi.explore_mv_imputation()
-    data = mvi.compute_mv_imputation("approach_2")
+    # mvi = MVImputation(data)
+    # mvi.explore_mv_imputation()
+    # data = mvi.compute_mv_imputation("approach_2")
 
     ## Does it even make sense to apply scaling?
     # scaling = Scaling(data)

@@ -1,13 +1,20 @@
 from matplotlib import legend
 import pandas as pd
 from matplotlib.pyplot import figure, xticks, savefig, subplots, show
-from ts_functions import plot_series_multivariate, HEIGHT, plot_series
+from ts_functions import plot_series, HEIGHT, plot_series
 from numpy import ones
 
 class Profiler:
 
   def __init__(self, data: pd.DataFrame) -> None:
     self.data = data
+
+    self.data = self.data.drop(columns=['PRECTOT'])	
+    self.data = self.data.drop(columns=['PS'])	
+    self.data = self.data.drop(columns=['T2M'])	
+    self.data = self.data.drop(columns=['T2MDEW'])	
+    self.data = self.data.drop(columns=['T2MWET'])	
+    self.data = self.data.drop(columns=['TS'])	
 
     index = self.data.index.to_period('W')
     self.week_df = self.data.copy().groupby(index).mean()
@@ -27,7 +34,7 @@ class Profiler:
 
   def explore_dimensionality(self):
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.data, x_label='date', y_label='values', title='DROUGHT')
+    plot_series(self.data, x_label='date', title='QV2M')
     xticks(rotation = 45)
     savefig('climate-forecasting/records/profiling/distribution.png')
 
@@ -41,21 +48,21 @@ class Profiler:
   def explore_granularity(self):
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.data, title='Daily values', x_label='date', y_label='consumption')
+    plot_series(self.data, title='Daily values', x_label='date', y_label="QV2M")
     xticks(rotation = 45)
     savefig('climate-forecasting/records/profiling/granularity_day.png')
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.week_df, title='Weekly values', x_label='date', y_label='consumption')
+    plot_series(self.week_df, title='Weekly values', x_label='date', y_label="QV2M")
     xticks(rotation = 45)
     savefig('climate-forecasting/records/profiling/granularity_week.png')
     
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series_multivariate(self.month_df, title='Monthly values', x_label='date', y_label='consumption')
+    plot_series(self.month_df, title='Monthly values', x_label='date', y_label="QV2M")
     savefig('climate-forecasting/records/profiling/granularity_month.png')
 
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series_multivariate(self.quarter_df, title='Quarterly values', x_label='date', y_label='consumption')
+    plot_series(self.quarter_df, title='Quarterly values', x_label='date', y_label="QV2M")
     savefig('climate-forecasting/records/profiling/granularity_quaterly.png')
 
 
@@ -92,7 +99,6 @@ class Profiler:
 
 
   def explore_distribution_histograms(self):
-    labels = ["PRECTOT", "PS", "T2M", "T2MDEW", "T2MWET", "TS", "QV2M"]
 
     granularity = ['daily', 'weekly', 'monthly']
 
@@ -103,11 +109,10 @@ class Profiler:
         bins = (10, 25, 50)
         _, axs = subplots(1, len(bins), figsize=(len(bins)*HEIGHT, HEIGHT))
         for j in range(len(bins)):
-            axs[j].set_title(f'Histogram for {g} {bins[j]} bins')
-            axs[j].set_xlabel('consumption')
+            axs[j].set_title(f'Histogram for {g} QV2M {bins[j]} bins')
             axs[j].set_ylabel('Nr records')
-            axs[j].hist(data[index].values, bins=bins[j], label=labels)
-            axs[j].legend(loc="upper right", prop={'size': 5})
+            axs[j].set_xlabel('QV2M')
+            axs[j].hist(data[index].values, bins=bins[j])
     
         savefig(f'climate-forecasting/records/profiling/distribution_histograms_{g}.png')
 
@@ -126,6 +131,6 @@ class Profiler:
     mean_line = pd.Series(line, index=dt_series.index)
     series = {'QV2M': dt_series, 'mean': mean_line}
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series(series, x_label='time', y_label='consumptions', title='Stationary study', show_std=True)
+    plot_series(series, x_label='date', title='Stationary study', show_std=True, y_label="QV2M")
     
     savefig(f'climate-forecasting/records/profiling/stationary.png')
