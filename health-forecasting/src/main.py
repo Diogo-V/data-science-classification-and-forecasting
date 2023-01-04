@@ -23,12 +23,7 @@ if __name__ == "__main__":
     mvi.explore_mv_imputation()
     data = mvi.compute_mv_imputation("approach_2")
 
-    ## Does it even make sense to apply scaling?
-    # scaling = Scaling(data)
-    # data = scaling.explore_scaling()
+    # No scaling applied due to few columns in dataset
     
-    # TODO: @Carlos -> After solving MVI, remove the following line:
-    # data = data.dropna(inplace=False)
-
-    # differentiation = Differentiation(data)
-    # data = differentiation.explore_differentiation()
+    differentiation = Differentiation(data)
+    data = differentiation.compute_differentiation()

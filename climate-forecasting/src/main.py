@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
   # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
   
-  data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True)
+  data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
 
   ## As shown by explore_count_data_types, there are no missing values for this dataset
   
@@ -31,5 +31,5 @@ if __name__ == "__main__":
   data = scaling.compute_scale()
 
   differentiation = Differentiation(data)
-  data = differentiation.explore_differentiation()
+  data = differentiation.compute_differentiation()
 

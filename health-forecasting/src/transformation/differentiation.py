@@ -37,7 +37,7 @@ class Differentiation:
 
   def plot_figure(self, data: pd.DataFrame, title: str) -> None:
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series(data, title=title, x_label='Date', y_label='QV2M')
+    plot_series(data, title=title, x_label='Date', y_label='Glucose')
     xticks(rotation = 45)
     savefig(f'health-forecasting/records/transformation/differentiation_{title}_plot.png')
 
@@ -89,7 +89,7 @@ class Differentiation:
 
       plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_eval')
       plt.savefig(f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_eval.png')
-      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_plots', x_label="date", y_label="QV2M")
+      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_plots', x_label="date", y_label="Glucose")
       plt.savefig(f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_plots.png')
 
   def rolling_mean(self, data: pd.DataFrame, approach: str) -> None:
@@ -108,7 +108,7 @@ class Differentiation:
     
     plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/{approach}_{measure}_rollingMean_eval.png')
     plt.savefig(f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_rollingMean_eval.png')
-    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_rollingMean_plots.png', x_label="date", y_label="QV2M")
+    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_rollingMean_plots.png', x_label="date", y_label="Glucose")
     plt.savefig(f'health-forecasting/records/transformation/differentiation_{approach}_{measure}_rollingMean_plots.png')
 
 
