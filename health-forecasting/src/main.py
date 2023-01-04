@@ -24,9 +24,9 @@ if __name__ == "__main__":
     profiler.explore_stationary()
 
     # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
-    # mvi = MVImputation(data)
-    # mvi.explore_mv_imputation()
-    # data = mvi.compute_mv_imputation("approach_2")
+    mvi = MVImputation(data)
+    mvi.explore_mv_imputation()
+    data = mvi.compute_mv_imputation("approach_2")
 
     # No scaling applied due to few columns in dataset
 

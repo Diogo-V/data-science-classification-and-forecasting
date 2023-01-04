@@ -1,7 +1,7 @@
 import pandas as pd
 from matplotlib.pyplot import figure, xticks, savefig, subplots
 from ts_functions import plot_series, HEIGHT, split_dataframe, PREDICTION_MEASURES, plot_evaluation_results
-from sklearn import RegressorMixin
+from sklearn.base import RegressorMixin
 
 
 class Smoothing:
@@ -23,7 +23,7 @@ class Smoothing:
         plot_series(smooth_df, title=f'Smoothing (win_size={size})', x_label='timestamp', y_label='insulin')
         xticks(rotation = 45)
         savefig(f'health-forecasting/records/transformation/smoothing_explore_{size}.png')
-        self.persistence_regressor(self.data, size)
+        self.persistence_regressor(smooth_df, size)
 
 
   def split_dataframe(data, trn_pct=0.70):
@@ -33,7 +33,7 @@ class Smoothing:
     test: pd.DataFrame = df_cp.iloc[trn_size:]
     return train, test
 
-  def plot_forecasting_series(trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
     _, ax = subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
@@ -44,7 +44,8 @@ class Smoothing:
     ax.plot(tst.index, prd_tst, '--r', label='test prediction')
     ax.legend(prop={'size': 5})
 
-  def persistence_regressor(self, data: pd.DateFrame, size: str):
+
+  def persistence_regressor(self, data: pd.DataFrame, size: str):
     train, test = split_dataframe(data, trn_pct=0.75)
 
     eval_results = {}
@@ -59,9 +60,7 @@ class Smoothing:
     print(f"{size} {eval_results}")
 
     plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_eval_{size}.png')
-    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_plots_{size}.png', x_label='date', y_label='glucose')
-
-
+    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_plots_{size}.png',  y_label='glucose')
 
 
 
