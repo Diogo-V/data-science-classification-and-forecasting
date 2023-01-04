@@ -11,7 +11,7 @@ class Smoothing:
 
     self.data = self.data.drop(columns=['Insulin'])	
 
-    self.win_sizes = [10, 50, 100, 200]
+    self.win_sizes = [10, 50, 100, 200, 300]
 
 
 
@@ -19,6 +19,7 @@ class Smoothing:
     for size in self.win_sizes:
         rolling = self.data.rolling(window=size)
         smooth_df = rolling.mean()
+        smooth_df = smooth_df.dropna()
         figure(figsize=(3*HEIGHT, HEIGHT/2))
         plot_series(smooth_df, title=f'Smoothing (win_size={size})', x_label='timestamp', y_label='insulin')
         xticks(rotation = 45)
@@ -71,7 +72,6 @@ class PersistenceRegressor (RegressorMixin):
 
     def fit(self, X: pd.DataFrame):
         self.last = X.iloc[-1,0]
-        print(self.last)
 
     def predict(self, X: pd.DataFrame):
         prd = X.shift().values
