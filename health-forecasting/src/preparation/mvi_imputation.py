@@ -73,7 +73,7 @@ class MVImputation:
         temp_df = pd.DataFrame(imputer.fit_transform(self.data), columns=["Insulin", "Glucose"])
         temp_df.index = self.data.index
 
-        self.data = temp_df
+        return temp_df
         #self.data.to_csv(f'health-forecasting/resources/data/data_mvi_approach1.csv', index=True)
 
     def approach_2_compute(self) -> pd.DataFrame:
@@ -84,7 +84,7 @@ class MVImputation:
         - Evaluate with Rolling Mean
         """
 
-        self.drop_records()
+        return self.drop_records()
         #self.data.to_csv(f'health-forecasting/resources/data/data_mvi_approach2.csv', index=True)
 
     def drop_column(self, column_name: str):
@@ -95,6 +95,7 @@ class MVImputation:
 
     def drop_records(self):
         self.data.dropna(axis=0, how='any', inplace=True)
+        return self.data
 
     def split_dataframe(self, trn_pct=0.70):
         trn_size = int(len(self.data) * trn_pct)

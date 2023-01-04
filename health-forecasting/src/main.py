@@ -7,6 +7,7 @@ from preparation.mvi_imputation import MVImputation
 from preparation.scaling import Scaling
 
 from transformation.differentiation import Differentiation
+from transformation.smoothing import Smoothing
 
 INPUT_FILE_PATH = 'health-forecasting/resources/data/glucose.csv'
 
@@ -27,12 +28,10 @@ if __name__ == "__main__":
     # mvi.explore_mv_imputation()
     # data = mvi.compute_mv_imputation("approach_2")
 
-    ## Does it even make sense to apply scaling?
-    # scaling = Scaling(data)
-    # data = scaling.explore_scaling()
-    
-    # TODO: @Carlos -> After solving MVI, remove the following line:
-    # data = data.dropna(inplace=False)
+    # No scaling applied due to few columns in dataset
 
+    smoothing = Smoothing(data)
+    data = smoothing.explore_smoothing()
+    
     # differentiation = Differentiation(data)
-    # data = differentiation.explore_differentiation()
+    # data = differentiation.compute_differentiation()

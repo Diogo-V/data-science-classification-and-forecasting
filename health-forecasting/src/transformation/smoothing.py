@@ -1,6 +1,6 @@
 import pandas as pd
 from matplotlib.pyplot import figure, xticks, savefig, subplots
-from ts_functions import plot_series, HEIGHT, split_dataframe, PREDICTION_MEASURES, plot_evaluation_results, plot_forecasting_series
+from ts_functions import plot_series, HEIGHT, split_dataframe, PREDICTION_MEASURES, plot_evaluation_results
 from sklearn import RegressorMixin
 
 
@@ -15,7 +15,7 @@ class Smoothing:
 
 
 
-  def explore_smoothing(self):
+  def explore_smoothing(self) -> None:
     for size in self.win_sizes:
         rolling = self.data.rolling(window=size)
         smooth_df = rolling.mean()
@@ -23,6 +23,7 @@ class Smoothing:
         plot_series(smooth_df, title=f'Smoothing (win_size={size})', x_label='timestamp', y_label='insulin')
         xticks(rotation = 45)
         savefig(f'health-forecasting/records/transformation/smoothing_explore_{size}.png')
+        self.persistence_regressor(self.data, size)
 
 
   def split_dataframe(data, trn_pct=0.70):
@@ -43,8 +44,8 @@ class Smoothing:
     ax.plot(tst.index, prd_tst, '--r', label='test prediction')
     ax.legend(prop={'size': 5})
 
-  def persistenceRegressor():
-    train, test = split_dataframe(self.data, trn_pct=0.75)
+  def persistence_regressor(self, data: pd.DateFrame, size: str):
+    train, test = split_dataframe(data, trn_pct=0.75)
 
     eval_results = {}
     measure = 'R2'
@@ -55,10 +56,10 @@ class Smoothing:
     prd_tst = fr_mod.predict(test)
 
     eval_results['Persistence'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
-    print(eval_results)
+    print(f"{size} {eval_results}")
 
-    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_eval.png')
-    plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_plots.png', x_label='date', y_label='glucose')
+    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_eval_{size}.png')
+    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_plots_{size}.png', x_label='date', y_label='glucose')
 
 
 
