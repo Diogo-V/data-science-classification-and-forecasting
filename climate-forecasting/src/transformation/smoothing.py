@@ -11,6 +11,15 @@ class Smoothing:
     
     self.win_sizes = [7, 14, 21, 30, 60, 90]
 
+    self.best_size = 60
+
+  
+  def compute_smoothing(self) -> pd.DataFrame:
+    rolling = self.data.rolling(window=self.best_size)
+    smooth_df = rolling.mean()
+    smooth_df = smooth_df.dropna()
+    return smooth_df
+
   def explore_smoothing(self) -> None:
     for size in self.win_sizes:
         rolling = self.data.rolling(window=size)
@@ -19,7 +28,7 @@ class Smoothing:
         figure(figsize=(3*HEIGHT, HEIGHT/2))
         plot_series(smooth_df, title=f'Smoothing (win_size={size})', x_label='timestamp', y_label='QV2M')
         xticks(rotation = 45)
-        savefig(f'climate-forecasting/records/transformation/smoothing_explore_{size}.png')
+        savefig(f'climate-forecasting/records/transformation/smoothing/smoothing_explore_{size}.png')
         self.persistence_regressor(smooth_df, size)
 
 
@@ -30,18 +39,18 @@ class Smoothing:
     test: pd.DataFrame = df_cp.iloc[trn_size:]
     return train, test
 
-  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, file_path: str, tittle: str, x_label: str = 'time', y_label:str =''):
     _, ax = subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    ax.set_title(figname)
+    ax.set_title(tittle)
     ax.plot(trn.index, trn, label='train', color='b')
     ax.plot(trn.index, prd_trn, '--y', label='train prediction')
     ax.plot(tst.index, tst, label='test', color='g')
     ax.plot(tst.index, prd_tst, '--r', label='test prediction')
     ax.legend(prop={'size': 5})
 
-    savefig(figname)
+    savefig(file_path)
 
 
   def persistence_regressor(self, data: pd.DataFrame, size: str):
@@ -57,11 +66,11 @@ class Smoothing:
 
     eval_results['Persistence'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
  
-    f = open(f'climate-forecasting/records/transformation/smoothing_persistence_eval_{size}.txt', 'w')
+    f = open(f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}.txt', 'w')
     f.write(f"{size} {eval_results}")
 
-    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/smoothing_persistence_eval_{size}')
-    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/smoothing_persistence_plots_{size}.png',  y_label='QV2M')
+    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}')
+    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_plots_{size}.png', f'Persistence plots with {size}', y_label='QV2M')
 
 
 

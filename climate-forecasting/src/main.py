@@ -49,7 +49,8 @@ if __name__ == "__main__":
   data = aggregation.compute_aggregation()
 
   smoothing = Smoothing(data)
-  data = smoothing.explore_smoothing()
+  smoothing.explore_smoothing()
+  data = smoothing.compute_smoothing()
 
   differentiation = Differentiation(data)
   differentiation.explore_differentiation()

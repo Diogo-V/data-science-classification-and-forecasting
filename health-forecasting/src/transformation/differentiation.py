@@ -12,7 +12,7 @@ class Differentiation:
       self.data: pd.DataFrame = data
 
   def compute_differentiation(self) -> pd.DataFrame:
-    return self.compute_no_diff(self.data)  # Seems like it's the best one
+    return self.compute_first_diff(self.data)  # Seems like it's the best one
 
   def explore_differentiation(self) -> None:
     no_diff = self.compute_no_diff(self.data)
@@ -66,11 +66,11 @@ class Differentiation:
       test: pd.DataFrame = df_cp.iloc[trn_size:]
       return train, test
 
-  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, file_path: str, tittle: str, x_label: str = 'time', y_label:str =''):
       _, ax = plt.subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
       ax.set_xlabel(x_label)
       ax.set_ylabel(y_label)
-      ax.set_title(figname)
+      ax.set_title(tittle)
       ax.plot(trn.index, trn, label='train', color='b')
       ax.plot(trn.index, prd_trn, '--y', label='train prediction')
       ax.plot(tst.index, tst, label='test', color='g')

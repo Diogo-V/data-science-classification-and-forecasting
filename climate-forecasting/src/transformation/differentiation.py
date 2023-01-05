@@ -12,7 +12,7 @@ class Differentiation:
       self.data: pd.DataFrame = data
 
   def compute_differentiation(self) -> pd.DataFrame:
-    return self.compute_first_diff(self.data)  # Seems like it's the best one
+    return self.compute_no_diff(self.data)  # Seems like it's the best one
 
   def explore_differentiation(self) -> None:
     no_diff = self.compute_no_diff(self.data)
@@ -66,16 +66,17 @@ class Differentiation:
       test: pd.DataFrame = df_cp.iloc[trn_size:]
       return train, test
 
-  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, file_path: str, tittle: str, x_label: str = 'time', y_label:str =''):
       _, ax = plt.subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
       ax.set_xlabel(x_label)
       ax.set_ylabel(y_label)
-      ax.set_title(figname)
+      ax.set_title(tittle)
       ax.plot(trn.index, trn, label='train', color='b')
       ax.plot(trn.index, prd_trn, '--y', label='train prediction')
       ax.plot(tst.index, tst, label='test', color='g')
       ax.plot(tst.index, prd_tst, '--r', label='test prediction')
       ax.legend(prop={'size': 5})
+      savefig(file_path)
 
   def simple_average(self, data: pd.DataFrame, approach: str):
 
@@ -93,8 +94,8 @@ class Differentiation:
       print(eval_results)
 
       plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_eval')
-      plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_eval.png')
-      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_plots', x_label="date", y_label="QV2M")
+
+      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_plots.png', f'{approach} {measure}', x_label="date", y_label="QV2M")
       plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_plots.png')
 
   def persistance(self, data: pd.DataFrame, approach: str) -> None:
