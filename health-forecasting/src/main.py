@@ -6,6 +6,7 @@ from profiling.profiling import Profiler
 from preparation.mvi_imputation import MVImputation
 from preparation.scaling import Scaling
 
+from transformation.aggregation import Aggregation
 from transformation.differentiation import Differentiation
 from transformation.smoothing import Smoothing
 
@@ -34,9 +35,14 @@ if __name__ == "__main__":
     # data = mvi.compute_mv_imputation("approach_2")
 
     # No scaling applied due to few columns in dataset
+    
+    aggregation = Aggregation(data)
+    aggregation.explore_aggregation()
+    data = aggregation.compute_aggregation()
 
     smoothing = Smoothing(data)
     data = smoothing.explore_smoothing()
-    
-    # differentiation = Differentiation(data)
-    # data = differentiation.compute_differentiation()
+
+    differentiation = Differentiation(data)
+    differentiation.explore_differentiation()
+    data = differentiation.compute_differentiation()

@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from profiling.profiling import Profiler
 from preparation.scaling import Scaling
 
+from transformation.aggregation import Aggregation
 from transformation.differentiation import Differentiation
 from transformation.smoothing import Smoothing
 
@@ -43,6 +44,14 @@ if __name__ == "__main__":
   # differentiation = Differentiation(data)
   # data = differentiation.compute_differentiation()
 
+  aggregation = Aggregation(data)
+  aggregation.explore_aggregation()
+  data = aggregation.compute_aggregation()
+
   smoothing = Smoothing(data)
   data = smoothing.explore_smoothing()
+
+  differentiation = Differentiation(data)
+  differentiation.explore_differentiation()
+  data = differentiation.compute_differentiation()
 
