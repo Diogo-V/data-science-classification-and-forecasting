@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from profiling.profiling import Profiler
 from preparation.scaling import Scaling
 
+from transformation.aggregation import Aggregation
 from transformation.differentiation import Differentiation
 
 INPUT_FILE_PATH = 'climate-forecasting/resources/data/drought.forecasting_dataset.csv'
@@ -30,6 +31,11 @@ if __name__ == "__main__":
   scaling = Scaling(data)
   data = scaling.compute_scale()
 
+  aggregation = Aggregation(data)
+  aggregation.explore_aggregation()
+  data = aggregation.compute_aggregation()
+
   differentiation = Differentiation(data)
+  differentiation.explore_differentiation()
   data = differentiation.compute_differentiation()
 

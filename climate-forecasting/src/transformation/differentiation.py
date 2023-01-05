@@ -25,21 +25,26 @@ class Differentiation:
     self.plot_figure(second_diff, 'second_diff')
 
     # Evaluates results with MA and RM
-    print("EVALUATING MODELS WITH SMA...")
-    self.simple_average(no_diff, 'no_diff')
-    self.simple_average(first_diff, 'first_diff')
-    self.simple_average(second_diff, 'second_diff')
+    # print("EVALUATING MODELS WITH SMA...")
+    # self.simple_average(no_diff, 'no_diff')
+    # self.simple_average(first_diff, 'first_diff')
+    # self.simple_average(second_diff, 'second_diff')
 
-    print("EVALUATING MODELS WITH RM...")
-    self.rolling_mean(no_diff, 'no_diff')
-    self.rolling_mean(first_diff, 'first_diff')
-    self.rolling_mean(second_diff, 'second_diff')
+    print("EVALUATING MODELS WITH PERSISTANCE...")
+    self.persistance(no_diff, 'no_diff')
+    self.persistance(first_diff, 'first_diff')
+    self.persistance(second_diff, 'second_diff')
+
+    # print("EVALUATING MODELS WITH RM...")
+    # self.rolling_mean(no_diff, 'no_diff')
+    # self.rolling_mean(first_diff, 'first_diff')
+    # self.rolling_mean(second_diff, 'second_diff')
 
   def plot_figure(self, data: pd.DataFrame, title: str) -> None:
     figure(figsize=(3*HEIGHT, HEIGHT))
     plot_series(data, title=title, x_label='Date', y_label='QV2M')
     xticks(rotation = 45)
-    savefig(f'climate-forecasting/records/transformation/differentiation_{title}_plot.png')
+    savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{title}_plot.png')
 
   def compute_no_diff(self, data: pd.DataFrame) -> pd.DataFrame:
     return data  # Just for compliance
@@ -87,10 +92,29 @@ class Differentiation:
       eval_results['SimpleAvg'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
       print(eval_results)
 
-      plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_eval')
-      plt.savefig(f'climate-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_eval.png')
-      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_plots', x_label="date", y_label="QV2M")
-      plt.savefig(f'climate-forecasting/records/transformation/differentiation_{approach}_{measure}_simple_avg_plots.png')
+      plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_eval')
+      plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_eval.png')
+      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_plots', x_label="date", y_label="QV2M")
+      plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_plots.png')
+
+  def persistance(self, data: pd.DataFrame, approach: str) -> None:
+  
+      train, test = self.split_dataframe(data, trn_pct=0.75)
+      eval_results = {}
+
+      fr_mod = PersistenceRegressor()
+      fr_mod.fit(train)
+      prd_trn = fr_mod.predict(train)
+      prd_tst = fr_mod.predict(test)
+
+      measure = "R2"
+      eval_results['Persistance'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
+      print(eval_results)
+      
+      plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_eval.png')
+      plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_eval.png')
+      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_plots.png', x_label="date", y_label="QV2M")
+      plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_plots.png')
 
   def rolling_mean(self, data: pd.DataFrame, approach: str) -> None:
     
@@ -106,10 +130,10 @@ class Differentiation:
     eval_results['RollingMean'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
     print(eval_results)
     
-    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/{approach}_{measure}_rollingMean_eval.png')
-    plt.savefig(f'climate-forecasting/records/transformation/differentiation_{approach}_{measure}_rollingMean_eval.png')
-    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation_{approach}_{measure}_rollingMean_plots.png', x_label="date", y_label="QV2M")
-    plt.savefig(f'climate-forecasting/records/transformation/differentiation_{approach}_{measure}_rollingMean_plots.png')
+    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/differentiation/{approach}_{measure}_rollingMean_eval.png')
+    plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_rollingMean_eval.png')
+    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_rollingMean_plots.png', x_label="date", y_label="QV2M")
+    plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_rollingMean_plots.png')
 
 
 class SimpleAvgRegressor (RegressorMixin):
@@ -122,6 +146,20 @@ class SimpleAvgRegressor (RegressorMixin):
 
     def predict(self, X: pd.DataFrame):
         prd = len(X) * [self.mean]
+        return prd
+
+class PersistenceRegressor (RegressorMixin):
+    def __init__(self):
+        super().__init__()
+        self.last = 0
+
+    def fit(self, X: pd.DataFrame):
+        self.last = X.iloc[-1,0]
+        print(self.last)
+
+    def predict(self, X: pd.DataFrame):
+        prd = X.shift().values
+        prd[0] = self.last
         return prd
 
 

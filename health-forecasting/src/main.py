@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     aggregation = Aggregation(data)
     aggregation.explore_aggregation()
-    data = aggregation.compute_aggregate_daily(data)
+    data = aggregation.compute_aggregation()
 
     differentiation = Differentiation(data)
     differentiation.explore_differentiation()
