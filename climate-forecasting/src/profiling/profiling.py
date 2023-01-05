@@ -9,27 +9,41 @@ class Profiler:
   def __init__(self, data: pd.DataFrame) -> None:
     self.data = data
 
-    self.data = self.data.drop(columns=['PRECTOT'])	
-    self.data = self.data.drop(columns=['PS'])	
-    self.data = self.data.drop(columns=['T2M'])	
-    self.data = self.data.drop(columns=['T2MDEW'])	
-    self.data = self.data.drop(columns=['T2MWET'])	
-    self.data = self.data.drop(columns=['TS'])	
+    index = self.data.index.to_period('D')
+    self.day_df_mean = self.data.copy().groupby(index).mean()
+    self.day_df_mean['date'] = index.drop_duplicates().to_timestamp()
+    self.day_df_mean.set_index('date', drop=True, inplace=True)
+
+    self.day_df_sum = self.data.copy().groupby(index).sum()
+    self.day_df_sum['date'] = index.drop_duplicates().to_timestamp()
+    self.day_df_sum.set_index('date', drop=True, inplace=True)
 
     index = self.data.index.to_period('W')
-    self.week_df = self.data.copy().groupby(index).mean()
-    self.week_df['date'] = index.drop_duplicates().to_timestamp()
-    self.week_df.set_index('date', drop=True, inplace=True)
+    self.week_df_mean = self.data.copy().groupby(index).mean()
+    self.week_df_mean['date'] = index.drop_duplicates().to_timestamp()
+    self.week_df_mean.set_index('date', drop=True, inplace=True)
+
+    self.week_df_sum = self.data.copy().groupby(index).sum()
+    self.week_df_sum['date'] = index.drop_duplicates().to_timestamp()
+    self.week_df_sum.set_index('date', drop=True, inplace=True)
 
     index = self.data.index.to_period('M')
-    self.month_df = self.data.copy().groupby(index).mean()
-    self.month_df['date'] = index.drop_duplicates().to_timestamp()
-    self.month_df.set_index('date', drop=True, inplace=True)
+    self.month_df_mean = self.data.copy().groupby(index).mean()
+    self.month_df_mean['date'] = index.drop_duplicates().to_timestamp()
+    self.month_df_mean.set_index('date', drop=True, inplace=True)
+
+    self.month_df_sum = self.data.copy().groupby(index).sum()
+    self.month_df_sum['date'] = index.drop_duplicates().to_timestamp()
+    self.month_df_sum.set_index('date', drop=True, inplace=True)
 
     index = self.data.index.to_period('Q')
-    self.quarter_df = self.data.copy().groupby(index).mean()
-    self.quarter_df['date'] = index.drop_duplicates().to_timestamp()
-    self.quarter_df.set_index('date', drop=True, inplace=True)
+    self.quarter_df_mean = self.data.copy().groupby(index).mean()
+    self.quarter_df_mean['date'] = index.drop_duplicates().to_timestamp()
+    self.quarter_df_mean.set_index('date', drop=True, inplace=True)
+
+    self.quarter_df_sum = self.data.copy().groupby(index).sum()
+    self.quarter_df_sum['date'] = index.drop_duplicates().to_timestamp()
+    self.quarter_df_sum.set_index('date', drop=True, inplace=True)
 
 
   def explore_dimensionality(self):
@@ -53,16 +67,16 @@ class Profiler:
     savefig('climate-forecasting/records/profiling/granularity_day.png')
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series(self.week_df, title='Weekly values', x_label='date', y_label="QV2M")
+    plot_series(self.week_df_mean, title='Weekly values', x_label='date', y_label="QV2M")
     xticks(rotation = 45)
     savefig('climate-forecasting/records/profiling/granularity_week.png')
     
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series(self.month_df, title='Monthly values', x_label='date', y_label="QV2M")
+    plot_series(self.month_df_mean, title='Monthly values', x_label='date', y_label="QV2M")
     savefig('climate-forecasting/records/profiling/granularity_month.png')
 
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series(self.quarter_df, title='Quarterly values', x_label='date', y_label="QV2M")
+    plot_series(self.quarter_df_mean, title='Quarterly values', x_label='date', y_label="QV2M")
     savefig('climate-forecasting/records/profiling/granularity_quaterly.png')
 
 
@@ -87,7 +101,7 @@ class Profiler:
     Analizes distribution through the 5-number summary and boxplots. It is doing for the most atomic time series (daily)
   """ 
   def explore_distribution_boxplots(self):
-    f = open('climate-forecasting/records/profiling/distribution_boxplot_daily_details.txt', 'w')
+    f = open('climate-forecasting/records/profiling/distribution_boxplot_hourly_details.txt', 'w')
     f.write(f"Daily\n")
     f.write(str(self.data.describe()))
     f.close()
@@ -95,14 +109,14 @@ class Profiler:
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
     self.data.boxplot()
-    savefig('climate-forecasting/records/profiling/distribution_boxplot_daily.png')
+    savefig('climate-forecasting/records/profiling/distribution_boxplot_hourly.png')
 
 
   def explore_distribution_histograms(self):
 
-    granularity = ['daily', 'weekly', 'monthly']
+    granularity = ['hourly', 'daily', 'weekly', 'monthly']
 
-    data = [self.data, self.week_df, self.month_df]
+    data = [self.data, self.day_df_sum, self.week_df_sum, self.month_df_sum]
 
     for g in granularity:
         index = granularity.index(g)

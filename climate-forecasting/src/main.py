@@ -6,6 +6,7 @@ from profiling.profiling import Profiler
 from preparation.scaling import Scaling
 
 from transformation.differentiation import Differentiation
+from transformation.smoothing import Smoothing
 
 INPUT_FILE_PATH = 'climate-forecasting/resources/data/drought.forecasting_dataset.csv'
 
@@ -13,6 +14,16 @@ if __name__ == "__main__":
 
   # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
   data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst= True)
+
+  multivariate_data = data
+
+  # Remove variables except target
+  data = data.drop(columns=['PRECTOT'])	
+  data = data.drop(columns=['PS'])	
+  data = data.drop(columns=['T2M'])	
+  data = data.drop(columns=['T2MDEW'])	
+  data = data.drop(columns=['T2MWET'])	
+  data = data.drop(columns=['TS'])	
 
   profiler = Profiler(data)
   profiler.explore_dimensionality()
@@ -23,14 +34,15 @@ if __name__ == "__main__":
   # profiler.explore_count_data_types()
 
   # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
-  
-  # data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
 
-  # ## As shown by explore_count_data_types, there are no missing values for this dataset
+  ## As shown by explore_count_data_types, there are no missing values for this dataset
   
   # scaling = Scaling(data)
   # data = scaling.compute_scale()
 
   # differentiation = Differentiation(data)
   # data = differentiation.compute_differentiation()
+
+  smoothing = Smoothing(data)
+  data = smoothing.explore_smoothing()
 

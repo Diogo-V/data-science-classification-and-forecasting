@@ -16,6 +16,11 @@ if __name__ == "__main__":
     # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
     data = read_csv(INPUT_FILE_PATH, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
 
+    multivariate_data = data
+
+    # Remove variables except target
+    data = data.drop(columns=['Insulin'])	
+
     profiler = Profiler(data)
     profiler.explore_dimensionality()
     profiler.explore_granularity()
@@ -24,9 +29,9 @@ if __name__ == "__main__":
     profiler.explore_stationary()
 
     # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
-    mvi = MVImputation(data)
-    mvi.explore_mv_imputation()
-    data = mvi.compute_mv_imputation("approach_2")
+    # mvi = MVImputation(data)
+    # mvi.explore_mv_imputation()
+    # data = mvi.compute_mv_imputation("approach_2")
 
     # No scaling applied due to few columns in dataset
 

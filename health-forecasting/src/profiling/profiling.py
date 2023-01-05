@@ -7,27 +7,41 @@ class Profiler:
   def __init__(self, data: pd.DataFrame) -> None:
     self.data = data
 
-    self.data = self.data.drop(columns=['Insulin'])	
-
     index = self.data.index.to_period('D')
-    self.daily_df = self.data.copy().groupby(index).mean()
-    self.daily_df['date'] = index.drop_duplicates().to_timestamp()
-    self.daily_df.set_index('date', drop=True, inplace=True)
+    self.day_df_mean = self.data.copy().groupby(index).mean()
+    self.day_df_mean['date'] = index.drop_duplicates().to_timestamp()
+    self.day_df_mean.set_index('date', drop=True, inplace=True)
+
+    self.day_df_sum = self.data.copy().groupby(index).sum()
+    self.day_df_sum['date'] = index.drop_duplicates().to_timestamp()
+    self.day_df_sum.set_index('date', drop=True, inplace=True)
 
     index = self.data.index.to_period('W')
-    self.week_df = self.data.copy().groupby(index).mean()
-    self.week_df['date'] = index.drop_duplicates().to_timestamp()
-    self.week_df.set_index('date', drop=True, inplace=True)
+    self.week_df_mean = self.data.copy().groupby(index).mean()
+    self.week_df_mean['date'] = index.drop_duplicates().to_timestamp()
+    self.week_df_mean.set_index('date', drop=True, inplace=True)
+
+    self.week_df_sum = self.data.copy().groupby(index).sum()
+    self.week_df_sum['date'] = index.drop_duplicates().to_timestamp()
+    self.week_df_sum.set_index('date', drop=True, inplace=True)
 
     index = self.data.index.to_period('M')
-    self.month_df = self.data.copy().groupby(index).mean()
-    self.month_df['date'] = index.drop_duplicates().to_timestamp()
-    self.month_df.set_index('date', drop=True, inplace=True)
+    self.month_df_mean = self.data.copy().groupby(index).mean()
+    self.month_df_mean['date'] = index.drop_duplicates().to_timestamp()
+    self.month_df_mean.set_index('date', drop=True, inplace=True)
+
+    self.month_df_sum = self.data.copy().groupby(index).sum()
+    self.month_df_sum['date'] = index.drop_duplicates().to_timestamp()
+    self.month_df_sum.set_index('date', drop=True, inplace=True)
 
     index = self.data.index.to_period('Q')
-    self.quarter_df = self.data.copy().groupby(index).mean()
-    self.quarter_df['date'] = index.drop_duplicates().to_timestamp()
-    self.quarter_df.set_index('date', drop=True, inplace=True)
+    self.quarter_df_mean = self.data.copy().groupby(index).mean()
+    self.quarter_df_mean['date'] = index.drop_duplicates().to_timestamp()
+    self.quarter_df_mean.set_index('date', drop=True, inplace=True)
+
+    self.quarter_df_sum = self.data.copy().groupby(index).sum()
+    self.quarter_df_sum['date'] = index.drop_duplicates().to_timestamp()
+    self.quarter_df_sum.set_index('date', drop=True, inplace=True)
 
 
   def explore_dimensionality(self):
@@ -46,26 +60,26 @@ class Profiler:
   def explore_granularity(self):
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.daily_df, title='Hour values', x_label='date', y_label='glucose')
+    plot_series_multivariate(self.data, title='Hour values', x_label='date', y_label='glucose')
     xticks(rotation = 45)
     savefig('health-forecasting/records/profiling/granularity_hour.png')
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.daily_df, title='Daily values', x_label='date', y_label='glucose')
+    plot_series_multivariate(self.day_df_mean, title='Daily values', x_label='date', y_label='glucose')
     xticks(rotation = 45)
     savefig('health-forecasting/records/profiling/granularity_day.png')
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series_multivariate(self.week_df, title='Weekly values', x_label='date', y_label='glucose')
+    plot_series_multivariate(self.week_df_mean, title='Weekly values', x_label='date', y_label='glucose')
     xticks(rotation = 45)
     savefig('health-forecasting/records/profiling/granularity_week.png')
     
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series_multivariate(self.month_df, title='Monthly values', x_label='date', y_label='glucose')
+    plot_series_multivariate(self.month_df_mean, title='Monthly values', x_label='date', y_label='glucose')
     savefig('health-forecasting/records/profiling/granularity_month.png')
 
     figure(figsize=(3*HEIGHT, HEIGHT))
-    plot_series_multivariate(self.quarter_df, title='Quarterly values', x_label='date',  y_label='glucose')
+    plot_series_multivariate(self.quarter_df_mean, title='Quarterly values', x_label='date',  y_label='glucose')
     savefig('health-forecasting/records/profiling/granularity_quaterly.png')
 
 
@@ -105,7 +119,7 @@ class Profiler:
 
     granularity = ['hourly', 'daily', 'weekly', 'monthly']
 
-    data = [self.data, self.daily_df, self.week_df, self.month_df]
+    data = [self.data, self.day_df_sum, self.week_df_sum, self.month_df_sum]
 
     for g in granularity:
         index = granularity.index(g)

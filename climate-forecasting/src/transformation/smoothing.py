@@ -8,7 +8,7 @@ class Smoothing:
 
   def __init__(self, data: pd.DataFrame) -> None:
     self.data = data
-
+    
     self.win_sizes = [7, 14, 21, 30, 60, 90]
 
   def explore_smoothing(self) -> None:
@@ -17,9 +17,9 @@ class Smoothing:
         smooth_df = rolling.mean()
         smooth_df = smooth_df.dropna()
         figure(figsize=(3*HEIGHT, HEIGHT/2))
-        plot_series(smooth_df, title=f'Smoothing (win_size={size})', x_label='timestamp', y_label='insulin')
+        plot_series(smooth_df, title=f'Smoothing (win_size={size})', x_label='timestamp', y_label='QV2M')
         xticks(rotation = 45)
-        savefig(f'health-forecasting/records/transformation/smoothing_explore_{size}.png')
+        savefig(f'climate-forecasting/records/transformation/smoothing_explore_{size}.png')
         self.persistence_regressor(smooth_df, size)
 
 
@@ -57,11 +57,11 @@ class Smoothing:
 
     eval_results['Persistence'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
  
-    f = open(f'health-forecasting/records/transformation/smoothing_persistence_eval_{size}.txt', 'w')
+    f = open(f'climate-forecasting/records/transformation/smoothing_persistence_eval_{size}.txt', 'w')
     f.write(f"{size} {eval_results}")
 
-    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_eval_{size}')
-    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/smoothing_persistence_plots_{size}.png',  y_label='glucose')
+    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/smoothing_persistence_eval_{size}')
+    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/smoothing_persistence_plots_{size}.png',  y_label='QV2M')
 
 
 
