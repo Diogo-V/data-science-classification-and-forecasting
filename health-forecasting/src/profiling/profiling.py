@@ -105,7 +105,7 @@ class Profiler:
   """ 
   def explore_distribution_boxplots(self):
     f = open('health-forecasting/records/profiling/distribution_boxplot_hourly_details.txt', 'w')
-    f.write(f"Daily\n")
+    f.write(f"Hourly\n")
     f.write(str(self.data.describe()))
     f.close()
 

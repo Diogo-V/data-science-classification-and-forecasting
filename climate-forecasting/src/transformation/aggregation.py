@@ -10,21 +10,21 @@ class Aggregation:
       self.data: pd.DataFrame = data
 
     def compute_aggregation(self) -> pd.DataFrame:
-        return self.compute_aggregate_monthly(self.data)  # Seems like it's the best one
+        return self.compute_aggregate_hourly(self.data)  # Seems like it's the best one
 
     def explore_aggregation(self) -> pd.DataFrame:
-        daily = self.compute_aggregate_daily(self.data)
+        hourly = self.compute_aggregate_hourly(self.data)
         weekly = self.compute_aggregate_weekly(self.data)
         monthly = self.compute_aggregate_monthly(self.data)
 
         # Plots figures for each aggregation measure
-        self.plot_figure(daily, "daily")
+        self.plot_figure(hourly, "hourly")
         self.plot_figure(weekly, "weekly")
         self.plot_figure(monthly, "monthly")
 
         # Evaluate with Persistance
         print("EVALUATING WITH PERSISTANCE...")
-        self.persistance(daily, "daily")
+        self.persistance(hourly, "hourly")
         self.persistance(weekly, "weekly")
         self.persistance(monthly, "monthly")
 
@@ -41,6 +41,9 @@ class Aggregation:
         plot_series(data, title=title, x_label='date', y_label='QV2M')
         xticks(rotation = 45)
         savefig(f'climate-forecasting/records/transformation/aggregation/aggregation_{title}_plot.png')
+
+    def compute_aggregate_hourly(self, data: pd.DataFrame) -> pd.DataFrame:
+        return data # does nothing
 
     def compute_aggregate_daily(self, data: pd.DataFrame) -> pd.DataFrame:
         return self.aggregate_by(data, "date", "D")

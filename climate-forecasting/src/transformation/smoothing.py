@@ -11,7 +11,7 @@ class Smoothing:
     
     self.win_sizes = [7, 14, 21, 30, 60, 90]
 
-    self.best_size = 60
+    self.best_size = 90
 
   
   def compute_smoothing(self) -> pd.DataFrame:

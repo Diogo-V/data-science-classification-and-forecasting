@@ -13,20 +13,20 @@ class Aggregation:
         return self.compute_aggregate_daily(self.data)  # Seems like it's the best one
 
     def explore_aggregation(self) -> pd.DataFrame:
+        hourly = self.compute_aggregate_hourly(self.data)
         daily = self.compute_aggregate_daily(self.data)
         weekly = self.compute_aggregate_weekly(self.data)
-        monthly = self.compute_aggregate_monthly(self.data)
 
         # Plots figures for each aggregation measure
+        self.plot_figure(hourly, "hourly")
         self.plot_figure(daily, "daily")
         self.plot_figure(weekly, "weekly")
-        self.plot_figure(monthly, "monthly")
 
         # Evaluate with Persistance
         print("EVALUATING WITH PERSISTANCE...")
+        self.persistance(hourly, "hourly")
         self.persistance(daily, "daily")
         self.persistance(weekly, "weekly")
-        self.persistance(monthly, "monthly")
 
 
     def aggregate_by(self, data: pd.Series, index_var: str, period: str):
@@ -41,6 +41,9 @@ class Aggregation:
         plot_series(data, title=title, x_label='Date', y_label='Glucose')
         xticks(rotation = 45)
         savefig(f'health-forecasting/records/transformation/aggregation/aggregation_{title}_plot.png')
+
+    def compute_aggregate_hourly(self, data: pd.DataFrame) -> pd.DataFrame:
+        return data
 
     def compute_aggregate_daily(self, data: pd.DataFrame) -> pd.DataFrame:
         return self.aggregate_by(data, "Date", "D")

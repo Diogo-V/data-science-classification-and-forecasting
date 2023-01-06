@@ -1,4 +1,4 @@
-Daily
+Hourly
           Glucose
 count  596.000000
 mean   157.909396

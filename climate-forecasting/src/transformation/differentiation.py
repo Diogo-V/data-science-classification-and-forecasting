@@ -12,7 +12,7 @@ class Differentiation:
       self.data: pd.DataFrame = data
 
   def compute_differentiation(self) -> pd.DataFrame:
-    return self.compute_no_diff(self.data)  # Seems like it's the best one
+    return self.compute_first_diff(self.data)  # Seems like it's the best one
 
   def explore_differentiation(self) -> None:
     no_diff = self.compute_no_diff(self.data)

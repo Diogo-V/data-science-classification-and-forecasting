@@ -1,4 +1,4 @@
-Daily
+Hourly
               QV2M
 count  7671.000000
 mean     10.447320
