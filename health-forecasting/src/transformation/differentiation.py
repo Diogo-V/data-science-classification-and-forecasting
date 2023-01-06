@@ -114,7 +114,7 @@ class Differentiation:
       
       plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_eval.png')
       plt.savefig(f'health-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_eval.png')
-      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_plots.png', x_label="Date", y_label="Glucose")
+      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_plots.png', tittle=approach, x_label="Date", y_label="Glucose")
       plt.savefig(f'health-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_plots.png')
 
   def rolling_mean(self, data: pd.DataFrame, approach: str) -> None:

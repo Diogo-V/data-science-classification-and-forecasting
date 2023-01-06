@@ -25,7 +25,7 @@ class Smoothing:
         rolling = self.data.rolling(window=size)
         smooth_df = rolling.mean()
         smooth_df = smooth_df.dropna()
-        figure(figsize=(3*HEIGHT, HEIGHT/2))
+        figure(figsize=(3*HEIGHT, HEIGHT))
         plot_series(smooth_df, title=f'Smoothing (win_size={size})', x_label='timestamp', y_label='QV2M')
         xticks(rotation = 45)
         savefig(f'climate-forecasting/records/transformation/smoothing/smoothing_explore_{size}.png')
