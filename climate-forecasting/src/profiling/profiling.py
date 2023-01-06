@@ -60,9 +60,13 @@ class Profiler:
 
 
   def explore_granularity(self):
+    figure(figsize=(3*HEIGHT, 3*HEIGHT))
+    plot_series(self.data, title='Hourly values', x_label='date', y_label="QV2M")
+    xticks(rotation = 45)
+    savefig('climate-forecasting/records/profiling/granularity_hourly.png')
 
     figure(figsize=(3*HEIGHT, 3*HEIGHT))
-    plot_series(self.data, title='Daily values', x_label='date', y_label="QV2M")
+    plot_series(self.day_df_mean, title='Daily values', x_label='date', y_label="QV2M")
     xticks(rotation = 45)
     savefig('climate-forecasting/records/profiling/granularity_day.png')
 
