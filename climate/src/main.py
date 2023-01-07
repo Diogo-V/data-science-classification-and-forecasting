@@ -100,7 +100,6 @@ if __name__ == "__main__":
   # mlpClassifier.compute_mlp_best_results(lr_type, learning_rate, max_iter)
 
   gradientClassifier = GradientClassifier(data_train, data_test)
-  # lr_type, learning_rate, max_iter = gradientClassifier.explore_best_gradient()
-  # gradientClassifier.compute_mlp_best_results(lr_type, learning_rate, max_iter)
-  gradientClassifier.compute_best_gradient(10, 0.1, 400)
+  lr_type, learning_rate, max_iter = gradientClassifier.explore_best_gradient()
+  gradientClassifier.compute_mlp_best_results(lr_type, learning_rate, max_iter)
 
