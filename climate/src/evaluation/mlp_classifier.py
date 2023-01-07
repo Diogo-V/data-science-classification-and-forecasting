@@ -4,11 +4,11 @@ import pandas as pd
 from pandas import DataFrame, read_csv, unique
 from matplotlib.pyplot import figure, subplots, savefig, show
 from sklearn.neural_network import MLPClassifier
-from ds_charts import plot_evaluation_results, plot_evaluation_results_2_train_test_matrixes, multiple_line_chart, horizontal_bar_chart, HEIGHT
+from ds_charts import plot_evaluation_results, multiple_line_chart, horizontal_bar_chart, HEIGHT
 from sklearn.metrics import accuracy_score, f1_score
 import math
 
-target = 'readmitted'
+target = 'class'
 
 class MLPClassify:
 
@@ -57,8 +57,8 @@ class MLPClassify:
                 values[lr] = yvalues
             multiple_line_chart(max_iter, values, ax=axs[0, k], title=f'MLP with lr_type={d}',
                                 xlabel='mx iter', ylabel='Accuracy', percentage=True)
-        savefig('health/records/evaluation/mlp_study.png')
-        f= open('health/records/evaluation/mlp_best_details.txt', 'w')
+        savefig('climate/records/evaluation/mlp_study.png')
+        f= open('climate/records/evaluation/mlp_best_details.txt', 'w')
         f.write(f'Best results with lr_type={best[0]}, learning rate={best[1]} and {best[2]} max iter, with accuracy={last_best}')
         f.close()
 
@@ -85,8 +85,8 @@ class MLPClassify:
         labels = unique(trnY)
         labels.sort()
         figure()
-        plot_evaluation_results_2_train_test_matrixes(labels, trnY, prd_trn, tstY, prd_tst)
-        savefig('health/records/evaluation/mlp_best_metrics.png')
+        plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
+        savefig('climate/records/evaluation/mlp_best_metrics.png')
 
         # Then, plot overfitting
         y_tst_values = []
@@ -114,9 +114,6 @@ class MLPClassify:
         evals = {'Train': prd_trn, 'Test': prd_tst}
         figure()
         multiple_line_chart(xvalues, evals, ax = None, title=f'Overfitting {name}', xlabel=xlabel, ylabel=ylabel, percentage=True)
-        savefig(f'health/records/evaluation/{name}_overfitting_exploration.png')
+        savefig(f'climate/records/evaluation/{name}_overfitting_exploration.png')
 
-        
-
-
-
+  
