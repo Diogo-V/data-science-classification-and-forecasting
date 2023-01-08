@@ -11,7 +11,7 @@ from transformation.differentiation import Differentiation
 from transformation.smoothing import Smoothing
 
 from evaluation.arima import ARIMA
-
+from forecasting.lstm_forecaster import LSTMForecaster
 INPUT_FILE_PATH = 'climate-forecasting/resources/data/drought.forecasting_dataset.csv'
 
 if __name__ == "__main__":
@@ -37,15 +37,15 @@ if __name__ == "__main__":
   # profiler.explore_stationary()
   # profiler.explore_count_data_types()
 
-  # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
+    # ----------------------------- 2º Phase -> Data preparation ----------------------------- #
 
-  ## As shown by explore_count_data_types, there are no missing values for this dataset
-  
-  # scaling = Scaling(data)
-  # data = scaling.compute_scale()
+    ## As shown by explore_count_data_types, there are no missing values for this dataset
+    
+    # scaling = Scaling(data)
+    # data = scaling.compute_scale()
 
-  # differentiation = Differentiation(data)
-  # data = differentiation.compute_differentiation()
+    # differentiation = Differentiation(data)
+    # data = differentiation.compute_differentiation()
 
   # aggregation = Aggregation(data)
   # aggregation.explore_aggregation()
@@ -65,5 +65,9 @@ if __name__ == "__main__":
   data = data.drop(columns=['PRECTOT', 'PS', 'T2M', 'T2MDEW', 'T2MWET', 'TS'])	
   train, test = split_dataframe(data, trn_pct=0.75)
 
-  arima = ARIMA(train)
-  arima.explore_arima(test)
+  lstmForecaster = LSTMForecaster(data)
+  sequence_length, hidden_units, epochs, best_model = lstmForecaster.explore_best_lstm()  
+  lstmForecaster.compute_best_lstm(sequence_length, hidden_units, epochs, best_model)
+
+  # arima = ARIMA(train)
+  # arima.explore_arima(test)
