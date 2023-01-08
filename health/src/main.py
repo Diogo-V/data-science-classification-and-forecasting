@@ -18,6 +18,8 @@ from evaluation.nb_classifier import NBClassifier
 from evaluation.knn_classifier import Knn_classifier
 from evaluation.random_forest_classifier import RTClassifier
 from evaluation.decision_tree_classifier import DTClassifier
+from evaluation.mlp_classifier import MLPClassify
+from evaluation.gradient_classifier import GradientClassifier
 
 register_matplotlib_converters()
 
@@ -119,9 +121,22 @@ if __name__ == "__main__":
   # k, approach = knn_class.explore_best_k_value(method="large")
   # knn_class.compute_knn_best_results(k , approach)
 
-  dt_classifier = DTClassifier(data_train, data_test)
-  criteria, depth, impurity = dt_classifier.compute_best_dt()
-  dt_classifier.explore_best_tree_graph_light(10, criteria, impurity)
-  dt_classifier.explore_dt_best_matrix_results(10, criteria, impurity)
-  dt_classifier.explore_dt_feature_importance()
-  dt_classifier.explore_best_dt_overfit(criteria, impurity)
+  # rtClassifier = RTClassifier(data_train, data_test)
+  # depth, features, estimators =  rtClassifier.explore_best_rt()
+  # rtClassifier.compute_best_rt_results(depth, features, estimators)
+
+  # dt_classifier = DTClassifier(data_train, data_test)
+  # criteria, depth, impurity = dt_classifier.compute_best_dt()
+  # dt_classifier.explore_best_tree_graph_light(10, criteria, impurity)
+  # dt_classifier.explore_dt_best_matrix_results(10, criteria, impurity)
+  # dt_classifier.explore_dt_feature_importance()
+  # dt_classifier.explore_best_dt_overfit(criteria, impurity)
+
+  # mlpClassifier = MLPClassify(data_train, data_test)
+  # lr_type, learning_rate, max_iter = mlpClassifier.explore_best_mlp()
+  # mlpClassifier.compute_mlp_best_results(lr_type, learning_rate, max_iter)
+
+  gradientClassifier = GradientClassifier(data_train, data_test)
+  # lr_type, learning_rate, max_iter = gradientClassifier.explore_best_gradient()
+  # gradientClassifier.compute_best_gradient(lr_type, learning_rate, max_iter)
+  gradientClassifier.compute_best_gradient(5, 0.1, 400)
