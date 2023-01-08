@@ -13,6 +13,7 @@ from sklearn.metrics import r2_score
 
 from ds_charts import HEIGHT, multiple_line_chart
 from matplotlib.pyplot import subplots, show, savefig
+import matplotlib.pyplot as plt
 
 target = 'Glucose'
 index_col='timestamp'
@@ -29,10 +30,8 @@ class LSTMForecaster():
         self.seq_length = 4
         self.num_epochs = 2000
         self.learning_rate = 0.001
-        # self.sequence_size = [4, 20, 60, 100]
-        self.sequence_size = [100]
-        # self.nr_hidden_units = [8, 16, 32]
-        self.nr_hidden_units = [8]
+        self.sequence_size = [4, 20, 60, 100]
+        self.nr_hidden_units = [8, 16, 32]
         self.max_iter = [500, 500, 1500, 2500]
 
         """ self.train_data = data_train
@@ -108,7 +107,7 @@ class LSTMForecaster():
         f.write(f'Best approach: Seq length = {best[0]} with hidden units = {best[1]} and epochs = {best[2]}')
         f.close()
 
-        return best[0], best[1], best[2]
+        return best[0], best[1], best[2], best_model
 
     def compute_best_lstm(self, sequence_length, hidden_units, epochs, best_model):
 
