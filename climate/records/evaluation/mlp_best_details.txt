@@ -1,0 +1,1 @@
+Best results with lr_type=constant, learning rate=0.1 and 300 max iter, with accuracy=0.5081766148814391

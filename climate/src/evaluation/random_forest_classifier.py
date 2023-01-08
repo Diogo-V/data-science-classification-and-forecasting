@@ -108,7 +108,7 @@ class RTClassifier:
       y_tst_values_f1.append(f1_score(self.test_y, prd_tst_Y))
       y_trn_values_f1.append(f1_score(self.train_y, prd_trn_Y))
     self.plot_overfitting_study(self.n_estimators, y_trn_values, y_tst_values, name=f'RF_depth={depth}_vars={features}', xlabel='nr_estimators', ylabel="accuracy score")
-    self.plot_overfitting_study(self.n_estimators, y_trn_values_f1, y_tst_values_f1, name=f'RF_depth={depth}_vars={features}_f1', xlabel='nr_estimators', ylabel="accuracy score")
+    self.plot_overfitting_study(self.n_estimators, y_trn_values_f1, y_tst_values_f1, name=f'RF_depth={depth}_vars={features}_f1', xlabel='nr_estimators', ylabel="f1 score")
 
   def plot_overfitting_study(self, xvalues, prd_trn, prd_tst, name, xlabel, ylabel):
     evals = {'Train': prd_trn, 'Test': prd_tst}

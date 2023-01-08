@@ -1,0 +1,1 @@
+Best approach: Seq length = 100 with hidden units = 8 and epochs = 1000
