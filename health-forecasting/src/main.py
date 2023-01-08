@@ -12,6 +12,7 @@ from transformation.differentiation import Differentiation
 from transformation.smoothing import Smoothing
 
 from evaluation.arima import ARIMA
+from forecasting.lstm_forecaster import LSTMForecaster
 
 INPUT_FILE_PATH = 'health-forecasting/resources/data/glucose.csv'
 
@@ -55,6 +56,10 @@ if __name__ == "__main__":
     data = read_csv(INPUT_FILE_PATH, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
     data = data.drop(columns=['Insulin'])	
     train, test = split_dataframe(data, trn_pct=0.75)
+
+    lstmForecaster = LSTMForecaster(data)
+    sequence_length, hidden_units, epochs, best_model = lstmForecaster.explore_best_lstm()  
+    lstmForecaster.compute_best_lstm(sequence_length, hidden_units, epochs, best_model)
 
     arima = ARIMA(train)
     arima.explore_arima(test)
