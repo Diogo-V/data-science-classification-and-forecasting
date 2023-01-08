@@ -2,7 +2,7 @@ from numpy import ndarray
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, read_csv, unique
-from matplotlib.pyplot import figure, subplots, savefig, show, plot
+from matplotlib.pyplot import figure, subplots, savefig, show, plot, xlabel, ylabel
 from sklearn.neural_network import MLPClassifier
 from ds_charts import plot_evaluation_results, multiple_line_chart, horizontal_bar_chart, HEIGHT
 from sklearn.metrics import accuracy_score, f1_score
@@ -91,6 +91,8 @@ class MLPClassify:
         # Then, plot loss curve
         figure()
         plot(clf.loss_curve_)
+        xlabel("Iteration")
+        ylabel("Loss")
         savefig('climate/records/evaluation/mlp_loss_curve.png')
 
         # Then, plot overfitting
