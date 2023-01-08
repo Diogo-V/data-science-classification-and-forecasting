@@ -2,7 +2,7 @@ from numpy import ndarray
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, read_csv, unique
-from matplotlib.pyplot import figure, subplots, savefig, show
+from matplotlib.pyplot import figure, subplots, savefig, show, plot
 from sklearn.neural_network import MLPClassifier
 from ds_charts import plot_evaluation_results, multiple_line_chart, horizontal_bar_chart, HEIGHT
 from sklearn.metrics import accuracy_score, f1_score
@@ -65,7 +65,7 @@ class MLPClassify:
         return best[0], best[1], best[2]
 
     def compute_mlp_best_results(self, lr_type, learning_rate, max_iter):
-        trnY: ndarray = self.data_train.values
+        trnY: ndarray = self.data_train.pop(target).values
         trnX: ndarray = self.data_train.values
 
         tstY: ndarray = self.data_test.pop(target).values
@@ -87,6 +87,11 @@ class MLPClassify:
         figure()
         plot_evaluation_results(labels, trnY, prd_trn, tstY, prd_tst)
         savefig('climate/records/evaluation/mlp_best_metrics.png')
+
+        # Then, plot loss curve
+        figure()
+        plot(clf.loss_curve_)
+        savefig('climate/records/evaluation/mlp_loss_curve.png')
 
         # Then, plot overfitting
         y_tst_values = []
