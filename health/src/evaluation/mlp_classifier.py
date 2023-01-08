@@ -2,7 +2,7 @@ from numpy import ndarray
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, read_csv, unique
-from matplotlib.pyplot import figure, subplots, savefig, show
+from matplotlib.pyplot import figure, subplots, savefig, show, plot
 from sklearn.neural_network import MLPClassifier
 from ds_charts import plot_evaluation_results, plot_evaluation_results_2_train_test_matrixes, multiple_line_chart, horizontal_bar_chart, HEIGHT
 from sklearn.metrics import accuracy_score, f1_score
@@ -68,7 +68,7 @@ class MLPClassify:
         trnY: ndarray = self.data_train.values
         trnX: ndarray = self.data_train.values
 
-        tstY: ndarray = self.data_test.pop(target).values
+        tstY: ndarray = self.data_test.values
         tstX: ndarray = self.data_test.values
 
         clf = MLPClassifier(activation='logistic', solver='sgd', learning_rate=lr_type,
@@ -87,6 +87,11 @@ class MLPClassify:
         figure()
         plot_evaluation_results_2_train_test_matrixes(labels, trnY, prd_trn, tstY, prd_tst)
         savefig('health/records/evaluation/mlp_best_metrics.png')
+
+        # Then, plot loss curve
+        figure()
+        plot(clf.loss_curve_)
+        savefig('health/records/evaluation/mlp_loss_curve.png')
 
         # Then, plot overfitting
         y_tst_values = []

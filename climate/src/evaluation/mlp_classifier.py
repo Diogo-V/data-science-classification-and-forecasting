@@ -65,10 +65,10 @@ class MLPClassify:
         return best[0], best[1], best[2]
 
     def compute_mlp_best_results(self, lr_type, learning_rate, max_iter):
-        trnY: ndarray = self.data_train.pop(target).values
+        trnY: ndarray = self.data_train.values
         trnX: ndarray = self.data_train.values
 
-        tstY: ndarray = self.data_test.pop(target).values
+        tstY: ndarray = self.data_test.values
         tstX: ndarray = self.data_test.values
 
         clf = MLPClassifier(activation='logistic', solver='sgd', learning_rate=lr_type,
