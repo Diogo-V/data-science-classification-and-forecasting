@@ -141,7 +141,7 @@ class Profiler:
     dt_series = pd.Series(self.data['QV2M'])
 
     mean_line = pd.Series(ones(len(dt_series.values)) * dt_series.mean(), index=dt_series.index)
-    series = {'ashrae': dt_series, 'mean': mean_line}
+    series = {'QV2M': dt_series, 'mean': mean_line}
     figure(figsize=(3*HEIGHT, HEIGHT))
     plot_series(series, x_label='timestamp',  title='Stationary study', y_label='QV2M', show_std=True)
     savefig(f'climate-forecasting/records/profiling/stationary_fixed.png')
