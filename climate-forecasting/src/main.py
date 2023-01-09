@@ -11,14 +11,16 @@ from transformation.differentiation import Differentiation
 from transformation.smoothing import Smoothing
 
 from evaluation.arima import ARIMA
+from evaluation.simple_average import SimpleAvgRegressor
+from evaluation.rolling_mean import RollingMeanRegressor
 from forecasting.lstm_forecaster import LSTMForecaster
 INPUT_FILE_PATH = 'climate-forecasting/resources/data/drought.forecasting_dataset.csv'
 
 if __name__ == "__main__":
 
   # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
-  # data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst= True)
-
+  data = read_csv(INPUT_FILE_PATH, index_col='date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst= True)
+  data = data.drop(columns=['PRECTOT', 'PS', 'T2M', 'T2MDEW', 'T2MWET', 'TS'])	
   # multivariate_data = data
 
   # Remove variables except target
@@ -47,17 +49,14 @@ if __name__ == "__main__":
     # differentiation = Differentiation(data)
     # data = differentiation.compute_differentiation()
 
-  # aggregation = Aggregation(data)
-  # aggregation.explore_aggregation()
-  # data = aggregation.compute_aggregation()
+  aggregation = Aggregation(data)
+  aggregation.explore_aggregation()
 
-  # smoothing = Smoothing(data)
-  # smoothing.explore_smoothing()
-  # data = smoothing.compute_smoothing()
+  smoothing = Smoothing(data)
+  smoothing.explore_smoothing()
 
-  # differentiation = Differentiation(data)
-  # differentiation.explore_differentiation()
-  # data = differentiation.compute_differentiation()
+  differentiation = Differentiation(data)
+  differentiation.explore_differentiation()
 
   # ----------------------------- 3º Phase -> Data evaluation ----------------------------- #
 
@@ -65,9 +64,16 @@ if __name__ == "__main__":
   data = data.drop(columns=['PRECTOT', 'PS', 'T2M', 'T2MDEW', 'T2MWET', 'TS'])	
   train, test = split_dataframe(data, trn_pct=0.75)
 
-  lstmForecaster = LSTMForecaster(data)
-  sequence_length, hidden_units, epochs, best_model = lstmForecaster.explore_best_lstm()  
-  lstmForecaster.compute_best_lstm(sequence_length, hidden_units, epochs, best_model)
+  # simpleAvgRegressor = SimpleAvgRegressor(train, test)
+  # simpleAvgRegressor.compute_simple_avg_regressor()
+
+  # rollingMeanRegressor = RollingMeanRegressor(train, test)
+  # rollingMeanRegressor.explore_rolling_mean_regressor()
+  # rollingMeanRegressor.compute_rolling_mean_regressor()
+
+  # lstmForecaster = LSTMForecaster(data)
+  # sequence_length, hidden_units, epochs, best_model = lstmForecaster.explore_best_lstm()  
+  # lstmForecaster.compute_best_lstm(sequence_length, hidden_units, epochs, best_model)
 
   # arima = ARIMA(train)
   # arima.explore_arima(test)

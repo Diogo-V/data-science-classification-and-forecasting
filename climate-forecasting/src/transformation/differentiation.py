@@ -20,9 +20,9 @@ class Differentiation:
     second_diff = self.compute_second_diff(self.data)
 
     # Plots figures for each differentiation measure
-    self.plot_figure(no_diff, 'no_diff')
-    self.plot_figure(first_diff, 'first_diff')
-    self.plot_figure(second_diff, 'second_diff')
+    self.plot_figure(no_diff, 'no_diff', 'no differentiation')
+    self.plot_figure(first_diff, 'first_diff', 'first differentiation')
+    self.plot_figure(second_diff, 'second_diff', 'second differentiation')
 
     # Evaluates results with MA and RM
     # print("EVALUATING MODELS WITH SMA...")
@@ -31,20 +31,20 @@ class Differentiation:
     # self.simple_average(second_diff, 'second_diff')
 
     print("EVALUATING MODELS WITH PERSISTANCE...")
-    self.persistance(no_diff, 'no_diff')
-    self.persistance(first_diff, 'first_diff')
-    self.persistance(second_diff, 'second_diff')
+    self.persistance(no_diff, 'no_diff', 'no differentiation')
+    self.persistance(first_diff, 'first_diff', 'first differentiation')
+    self.persistance(second_diff, 'second_diff', 'second differentiation')
 
     # print("EVALUATING MODELS WITH RM...")
     # self.rolling_mean(no_diff, 'no_diff')
     # self.rolling_mean(first_diff, 'first_diff')
     # self.rolling_mean(second_diff, 'second_diff')
 
-  def plot_figure(self, data: pd.DataFrame, title: str) -> None:
+  def plot_figure(self, data: pd.DataFrame, approach: str, title: str) -> None:
     figure(figsize=(3*HEIGHT, HEIGHT))
     plot_series(data, title=title, x_label='Date', y_label='QV2M')
     xticks(rotation = 45)
-    savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{title}_plot.png')
+    savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_plot.png')
 
   def compute_no_diff(self, data: pd.DataFrame) -> pd.DataFrame:
     return data  # Just for compliance
@@ -78,6 +78,23 @@ class Differentiation:
       ax.legend(prop={'size': 5})
       savefig(file_path)
 
+  def persistance(self, data: pd.DataFrame, approach: str, tittle: str) -> None:
+  
+      train, test = self.split_dataframe(data, trn_pct=0.75)
+      eval_results = {}
+
+      fr_mod = PersistenceRegressor()
+      fr_mod.fit(train)
+      prd_trn = fr_mod.predict(train)
+      prd_tst = fr_mod.predict(test)
+
+      measure = "R2"
+      eval_results['Persistance'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
+      print(eval_results)
+      
+      plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, tittle, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_eval.png')
+      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_plots.png', tittle = tittle, x_label="date", y_label="QV2M")
+
   def simple_average(self, data: pd.DataFrame, approach: str):
 
       train, test = self.split_dataframe(data, trn_pct=0.75)
@@ -98,24 +115,6 @@ class Differentiation:
       self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_plots.png', f'{approach} {measure}', x_label="date", y_label="QV2M")
       plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_simple_avg_plots.png')
 
-  def persistance(self, data: pd.DataFrame, approach: str) -> None:
-  
-      train, test = self.split_dataframe(data, trn_pct=0.75)
-      eval_results = {}
-
-      fr_mod = PersistenceRegressor()
-      fr_mod.fit(train)
-      prd_trn = fr_mod.predict(train)
-      prd_tst = fr_mod.predict(test)
-
-      measure = "R2"
-      eval_results['Persistance'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
-      print(eval_results)
-      
-      plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_eval.png')
-      plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_eval.png')
-      self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_plots.png', tittle = measure, x_label="date", y_label="QV2M")
-      plt.savefig(f'climate-forecasting/records/transformation/differentiation/differentiation_{approach}_{measure}_persistance_plots.png')
 
   def rolling_mean(self, data: pd.DataFrame, approach: str) -> None:
     

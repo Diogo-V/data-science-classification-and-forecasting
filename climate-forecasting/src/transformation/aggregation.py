@@ -10,21 +10,21 @@ class Aggregation:
       self.data: pd.DataFrame = data
 
     def compute_aggregation(self) -> pd.DataFrame:
-        return self.compute_aggregate_hourly(self.data)  # Seems like it's the best one
+        return self.compute_aggregate_daily(self.data)  # Seems like it's the best one
 
     def explore_aggregation(self) -> pd.DataFrame:
-        hourly = self.compute_aggregate_hourly(self.data)
+        daily = self.compute_aggregate_daily(self.data)
         weekly = self.compute_aggregate_weekly(self.data)
         monthly = self.compute_aggregate_monthly(self.data)
 
         # Plots figures for each aggregation measure
-        self.plot_figure(hourly, "hourly")
+        self.plot_figure(daily, "daily")
         self.plot_figure(weekly, "weekly")
         self.plot_figure(monthly, "monthly")
 
         # Evaluate with Persistance
         print("EVALUATING WITH PERSISTANCE...")
-        self.persistance(hourly, "hourly")
+        self.persistance(daily, "daily")
         self.persistance(weekly, "weekly")
         self.persistance(monthly, "monthly")
 
@@ -61,7 +61,7 @@ class Aggregation:
         test: pd.DataFrame = df_cp.iloc[trn_size:]
         return train, test
 
-    def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+    def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, figpath: str, x_label: str = 'time', y_label:str =''):
         _, ax = plt.subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
         ax.set_xlabel(x_label)
         ax.set_ylabel(y_label)
@@ -71,6 +71,8 @@ class Aggregation:
         ax.plot(tst.index, tst, label='test', color='g')
         ax.plot(tst.index, prd_tst, '--r', label='test prediction')
         ax.legend(prop={'size': 5})
+
+        savefig(figpath)
 
     def persistance(self, data: pd.DataFrame, approach: str) -> None:
     
@@ -86,10 +88,8 @@ class Aggregation:
         eval_results['Persistance'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
         print(eval_results)
         
-        plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_eval.png')
-        plt.savefig(f'climate-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_eval.png')
-        self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_plots.png', x_label="date", y_label="QV2M")
-        plt.savefig(f'climate-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_plots.png')
+        plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, approach, f'climate-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_eval')
+        self.plot_forecasting_series(train, test, prd_trn, prd_tst, approach, f'climate-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_plots.png', x_label="date", y_label="QV2M")
 
 class PersistenceRegressor (RegressorMixin):
     def __init__(self):

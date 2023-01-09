@@ -1,4 +1,4 @@
-from matplotlib.pyplot import subplots, Axes, gca, savefig
+from matplotlib.pyplot import subplots, Axes, gca, savefig, suptitle
 import matplotlib.dates as mdates
 import config as cfg
 from pandas import concat, Series
@@ -73,7 +73,7 @@ def split_dataframe(data, trn_pct=0.70):
     test = df_cp.iloc[trn_size:]
     return train, test
 
-def plot_evaluation_results(trn_y, prd_trn, tst_y, prd_tst, file_name):
+def plot_evaluation_results(trn_y, prd_trn, tst_y, prd_tst, tittle, file_name):
     eval1 = {
         'RMSE': [sqrt(PREDICTION_MEASURES['MSE'](trn_y, prd_trn)), sqrt(PREDICTION_MEASURES['MSE'](tst_y, prd_tst))],
         'MAE': [PREDICTION_MEASURES['MAE'](trn_y, prd_trn), PREDICTION_MEASURES['MAE'](tst_y, prd_tst)]
@@ -89,6 +89,7 @@ def plot_evaluation_results(trn_y, prd_trn, tst_y, prd_tst, file_name):
     _, axs = subplots(1, 2)
     multiple_bar_chart(['Train', 'Test'], eval1, ax=axs[0], title="Predictor's performance", percentage=False)
     multiple_bar_chart(['Train', 'Test'], eval2, ax=axs[1], title="Predictor's performance", percentage=False)
+    suptitle(tittle, fontsize=10)
     savefig(f'{file_name}.png')
 
 def plot_forecasting_series(trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):

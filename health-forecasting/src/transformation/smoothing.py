@@ -25,7 +25,7 @@ class Smoothing:
         smooth_df = rolling.mean()
         smooth_df = smooth_df.dropna()
         figure(figsize=(3*HEIGHT, HEIGHT))
-        plot_series(smooth_df, title=f'Smoothing (win_size={size})', x_label='timestamp', y_label='insulin')
+        plot_series(smooth_df, title=f'{size} days', x_label='timestamp', y_label='insulin')
         xticks(rotation = 45)
         savefig(f'health-forecasting/records/transformation/smoothing/smoothing_explore_{size}.png')
         self.persistence_regressor(smooth_df, size)
@@ -38,7 +38,7 @@ class Smoothing:
     test: pd.DataFrame = df_cp.iloc[trn_size:]
     return train, test
 
-  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, figpath: str, x_label: str = 'time', y_label:str =''):
     _, ax = subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
@@ -49,7 +49,7 @@ class Smoothing:
     ax.plot(tst.index, prd_tst, '--r', label='test prediction')
     ax.legend(prop={'size': 5})
 
-    savefig(figname)
+    savefig(figpath)
 
 
   def persistence_regressor(self, data: pd.DataFrame, size: str):
@@ -68,8 +68,8 @@ class Smoothing:
     f = open(f'health-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}.txt', 'w')
     f.write(f"{size} {eval_results}")
 
-    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}')
-    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/smoothing/smoothing_persistence_plots_{size}.png',  y_label='glucose')
+    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'{size} days', f'health-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}')
+    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'{size} days', f'health-forecasting/records/transformation/smoothing/smoothing_persistence_plots_{size}.png',  y_label='glucose')
 
 
 

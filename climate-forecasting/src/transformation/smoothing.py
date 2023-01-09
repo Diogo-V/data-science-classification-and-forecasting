@@ -69,8 +69,8 @@ class Smoothing:
     f = open(f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}.txt', 'w')
     f.write(f"{size} {eval_results}")
 
-    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}')
-    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_plots_{size}.png', f'Persistence plots with {size}', y_label='QV2M')
+    plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'{size} days', f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}')
+    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_plots_{size}.png', f'{size} days', y_label='QV2M')
 
 
 

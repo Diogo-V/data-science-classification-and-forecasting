@@ -61,16 +61,17 @@ class Aggregation:
         test: pd.DataFrame = df_cp.iloc[trn_size:]
         return train, test
 
-    def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
-        _, ax = plt.subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
-        ax.set_xlabel(x_label)
-        ax.set_ylabel(y_label)
-        ax.set_title(figname)
-        ax.plot(trn.index, trn, label='train', color='b')
-        ax.plot(trn.index, prd_trn, '--y', label='train prediction')
-        ax.plot(tst.index, tst, label='test', color='g')
-        ax.plot(tst.index, prd_tst, '--r', label='test prediction')
-        ax.legend(prop={'size': 5})
+    def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, file_path: str, tittle: str, x_label: str = 'time', y_label:str =''):
+      _, ax = plt.subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
+      ax.set_xlabel(x_label)
+      ax.set_ylabel(y_label)
+      ax.set_title(tittle)
+      ax.plot(trn.index, trn, label='train', color='b')
+      ax.plot(trn.index, prd_trn, '--y', label='train prediction')
+      ax.plot(tst.index, tst, label='test', color='g')
+      ax.plot(tst.index, prd_tst, '--r', label='test prediction')
+      ax.legend(prop={'size': 5})
+      savefig(file_path)
 
     def persistance(self, data: pd.DataFrame, approach: str) -> None:
     
@@ -86,10 +87,8 @@ class Aggregation:
         eval_results['Persistance'] = PREDICTION_MEASURES[measure](test.values, prd_tst)
         print(eval_results)
         
-        plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'health-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_eval.png')
-        plt.savefig(f'health-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_eval.png')
-        self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_plots.png', x_label="Date", y_label="Glucose")
-        plt.savefig(f'health-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_plots.png')
+        plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, approach, f'health-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_eval')
+        self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'health-forecasting/records/transformation/aggregation/aggregation_{approach}_{measure}_persistance_plots.png', approach,  x_label="Date", y_label="Glucose")
 
 class PersistenceRegressor (RegressorMixin):
     def __init__(self):
