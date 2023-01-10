@@ -42,8 +42,8 @@ if __name__ == "__main__":
 
     # No scaling applied due to few columns in dataset
     
-    aggregation = Aggregation(data)
-    aggregation.explore_aggregation()
+    # aggregation = Aggregation(data)
+    # aggregation.explore_aggregation()
 
     # smoothing = Smoothing(data)
     # smoothing.explore_smoothing()
@@ -54,10 +54,10 @@ if __name__ == "__main__":
     # ----------------------------- 3º Phase -> Data evaluation ----------------------------- #
     # data = read_csv(INPUT_FILE_PATH, index_col='Date', sep=',', decimal='.', parse_dates=True, infer_datetime_format=True, dayfirst=True)
     # data = data.drop(columns=['Insulin'])	
-    # train, test = split_dataframe(data, trn_pct=0.75)
+    train, test = split_dataframe(data, trn_pct=0.75)
 
-    # simpleAvgRegressor = SimpleAvgRegressor(train, test)
-    # simpleAvgRegressor.compute_simple_avg_regressor()
+    simpleAvgRegressor = SimpleAvgRegressor(train, test)
+    simpleAvgRegressor.compute_simple_avg_regressor()
 
     # rollingMeanRegressor = RollingMeanRegressor(train, test)
     # rollingMeanRegressor.explore_rolling_mean_regressor()

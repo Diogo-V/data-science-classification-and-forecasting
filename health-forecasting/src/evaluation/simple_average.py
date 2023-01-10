@@ -10,7 +10,6 @@ class SimpleAvgRegressor (RegressorMixin):
         self.train_data = train
         self.test_data = test
 
-
     def compute_simple_avg_regressor(self):
       measure = 'R2'
       eval_results = {}
@@ -23,15 +22,15 @@ class SimpleAvgRegressor (RegressorMixin):
       f = open(f'health-forecasting/records/evaluation/health_simple_average_results.txt', 'w')
       f.write(f'{eval_results}')
 
-      plot_evaluation_results(self.train_data.values, prd_trn, self.test_data.values, prd_tst, f'health-forecasting/records/evaluation/health_simpleAvg_eval.png')
-      self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, 'health-forecasting/records/evaluation/health_simpleAvg_plots.png', x_label='timestamp', y_label='QV2M')
+      plot_evaluation_results(self.train_data.values, prd_trn, self.test_data.values, prd_tst, 'Simple Average',f'health-forecasting/records/evaluation/health_simpleAvg_eval.png')
+      self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, 'Simple Average', 'health-forecasting/records/evaluation/health_simpleAvg_plots.png', x_label='timestamp', y_label='Glucose')
 
 
-    def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+    def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, tittle: str, figname: str, x_label: str = 'time', y_label:str =''):
       _, ax = subplots(1,1,figsize=(6*HEIGHT, HEIGHT), squeeze=True)
       ax.set_xlabel(x_label)
       ax.set_ylabel(y_label)
-      ax.set_title(figname)
+      ax.set_title(tittle)
       ax.plot(trn.index, trn, label='train', color='b')
       ax.plot(trn.index, prd_trn, '--y', label='train prediction')
       ax.plot(tst.index, tst, label='test', color='g')
