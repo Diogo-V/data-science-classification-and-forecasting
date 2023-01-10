@@ -11,7 +11,11 @@ class ARIMA:
         self.data = data
 
     def compute_arima(self) -> ARIMA_model:
-        return ARIMA_model(self.data, order=(1, 2, 1))
+        pred = ARIMA_model(self.data, order=(1, 2, 1))
+        model = pred.fit(method_kwargs={'warn_convergence': False})
+        model.plot_diagnostics(figsize=(2*HEIGHT, 2*HEIGHT))
+        savefig(f'climate-forecasting/records/evaluation/arima_diagnostics.png')
+        return model
 
     def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, file_path: str, tittle: str, x_label: str = 'time', y_label:str =''):
       _, ax = plt.subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)

@@ -11,7 +11,11 @@ class ARIMA:
         self.data = data
 
     def compute_arima(self) -> ARIMA_model:
-        return ARIMA_model(self.data, order=(1, 1, 3))
+        pred = ARIMA_model(self.data, order=(1, 1, 3))
+        model = pred.fit(method_kwargs={'warn_convergence': False})
+        model.plot_diagnostics(figsize=(2*HEIGHT, 2*HEIGHT))
+        savefig(f'health-forecasting/records/evaluation/arima_diagnostics.png')
+        return model
 
     def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, file_path: str, tittle: str, x_label: str = 'time', y_label:str =''):
       _, ax = plt.subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
@@ -59,6 +63,7 @@ class ARIMA:
         print(f'Best results achieved with (p,d,q)=({best[0]}, {best[1]}, {best[2]}) ==> measure={last_best:.2f}')
 
         best_model.plot_diagnostics(figsize=(2*HEIGHT, 2*HEIGHT))
+        savefig(f'health-forecasting/records/evaluation/arima_diagnostics.png')
 
         prd_trn = best_model.predict(start=0, end=len(self.data)-1)
         prd_tst = best_model.forecast(steps=len(test))
