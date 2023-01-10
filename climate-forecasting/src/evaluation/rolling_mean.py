@@ -26,7 +26,7 @@ class RollingMeanRegressor (RegressorMixin):
       f.write(f'{self.best_size} {eval_results}')
 
       plot_evaluation_results(self.train_data.values, prd_trn, self.test_data.values, prd_tst, self.best_size, f'climate-forecasting/records/evaluation/climate_rolling_mean_best_{self.best_size}_eval')
-      self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, f'climate-forecasting/records/evaluation/climate_rolling_mean_best_{self.best_size}_plots.png', x_label='timestamp', y_label='QV2M')
+      self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, self.best_size, f'climate-forecasting/records/evaluation/climate_rolling_mean_best_{self.best_size}_plots.png', x_label='timestamp', y_label='QV2M')
 
 
     def explore_rolling_mean_regressor(self):
@@ -44,14 +44,14 @@ class RollingMeanRegressor (RegressorMixin):
         f.write(f'{size} {eval_results}')
 
         plot_evaluation_results(self.train_data.values, prd_trn, self.test_data.values, prd_tst, size, f'climate-forecasting/records/evaluation/climate_rolling_mean_{size}_eval')
-        self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, f'climate-forecasting/records/evaluation/climate_rolling_mean_{size}_plots.png', x_label='timestamp', y_label='QV2M')
+        self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, size, f'climate-forecasting/records/evaluation/climate_rolling_mean_{size}_plots.png', x_label='timestamp', y_label='QV2M')
 
 
-    def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, x_label: str = 'time', y_label:str =''):
+    def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figtittle: str, figname: str, x_label: str = 'time', y_label:str =''):
       _, ax = subplots(1,1,figsize=(6*HEIGHT, HEIGHT), squeeze=True)
       ax.set_xlabel(x_label)
       ax.set_ylabel(y_label)
-      ax.set_title(figname)
+      ax.set_title(figtittle)
       ax.plot(trn.index, trn, label='train', color='b')
       ax.plot(trn.index, prd_trn, '--y', label='train prediction')
       ax.plot(tst.index, tst, label='test', color='g')

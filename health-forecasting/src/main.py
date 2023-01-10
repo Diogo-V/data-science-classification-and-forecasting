@@ -56,11 +56,11 @@ if __name__ == "__main__":
     # data = data.drop(columns=['Insulin'])	
     train, test = split_dataframe(data, trn_pct=0.75)
 
-    simpleAvgRegressor = SimpleAvgRegressor(train, test)
-    simpleAvgRegressor.compute_simple_avg_regressor()
+    # simpleAvgRegressor = SimpleAvgRegressor(train, test)
+    # simpleAvgRegressor.compute_simple_avg_regressor()
 
-    # rollingMeanRegressor = RollingMeanRegressor(train, test)
-    # rollingMeanRegressor.explore_rolling_mean_regressor()
+    rollingMeanRegressor = RollingMeanRegressor(train, test)
+    rollingMeanRegressor.explore_rolling_mean_regressor()
     # rollingMeanRegressor.compute_rolling_mean_regressor()
 
     # lstmForecaster = LSTMForecaster(data)

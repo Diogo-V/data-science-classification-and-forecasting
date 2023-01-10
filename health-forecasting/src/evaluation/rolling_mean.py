@@ -10,7 +10,7 @@ class RollingMeanRegressor (RegressorMixin):
         self.train_data = train
         self.test_data = test
 
-        self.win_sizes = [2, 3, 4, 5, 7, 8, 10, 14, 21, 30, 60, 90]
+        self.win_sizes = [2, 3, 4, 5, 7, 8, 10, 15, 20]
 
         self.best_size = 2
 
@@ -26,7 +26,7 @@ class RollingMeanRegressor (RegressorMixin):
       f.write(f'{self.best_size} {eval_results}')
 
       plot_evaluation_results(self.train_data.values, prd_trn, self.test_data.values, prd_tst, f'health-forecasting/records/evaluation/health_rolling_mean_{self.best_size}_eval')
-      self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, size, f'{size}', 'health-forecasting/records/evaluation/health_rolling_mean_{size}_plots.png', x_label='timestamp', y_label='QV2M')
+      self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst,  f'{self.best_size}', f'health-forecasting/records/evaluation/health_rolling_mean_{self.best_size}_plots.png', x_label='timestamp', y_label='Glucose')
 
 
     def explore_rolling_mean_regressor(self):
@@ -43,8 +43,8 @@ class RollingMeanRegressor (RegressorMixin):
         f = open(f'health-forecasting/records/evaluation/health_rolling_mean_{size}_results.txt', 'w')
         f.write(f'{size} {eval_results}')
 
-        plot_evaluation_results(self.train_data.values, prd_trn, self.test_data.values, prd_tst, f'health-forecasting/records/evaluation/health_rolling_mean_{size}_eval', )
-        self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, size, f'{size}', 'health-forecasting/records/evaluation/health_rolling_mean_{size}_plots.png', x_label='timestamp', y_label='QV2M')
+        plot_evaluation_results(self.train_data.values, prd_trn, self.test_data.values, prd_tst, size, f'health-forecasting/records/evaluation/health_rolling_mean_{size}_eval', )
+        self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, f'{size}', f'health-forecasting/records/evaluation/health_rolling_mean_{size}_plots.png', x_label='timestamp', y_label='Glucose')
 
 
     def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, figpath: str, x_label: str = 'time', y_label:str =''):

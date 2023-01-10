@@ -49,14 +49,14 @@ if __name__ == "__main__":
     # differentiation = Differentiation(data)
     # data = differentiation.compute_differentiation()
 
-  aggregation = Aggregation(data)
-  aggregation.explore_aggregation()
+  # aggregation = Aggregation(data)
+  # aggregation.explore_aggregation()
 
-  smoothing = Smoothing(data)
-  smoothing.explore_smoothing()
+  # smoothing = Smoothing(data)
+  # smoothing.explore_smoothing()
 
-  differentiation = Differentiation(data)
-  differentiation.explore_differentiation()
+  # differentiation = Differentiation(data)
+  # differentiation.explore_differentiation()
 
   # ----------------------------- 3º Phase -> Data evaluation ----------------------------- #
 
@@ -67,8 +67,8 @@ if __name__ == "__main__":
   # simpleAvgRegressor = SimpleAvgRegressor(train, test)
   # simpleAvgRegressor.compute_simple_avg_regressor()
 
-  # rollingMeanRegressor = RollingMeanRegressor(train, test)
-  # rollingMeanRegressor.explore_rolling_mean_regressor()
+  rollingMeanRegressor = RollingMeanRegressor(train, test)
+  rollingMeanRegressor.explore_rolling_mean_regressor()
   # rollingMeanRegressor.compute_rolling_mean_regressor()
 
   # lstmForecaster = LSTMForecaster(data)
