@@ -67,8 +67,8 @@ if __name__ == "__main__":
   # simpleAvgRegressor = SimpleAvgRegressor(train, test)
   # simpleAvgRegressor.compute_simple_avg_regressor()
 
-  # rollingMeanRegressor = RollingMeanRegressor(train, test)
-  # rollingMeanRegressor.explore_rolling_mean_regressor()
+  rollingMeanRegressor = RollingMeanRegressor(train, test)
+  rollingMeanRegressor.explore_rolling_mean_regressor()
   # rollingMeanRegressor.compute_rolling_mean_regressor()
 
   # lstmForecaster = LSTMForecaster(data)

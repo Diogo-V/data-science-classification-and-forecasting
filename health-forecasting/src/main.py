@@ -59,13 +59,13 @@ if __name__ == "__main__":
     # simpleAvgRegressor = SimpleAvgRegressor(train, test)
     # simpleAvgRegressor.compute_simple_avg_regressor()
 
-    # rollingMeanRegressor = RollingMeanRegressor(train, test)
-    # rollingMeanRegressor.explore_rolling_mean_regressor()
+    rollingMeanRegressor = RollingMeanRegressor(train, test)
+    rollingMeanRegressor.explore_rolling_mean_regressor()
     # rollingMeanRegressor.compute_rolling_mean_regressor()
 
     # lstmForecaster = LSTMForecaster(data)
     # sequence_length, hidden_units, epochs, best_model = lstmForecaster.explore_best_lstm()  
     # lstmForecaster.compute_best_lstm(sequence_length, hidden_units, epochs, best_model)
 
-    arima = ARIMA(train)
-    arima.compute_arima()
+    # arima = ARIMA(train)
+    # arima.compute_arima()
