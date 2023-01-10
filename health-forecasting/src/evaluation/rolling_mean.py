@@ -44,7 +44,7 @@ class RollingMeanRegressor (RegressorMixin):
         f.write(f'{size} {eval_results}')
 
         plot_evaluation_results(self.train_data.values, prd_trn, self.test_data.values, prd_tst, size, f'health-forecasting/records/evaluation/health_rolling_mean_{size}_eval', )
-        self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, f'{size}', f'health-forecasting/records/evaluation/health_rolling_mean_{size}_plots.png', x_label='timestamp', y_label='Glucose')
+        self.plot_forecasting_series(self.train_data, self.test_data, prd_trn, prd_tst, size, f'health-forecasting/records/evaluation/health_rolling_mean_{size}_plots.png', x_label='timestamp', y_label='Glucose')
 
 
     def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, figname: str, figpath: str, x_label: str = 'time', y_label:str =''):

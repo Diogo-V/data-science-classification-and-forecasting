@@ -67,5 +67,5 @@ if __name__ == "__main__":
     # sequence_length, hidden_units, epochs, best_model = lstmForecaster.explore_best_lstm()  
     # lstmForecaster.compute_best_lstm(sequence_length, hidden_units, epochs, best_model)
 
-    arima = ARIMA(train)
-    arima.compute_arima()
+    # arima = ARIMA(train)
+    # arima.compute_arima()
