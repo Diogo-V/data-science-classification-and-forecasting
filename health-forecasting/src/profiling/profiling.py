@@ -140,7 +140,7 @@ class Profiler:
     dt_series = pd.Series(self.data['Glucose'])
 
     mean_line = pd.Series(ones(len(dt_series.values)) * dt_series.mean(), index=dt_series.index)
-    series = {'ashrae': dt_series, 'mean': mean_line}
+    series = {'Glucose': dt_series, 'mean': mean_line}
     figure(figsize=(3*HEIGHT, HEIGHT))
     plot_series(series, x_label='timestamp',  title='Stationary study', y_label='glucose', show_std=True)
     savefig(f'health-forecasting/records/profiling/stationary_fixed.png')
@@ -152,7 +152,7 @@ class Profiler:
         line += mean
     line += [line[-1]] * (n - len(line))
     mean_line = pd.Series(line, index=dt_series.index)
-    series = {'QV2M': dt_series, 'mean': mean_line}
+    series = {'Glucose': dt_series, 'mean': mean_line}
     figure(figsize=(3*HEIGHT, HEIGHT))
     plot_series(series, x_label='Time', title='Stationary study', show_std=True,  y_label='glucose')
     
