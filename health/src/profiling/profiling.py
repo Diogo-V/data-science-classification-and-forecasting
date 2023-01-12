@@ -97,9 +97,9 @@ class Profiler:
         if nr is not None and nr > 0:
             mv[var] = nr
 
-    figure()
+    figure(figsize=[10, 5])
     bar_chart(list(mv.keys()), list(mv.values()), title='Nr of missing values per variable',
-                xlabel='variables', ylabel='nr missing values', rotation=True)
+                xlabel='variables', ylabel='nr missing values', rotation=False)
     savefig(f'{output_image_path}/nr_missing_values.png')
     if display:
         show()

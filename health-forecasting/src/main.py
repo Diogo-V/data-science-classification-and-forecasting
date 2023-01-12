@@ -13,6 +13,7 @@ from transformation.smoothing import Smoothing
 
 from evaluation.arima import ARIMA
 from evaluation.simple_average import SimpleAvgRegressor
+from evaluation.persistence import PersistenceRegressor
 from evaluation.rolling_mean import RollingMeanRegressor
 from forecasting.lstm_forecaster import LSTMForecaster
 
@@ -59,8 +60,11 @@ if __name__ == "__main__":
     # simpleAvgRegressor = SimpleAvgRegressor(train, test)
     # simpleAvgRegressor.compute_simple_avg_regressor()
 
-    rollingMeanRegressor = RollingMeanRegressor(train, test)
-    rollingMeanRegressor.explore_rolling_mean_regressor()
+    persistenceRegressor = PersistenceRegressor(train, test)
+    persistenceRegressor.explore_rolling_mean_regressor()
+
+    # rollingMeanRegressor = RollingMeanRegressor(train, test)
+    # rollingMeanRegressor.explore_rolling_mean_regressor()
     # rollingMeanRegressor.compute_rolling_mean_regressor()
 
     # lstmForecaster = LSTMForecaster(data)

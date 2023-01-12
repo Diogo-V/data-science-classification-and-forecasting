@@ -1,7 +1,7 @@
 import pandas as pd
 from numpy import log
 from seaborn import distplot
-from matplotlib.pyplot import figure, savefig, subplots, Axes
+from matplotlib.pyplot import figure, savefig, subplots, Axes, show
 from scipy.stats import norm, expon, lognorm
 
 from ds_charts import bar_chart, get_variable_types, HEIGHT, choose_grid, multiple_bar_chart, multiple_line_chart
@@ -23,8 +23,10 @@ class Distribution:
     Arguments:
       * output_image_path(str): path to output image
     """
+    figure(figsize=[10, 10])
     self.data.boxplot(rot=45)
     savefig(f'{output_image_path}/global_boxplot.png')
+    show()
 
   def explore_numeric_boxplot(self, output_image_path: str) -> None:
     """

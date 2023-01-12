@@ -41,16 +41,16 @@ MISSING_VALUES_REPR = '?'
 if __name__ == "__main__":
 
   # ----------------------------- 1º Phase -> Data profiling ----------------------------- #
-  
-  # profiler = Profiler(data)
-  # profiler_sparsity = Sparsity(data)
-  # profiler_distribution = Distribution(data)
+  data = read_csv(INPUT_FILE_PATH, na_values='na')
+  profiler = Profiler(data)
+  profiler_sparsity = Sparsity(data)
+  profiler_distribution = Distribution(data)
 
   # profiler.explore_dimensionality(PROFILING_PATH, display=False)
   # profiler.explore_variable_types(PROFILING_PATH, display=False)
   # profiler.explore_missing_values(PROFILING_PATH, MISSING_VALUES_REPR, display=True)
 
-  # profiler_distribution.explore_global_boxplot(PROFILING_PATH)
+  profiler_distribution.explore_global_boxplot(PROFILING_PATH)
   # profiler_distribution.explore_numeric_boxplot(PROFILING_PATH)
   # profiler_distribution.explore_count_numeric_outliers(PROFILING_PATH)
   # profiler_distribution.explore_histogram_numeric_outliers(PROFILING_PATH)
@@ -136,6 +136,6 @@ if __name__ == "__main__":
   # lr_type, learning_rate, max_iter = mlpClassifier.explore_best_mlp()
   # mlpClassifier.compute_mlp_best_results(lr_type, learning_rate, max_iter)
 
-  gradientClassifier = GradientClassifier(data_train, data_test)
-  lr_type, learning_rate, max_iter = gradientClassifier.explore_best_gradient()
-  gradientClassifier.compute_best_gradient(lr_type, learning_rate, max_iter)
+  # gradientClassifier = GradientClassifier(data_train, data_test)
+  # lr_type, learning_rate, max_iter = gradientClassifier.explore_best_gradient()
+  # gradientClassifier.compute_best_gradient(lr_type, learning_rate, max_iter)
