@@ -39,15 +39,13 @@ class Smoothing:
     test: pd.DataFrame = df_cp.iloc[trn_size:]
     return train, test
 
-  def plot_forecasting_series(self, trn, tst, prd_trn, prd_tst, file_path: str, tittle: str, x_label: str = 'time', y_label:str =''):
+  def plot_forecasting_series(self, trn, prd_trn, file_path: str, tittle: str, x_label: str = 'time', y_label:str =''):
     _, ax = subplots(1,1,figsize=(5*HEIGHT, HEIGHT), squeeze=True)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
     ax.set_title(tittle)
     ax.plot(trn.index, trn, label='train', color='b')
     ax.plot(trn.index, prd_trn, '--y', label='train prediction')
-    ax.plot(tst.index, tst, label='test', color='g')
-    ax.plot(tst.index, prd_tst, '--r', label='test prediction')
     ax.legend(prop={'size': 5})
 
     savefig(file_path)
@@ -70,7 +68,7 @@ class Smoothing:
     f.write(f"{size} {eval_results}")
 
     plot_evaluation_results(train.values, prd_trn, test.values, prd_tst, f'{size} days', f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_eval_{size}')
-    self.plot_forecasting_series(train, test, prd_trn, prd_tst, f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_plots_{size}.png', f'{size} days', y_label='QV2M')
+    self.plot_forecasting_series(train, prd_trn, f'climate-forecasting/records/transformation/smoothing/smoothing_persistence_plots_{size}.png', f'{size} days', y_label='QV2M')
 
 
 
