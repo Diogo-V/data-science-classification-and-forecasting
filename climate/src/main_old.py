@@ -206,10 +206,10 @@ def histogram_with_distributions_per_numeric_variable():
   rows, cols = choose_grid(len(numeric_vars))
   fig, axs = subplots(rows, cols, figsize=(cols*HEIGHT, rows*HEIGHT), squeeze=False)
   i, j = 0, 0
-  for n in range(len(numeric_vars)):
-      histogram_with_distributions(axs[i, j], data[numeric_vars[n]].dropna(), numeric_vars[n])
-      i, j = (i + 1, 0) if (n+1) % cols == 0 else (i, j + 1)
-  savefig('climate/records/profiling/histogram_numeric_distribution.png')
+#   for n in range(len(numeric_vars)):
+  histogram_with_distributions(axs[i, j], data[numeric_vars[0]].dropna(), numeric_vars[0])
+  i, j = (i + 1, 0) if (0+1) % cols == 0 else (i, j + 1)
+  savefig('climate/records/profiling/histogram_numeric_distribution_zero.png')
   show()
 
 def explore_scatter_plot(self, output_image_path: str) -> None:
@@ -248,11 +248,11 @@ def explore_heatmap() -> None:
 
 
 if __name__ == "__main__":
-#   histogram_with_distributions_per_numeric_variable()
-#   histogram_trend_per_numeric_variable()
+    histogram_with_distributions_per_numeric_variable()
+    # histogram_trend_per_numeric_variable()
 #   nr_of_outliers_per_numeric_variable()
     # boxplot_per_numeric_variable()
-    global_boxplot()
+    # global_boxplot()
     # histogram_per_numeric_variable()
     # histogram_per_symbolic_variable()
     # explore_heatmap()
